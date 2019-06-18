@@ -1,4 +1,4 @@
-package cn.four.steel.bean.params;
+package cn.four.steel.bean.from;
 
 public class PagePrice implements java.io.Serializable{
 	/**
@@ -8,6 +8,7 @@ public class PagePrice implements java.io.Serializable{
 	private long specId;
 	private String specName;
 	private double price;
+	private String priceType;
 	public long getSpecId() {
 		return specId;
 	}
@@ -25,5 +26,11 @@ public class PagePrice implements java.io.Serializable{
 	}
 	public void setPrice(double price) {
 		this.price = price;
+	}
+	public String getPriceType() {
+		return priceType;
+	}
+	public void setPriceType(String priceType) {
+		this.priceType = priceType;
 	}
 }

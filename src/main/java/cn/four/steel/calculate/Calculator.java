@@ -12,4 +12,7 @@ public class Calculator {
 		}
 		return null;
 	}
+	public void calcAmount(){
+		
+	}
 }

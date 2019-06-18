@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 
-import cn.four.steel.bean.params.PagePrice;
+import cn.four.steel.bean.from.PagePrice;
 import cn.four.steel.service.SteelPriceService;
 
 @RestController
@@ -28,13 +28,19 @@ public class SteelPriceController {
 		try {
 			long  specId =  Long.valueOf(json.getString("specId"));
 			double price = Double.valueOf(json.getString("price"));
+			String priceType = json.getString("priceType");
 			PagePrice params = new PagePrice();
 			params.setPrice(price);
 			params.setSpecId(specId);
+			params.setPriceType(priceType);
 			steelPriceService.addPrice(params);
 		} catch (JSONException e) {
 			logger.error(e.getMessage());
 		}
 		return "Success";
+	}
+	
+	public void queryPrice(){
+		
 	}
 }
