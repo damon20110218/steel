@@ -8,9 +8,12 @@ public class FrontOrder {
 	private Long specId;
 	private Double clientAmount;
 	private Double price;
-	private String SteelCalcAmount;
+	private String steelCalcAmount;
 	private String comment;
 	private String unit;
+	private String clientName;
+	private String isOut;
+	private String isSale;
 	public Long getOrderId() {
 		return orderId;
 	}
@@ -54,10 +57,10 @@ public class FrontOrder {
 		this.price = price;
 	}
 	public String getSteelCalcAmount() {
-		return SteelCalcAmount;
+		return steelCalcAmount;
 	}
 	public void setSteelCalcAmount(String steelCalcAmount) {
-		SteelCalcAmount = steelCalcAmount;
+		this.steelCalcAmount = steelCalcAmount;
 	}
 	public String getComment() {
 		return comment;
@@ -70,5 +73,23 @@ public class FrontOrder {
 	}
 	public void setUnit(String unit) {
 		this.unit = unit;
+	}
+	public String getClientName() {
+		return clientName;
+	}
+	public void setClientName(String clientName) {
+		this.clientName = clientName;
+	}
+	public String getIsOut() {
+		return isOut;
+	}
+	public void setIsOut(String isOut) {
+		this.isOut = isOut;
+	}
+	public String getIsSale() {
+		return isSale;
+	}
+	public void setIsSale(String isSale) {
+		this.isSale = isSale;
 	}
 }

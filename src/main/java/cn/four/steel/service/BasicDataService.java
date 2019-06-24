@@ -130,4 +130,33 @@ public class BasicDataService {
 		params.add(clientId);
 		jdbcTemplate.update(delSQL, params.toArray());
 	}
+	/**
+	 * 
+	* @Title: loadSingleSteelPrice  
+	* @Description: 计算出单个钢板的理论价格  
+	* @param specId
+	* @return    参数  
+	* double    返回类型  
+	* @throws
+	 */
+	public double loadSingleSteelPrice(Long specId){
+		String querySQL = "select ss.thickness, sc.length, sc.width, sp.density, sk.price from steel_specs ss, steel_category sc, steel_parameter sp, steel_price sk"
+				+ " where ss.categort_id = sc.category_id and ss.category_id = sp.category_id and ss.price_code = sk.price_code"
+				+ " and ss.spec_id = ? and sk.prcie_date = ?";
+		List<Object> params = new ArrayList<Object>();
+		Date now = new Date();
+		params.add(specId);
+		params.add(now);
+		Map<String, Object> map = jdbcTemplate.queryForMap(querySQL, params.toArray());
+		double singleSteelPrice = 0D;
+		if(map != null){
+			double thickness = Double.valueOf(String.valueOf(map.get("thickness")));
+			long length = Long.valueOf(String.valueOf(map.get("length")));
+			long width = Long.valueOf(String.valueOf(map.get("width")));
+			double density = Double.valueOf(String.valueOf(map.get("density")));
+			double price = Double.valueOf(String.valueOf(map.get("price")));
+			singleSteelPrice = (length * width * thickness * density * price ) /1000000000;
+		}
+		return singleSteelPrice;
+	}
 }

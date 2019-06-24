@@ -12,7 +12,5 @@ public class Calculator {
 		}
 		return null;
 	}
-	public void calcAmount(){
-		
-	}
+	public void schedule()
 }

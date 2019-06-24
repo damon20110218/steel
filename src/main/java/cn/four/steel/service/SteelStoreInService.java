@@ -15,7 +15,7 @@ import cn.four.steel.bean.to.MainStorage;
 
 @Transactional
 @Service
-public class SteelStorageService {
+public class SteelStoreInService {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -27,7 +27,6 @@ public class SteelStorageService {
 		String updateSQL = "update steel_storage set store_date = ?, client_no = ?, store_no = ?, steel_amount = ?"
 				+ " steel_factory = ?, year = ?, month = ?, spec_id = ?, client_id = ?, price = ?, cash_amount = ? where storage_id = ?";
 		List<Object> params = new ArrayList<Object>();
-
 		Date now = new Date();
 		for (int i = 0; i < fss.size(); i++) {
 			FrontStorage fs = fss.get(i);
@@ -98,10 +97,11 @@ public class SteelStorageService {
 		return stores;
 	}
 	
-	public List<FrontStorage> queryStorageById(Long storage_id){
+	public List<FrontStorage> queryStorageById(String storageNo){
 		String querySQL = "select storage_id, store_no, client_no, cash_amount, steel_factory, steel_amount, "
-				+ "price, spec_id, client_id  from steel_storage where storage_id = ? ";
+				+ "price, spec_id, client_id  from steel_storage where store_no = ? ";
 		List<Object> params = new ArrayList<Object>();
+		params.add(storageNo);
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(querySQL, params.toArray());
 		List<FrontStorage> stores = new ArrayList<>();
 		if (list != null) {
@@ -120,5 +120,10 @@ public class SteelStorageService {
 			}
 		}
 		return stores;
+	}
+	
+	public void todayStorage(){
+		String storeInSQL = "";
+		String storeOutSQL = "";
 	}
 }

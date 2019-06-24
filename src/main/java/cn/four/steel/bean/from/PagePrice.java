@@ -5,15 +5,15 @@ public class PagePrice implements java.io.Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 9177583169242016623L;
-	private long specId;
+	private String priceCode;
 	private String specName;
 	private double price;
 	private String priceType;
-	public long getSpecId() {
-		return specId;
+	public String getPriceCode() {
+		return priceCode;
 	}
-	public void setSpecId(long specId) {
-		this.specId = specId;
+	public void setPriceCode(String priceCode) {
+		this.priceCode = priceCode;
 	}
 	public String getSpecName() {
 		return specName;

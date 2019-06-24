@@ -16,13 +16,14 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.four.steel.bean.from.FrontStorage;
-import cn.four.steel.service.SteelStorageService;
+import cn.four.steel.bean.to.MainStorage;
+import cn.four.steel.service.SteelStoreInService;
 
 @RestController
-public class SteelStorageController {
-	private static Logger logger = LoggerFactory.getLogger(SteelStorageController.class);
+public class SteelStoreInController {
+	private static Logger logger = LoggerFactory.getLogger(SteelStoreInController.class);
 	@Autowired
-	private SteelStorageService steelStorageService;
+	private SteelStoreInService steelStorageService;
 
 	// 入库新增 及修改
 	@RequestMapping("/store/update")
@@ -45,8 +46,21 @@ public class SteelStorageController {
 		}
 	}
 	@RequestMapping("/store/query")
-	public void queryStorage(String storageNo, String clientNo){
-		
+	public List<MainStorage> queryStorage(String storageNo, String clientNo, String year, String month){
+		try{
+			return steelStorageService.queryStorage(storageNo, clientNo, year, month);
+		}catch(Exception e){
+			return null;
+		}
 	}
-
+	
+	@RequestMapping("/store/show")
+	public List<FrontStorage> showSingleStorage(String storageNo){
+		try{
+			return steelStorageService.queryStorageById(storageNo);
+		} catch(Exception e){
+			logger.error("show single storage:" + storageNo + ", " + e.getMessage());
+			return null;
+		}
+	}
 }
