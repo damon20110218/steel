@@ -7,10 +7,12 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
 
 import cn.four.steel.bean.to.SingleInventory;
 import cn.four.steel.util.SteelUtil;
 
+@Service
 public class SteelInventoryService {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;

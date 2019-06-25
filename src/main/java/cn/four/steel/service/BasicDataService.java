@@ -12,11 +12,15 @@ import org.springframework.stereotype.Service;
 import cn.four.steel.bean.from.Client;
 import cn.four.steel.bean.to.SteelCategory;
 import cn.four.steel.bean.to.SteelSpecication;
+import cn.four.steel.cache.BaseDataCache;
 
 @Service
 public class BasicDataService {
 	@Autowired
     private JdbcTemplate jdbcTemplate;
+	
+	@Autowired
+	private BaseDataCache baseDataCache;
 	
 	public List<SteelCategory> listAllCategory(Long categoryId){
 		String sql = "Select * From steel_category Where 1=1 ";
@@ -124,12 +128,15 @@ public class BasicDataService {
 			params.add(client.getClientId());
 			jdbcTemplate.update(updateSQL, params.toArray());
 		}
+		
+		baseDataCache.updateClient(client);
 	}
 	public void delClient(Long clientId){
 		String delSQL = "delete from client_info where client_id = ?";
 		List<Object> params = new ArrayList<Object>();
 		params.add(clientId);
 		jdbcTemplate.update(delSQL, params.toArray());
+		baseDataCache.delClient(clientId);
 	}
 	/**
 	 * 
