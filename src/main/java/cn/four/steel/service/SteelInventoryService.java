@@ -1,13 +1,59 @@
 package cn.four.steel.service;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import cn.four.steel.bean.to.SingleInventory;
+import cn.four.steel.util.SteelUtil;
 
 public class SteelInventoryService {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
-	public void queryInventory(String year, String month){
-		String querySQL = "select * from steel_inventory si, steel_specs ss, steel_category sc";
+	public List<SingleInventory> queryInventory(String year, String month){
+		String querySQL = "select inventory_date, steel_name, thickness, store_in, store_out from steel_inventory si where 1=1";
+		List<Object> params = new ArrayList<Object>();
+		if(year != null && !"".equals(year)){
+			querySQL += "and year = ?";
+			params.add(year);
+		}
+		if(month != null && !"".equals(month)){
+			querySQL += "and month = ?";
+			params.add(month);
+		}
+		List<Map<String, Object>> list = jdbcTemplate.queryForList(querySQL, params.toArray());
+		List<SingleInventory> inventories = new ArrayList<>();
+		if(list != null){
+			for(Map<String, Object> m : list){
+				SingleInventory in = new SingleInventory();
+				in.setInventoryDate(SteelUtil.formatDate((Date)m.get("inventory_date"), null));
+				in.setSteelName(String.valueOf(m.get("steel_name")));
+				in.setThickness(Double.valueOf(String.valueOf(m.get("thickness"))));
+				in.setStoreIn(Double.valueOf(String.valueOf(m.get("store_in"))));
+				in.setStoreOut(Double.valueOf(String.valueOf(m.get("store_out"))));
+				inventories.add(in);
+			}
+		}
+		return inventories;
+	}
+	public List<SingleInventory> calcAllInventory(String steelName){
+		String querySQL = "select thickness, sum(diff) as sum from (select thickness, (steel_in-store_out) as diff from steel_inventory si steel_name = ?) group by thickness order by thickness";
+		List<Object> params = new ArrayList<Object>();
+		List<Map<String, Object>> list = jdbcTemplate.queryForList(querySQL, params.toArray());
+		List<SingleInventory> inventories = new ArrayList<>();
+		if(list != null){
+			for(Map<String, Object> m : list){
+				SingleInventory in = new SingleInventory();
+				in.setThickness(Double.valueOf(String.valueOf(m.get("thickness"))));
+				in.setInventory(Double.valueOf(String.valueOf(m.get("sum"))));
+				inventories.add(in);
+			}
+		}
+		return inventories;
 	}
 }

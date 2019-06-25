@@ -1,0 +1,10 @@
+INSERT INTO steel_category (category_id, steel_name, steel_en_name, steel_code, length, width, calc_type) VALUES (1, '»»‘˛∞Â', null, 'hot_no_1', 4000, 1500, 'hot');
+INSERT INTO steel_category (category_id, steel_name, steel_en_name, steel_code, length, width, calc_type) VALUES (2, '»»‘˛∞Â', null, 'hot_no_2', 4000, 1260, 'hot');
+INSERT INTO steel_category (category_id, steel_name, steel_en_name, steel_code, length, width, calc_type) VALUES (3, '¿‰‘˛∞Â', null, 'cold_no_1', 2500, 1250, 'cold');
+INSERT INTO steel_category (category_id, steel_name, steel_en_name, steel_code, length, width, calc_type) VALUES (4, '¿‰‘˛∞Â', null, 'cold_no_2', 2000, 1000, 'cold');
+INSERT INTO steel_category (category_id, steel_name, steel_en_name, steel_code, length, width, calc_type) VALUES (5, 'À·œ¥∞Â', null, 'acid_no_1', 3000, 1500, 'acid');
+INSERT INTO steel_category (category_id, steel_name, steel_en_name, steel_code, length, width, calc_type) VALUES (6, 'À·œ¥∞Â', null, 'acid_no_2', 3000, 1260, 'acid');
+INSERT INTO steel_category (category_id, steel_name, steel_en_name, steel_code, length, width, calc_type) VALUES (7, '¬¡∞Â', null, 'al_no_1', 2000, 1000, 'al');
+INSERT INTO steel_category (category_id, steel_name, steel_en_name, steel_code, length, width, calc_type) VALUES (8, '¬¡∞Â', null, 'al_no_2', 4000, 1200, 'al');
+INSERT INTO steel_category (category_id, steel_name, steel_en_name, steel_code, length, width, calc_type) VALUES (9, '∂∆–ø∞Â', null, 'zi_no_1', 2500, 1250, 'zi');
+INSERT INTO steel_category (category_id, steel_name, steel_en_name, steel_code, length, width, calc_type) VALUES (10, '∂∆–ø∞Â', null, 'zi_no_2', 2000, 1000, 'zi');

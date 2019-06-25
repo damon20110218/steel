@@ -43,6 +43,7 @@ public class SteelOrderController {
 			return "failed";
 		}
 	}
+
 	@RequestMapping(value = "/order/query", method = RequestMethod.POST)
 	public List<FrontOrder> queryOrder(String search, String year, String month, String isSale, String isOut) {
 		try {
@@ -52,7 +53,14 @@ public class SteelOrderController {
 			return null;
 		}
 	}
+
 	@RequestMapping(value = "/order/show", method = RequestMethod.POST)
-	public void showSingleOrder(String orderNo){
+	public List<FrontOrder> showSingleOrder(String orderNo) {
+		try {
+			return steelOrderService.showSingleOrder(orderNo);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return null;
+		}
 	}
 }

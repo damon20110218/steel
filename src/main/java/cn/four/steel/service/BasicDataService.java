@@ -61,6 +61,7 @@ public class BasicDataService {
 				spec.setSpecId(Long.valueOf(String.valueOf(map.get("spec_id"))));
 				spec.setCategoryId(Long.valueOf(String.valueOf(map.get("category_id"))));
 				spec.setThickness(Double.valueOf(String.valueOf(map.get("thickness"))));
+				spec.setPriceCode(String.valueOf(map.get("price_code")));
 				specs.add(spec);
 			}
 		}

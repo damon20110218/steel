@@ -4,6 +4,7 @@ public class SteelSpecication {
 	private Long specId;
 	private Long categoryId;
 	private Double thickness;
+	private String priceCode;
 	public Long getCategoryId() {
 		return categoryId;
 	}
@@ -21,5 +22,11 @@ public class SteelSpecication {
 	}
 	public void setSpecId(Long specId) {
 		this.specId = specId;
+	}
+	public String getPriceCode() {
+		return priceCode;
+	}
+	public void setPriceCode(String priceCode) {
+		this.priceCode = priceCode;
 	}
 }
