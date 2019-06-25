@@ -27,12 +27,28 @@ public class SteelOutService {
 		String updateOrderSQL = "update steel_order set is_out = ? where order_no = ?";
 		String updateSQL = "update steel_outbound set out_date = ?, order_no =?, spec_id = ?,"
 				+ "actual_amount = ? , year = ?, month = ? where out_id = ?";
+		
+		String categorySQL = "select sc.steel_name, ss.thickness from steel_specs ss, steel_category sc where ss.category_id = sc.category_id and ss.spec_id = ?";
+		String inventorySQL = "select store_out from steel_inventory where inventory_date = ? and thickness = ? and steel_name = ?";
+		String updateInSQL = "update steel_inventory set store_out = ? where inventory_date = ? and thickness = ? and steel_name = ?";
+		String insertInSQL = "insert into steel_inventory(inventory_date, store_out, year, month, steel_name, thickness) values(?,?,?,?,?,?)";
+		
+		String storeDateSQL = "select out_date, actual_amount from steel_out where out_id = ?";
+		
 		Date now = new Date();
 		List<Object> params = new ArrayList<Object>();
 		for (int i = 0; i < outs.size(); i++) {
-			params.clear();
 			FrontOut out = outs.get(i);
+			// 获取种类规格信息
+			params.clear();
+			params.add(out.getSpecId());
+			Map<String, Object> m = jdbcTemplate.queryForMap(categorySQL, params.toArray());
+			String steelName = String.valueOf(m.get("steel_name"));
+			Double thickness = Double.valueOf(String.valueOf(m.get("thickness")));
+		
+			params.clear();
 			if (out.getOutId() == null) {
+				// 出库
 				params.add(now);
 				params.add(out.getOrderNo());
 				params.add(out.getSpecId());
@@ -40,7 +56,56 @@ public class SteelOutService {
 				params.add(now.getYear());
 				params.add(now.getMonth() + 1);
 				jdbcTemplate.update(insertSQL, params.toArray());
+				
+				// Firstly query today's store in, lastly update inventory position
+				params.clear();
+				params.add(now);
+				params.add(thickness);
+				params.add(steelName);
+				m = jdbcTemplate.queryForMap(inventorySQL, params.toArray());
+				Object o = m.get("store_out");
+				if(o == null){  // 当日此规格未入库过
+					params.clear();
+					params.add(now);
+					params.add(out.getActualAmount());
+					params.add(now.getYear());
+					params.add(now.getMonth() + 1);
+					params.add(steelName);
+					params.add(thickness);
+					jdbcTemplate.update(insertInSQL, params.toArray());
+				} else {
+					Double storeOut = Double.valueOf(String.valueOf(o));
+					Double lastAmount = storeOut + out.getActualAmount();
+					params.clear();
+					params.add(lastAmount);
+					params.add(now);
+					params.add(thickness);
+					params.add(steelName);
+					jdbcTemplate.update(updateInSQL, params.toArray());
+				}
 			} else {
+				// Firstly query store date, then query today's store, lastly update inventory position
+				
+				params.add(out.getOutId());
+				m = jdbcTemplate.queryForMap(storeDateSQL, params.toArray());
+				Date storeDate = (Date) m.get("out_date");
+				Double steelAmount = Double.valueOf(String.valueOf(m.get("actual_amount")));
+				params.clear();
+				params.add(storeDate);
+				params.add(thickness);
+				params.add(steelName);
+				m = jdbcTemplate.queryForMap(inventorySQL, params.toArray());
+				Object o = m.get("store_out");
+				Double storeOut = Double.valueOf(String.valueOf(o));
+				Double lastAmount = storeOut - steelAmount + out.getActualAmount();
+				params.clear();
+				params.add(lastAmount);
+				params.add(storeDate);
+				params.add(thickness);
+				params.add(steelName);
+				jdbcTemplate.update(updateInSQL, params.toArray());
+				
+				// 出库
 				params.add(now);
 				params.add(out.getOrderNo());
 				params.add(out.getSpecId());

@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
 
 import cn.four.steel.bean.from.Client;
 import cn.four.steel.bean.to.SteelCategory;
@@ -26,6 +27,7 @@ import cn.four.steel.service.BasicDataService;
  * @version V1.0 
  * @Copyright: 2019 www.gtja.net Inc. All rights reserved.
  */
+@Component
 public class BaseDataCache  implements CommandLineRunner {
 	
 	private static Logger logger = LoggerFactory.getLogger(BaseDataCache.class);
@@ -52,7 +54,12 @@ public class BaseDataCache  implements CommandLineRunner {
 		
 		loadCustomerList();
 	}
-	
+	public Map<Long, SteelCategory> getCatetories(){
+		return steelCatrgoryMap;
+	}
+	public Map<Long, SteelSpecication> getSpecs(){
+		return steelSpcMap;
+	}
 	private void loadSteelCategory() {
 		List<SteelCategory> steelCatrgoryList = basicDataService.listAllCategory(null); 
 		for(SteelCategory steelCatrgory: steelCatrgoryList) {

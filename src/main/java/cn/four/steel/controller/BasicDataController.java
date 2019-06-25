@@ -1,6 +1,7 @@
 package cn.four.steel.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,6 +18,7 @@ import com.alibaba.fastjson.JSONObject;
 import cn.four.steel.bean.from.Client;
 import cn.four.steel.bean.to.SteelCategory;
 import cn.four.steel.bean.to.SteelSpecication;
+import cn.four.steel.cache.BaseDataCache;
 import cn.four.steel.service.BasicDataService;
 
 @RestController
@@ -24,16 +26,27 @@ public class BasicDataController {
 	private static Logger logger = LoggerFactory.getLogger(BasicDataController.class);
 	@Autowired
 	private BasicDataService basicDataService;
+	@Autowired
+	private BaseDataCache baseDataCache;
 
 	@RequestMapping(value = "/basic/category", method = RequestMethod.POST)
 	public List<SteelCategory> category() {
-		List<SteelCategory> categories = basicDataService.listAllCategory(null);
-		return categories;
+		// 采用缓存数据
+		Map<Long, SteelCategory> m = baseDataCache.getCatetories();
+		if (m.size() != 0) {
+			return (List<SteelCategory>) m.values();
+		} else {
+			List<SteelCategory> categories = basicDataService.listAllCategory(null);
+			return categories;
+		}
 	}
 
 	@RequestMapping(value = "/basic/spec", method = RequestMethod.POST)
 	public List<SteelSpecication> spec(String categoryId, HttpServletRequest request) {
-		List<SteelSpecication> specs = basicDataService.loadSpecs(null, Long.valueOf(categoryId));
+		List<SteelSpecication> specs = baseDataCache.getSteelSpecicationByCategory(Long.valueOf(categoryId));
+		if(specs == null || specs.size() == 0){
+			specs = basicDataService.loadSpecs(null, Long.valueOf(categoryId));
+		}
 		return specs;
 	}
 

@@ -24,21 +24,51 @@ public class SteelStoreInService {
 		String insertSQL = "insert steel_storage(store_date, client_no, store_no, steel_amount, steel_factory,"
 				+ " year, month, spec_id, client_id, price, cash_amount) values(?,?,?,?,?,?,?,?,?,?,?,?)";
 
-		String updateSQL = "update steel_storage set store_date = ?, client_no = ?, store_no = ?, steel_amount = ?"
-				+ " steel_factory = ?, year = ?, month = ?, spec_id = ?, client_id = ?, price = ?, cash_amount = ? where storage_id = ?";
+		String updateSQL = "update steel_storage set client_no = ?, store_no = ?, steel_amount = ?"
+				+ " steel_factory = ?, spec_id = ?, client_id = ?, price = ?, cash_amount = ? where storage_id = ?";
+		String categorySQL = "select sc.steel_name, ss.thickness from steel_specs ss, steel_category sc where ss.category_id = sc.category_id and ss.spec_id = ?";
+		String inventorySQL = "select store_in from steel_inventory where inventory_date = ? and thickness = ? and steel_name = ?";
+		String updateInSQL = "update steel_inventory set store_in = ? where inventory_date = ? and thickness = ? and steel_name = ?";
+		String insertInSQL = "insert into steel_inventory(inventory_date, store_in, year, month, steel_name, thickness) values(?,?,?,?,?,?)";
 		List<Object> params = new ArrayList<Object>();
 		Date now = new Date();
 		for (int i = 0; i < fss.size(); i++) {
 			FrontStorage fs = fss.get(i);
+			// 获取种类与规格信息
+			params.clear();
+			params.add(fs.getSpecId());
+			Map<String, Object> m = jdbcTemplate.queryForMap(categorySQL, params.toArray());
+			String steelName = String.valueOf(m.get("steel_name"));
+			Double thickness = Double.valueOf(String.valueOf(m.get("thickness")));
+			
 			params.clear();
 			if(fs.getStorageId() != null){
-				params.add(now);
+				// Firstly query store date, then query today's store, lastly update inventory position
+				String storeDateSQL = "select store_date, steel_amount from steel_storage where storage_id = ?";
+				params.add(fs.getStorageId());
+				m = jdbcTemplate.queryForMap(storeDateSQL, params.toArray());
+				Date storeDate = (Date) m.get("store_date");
+				Double steelAmount = Double.valueOf(String.valueOf(m.get("steel_amount")));
+				params.clear();
+				params.add(storeDate);
+				params.add(thickness);
+				params.add(steelName);
+				m = jdbcTemplate.queryForMap(inventorySQL, params.toArray());
+				Object o = m.get("store_in");
+				Double storeIn = Double.valueOf(String.valueOf(o));
+				Double lastAmount = storeIn - steelAmount + fs.getAmount();
+				params.clear();
+				params.add(lastAmount);
+				params.add(storeDate);
+				params.add(thickness);
+				params.add(steelName);
+				jdbcTemplate.update(updateInSQL, params.toArray());
+				//入库
+				params.clear();
 				params.add(fs.getClientNo());
 				params.add(fs.getStorageNo());
 				params.add(fs.getAmount());
 				params.add(fs.getFactory());
-				params.add(now.getYear());
-				params.add(now.getMonth() + 1);
 				params.add(fs.getSpecId());
 				params.add(fs.getClientId());
 				params.add(fs.getPrice());
@@ -46,6 +76,7 @@ public class SteelStoreInService {
 				params.add(fs.getStorageId());
 				jdbcTemplate.update(updateSQL, params.toArray());
 			} else {
+				// 入库
 				params.add(now);
 				params.add(fs.getClientNo());
 				params.add(fs.getStorageNo());
@@ -58,7 +89,35 @@ public class SteelStoreInService {
 				params.add(fs.getPrice());
 				params.add(fs.getCashAmount());
 				jdbcTemplate.update(insertSQL, params.toArray());
+				
+				// Firstly query today's store in, lastly update inventory position
+				params.clear();
+				params.add(now);
+				params.add(thickness);
+				params.add(steelName);
+				m = jdbcTemplate.queryForMap(inventorySQL, params.toArray());
+				Object o = m.get("store_in");
+				if(o == null){  // 当日此规格未入库过
+					params.clear();
+					params.add(now);
+					params.add(fs.getAmount());
+					params.add(now.getYear());
+					params.add(now.getMonth() + 1);
+					params.add(steelName);
+					params.add(thickness);
+					jdbcTemplate.update(insertInSQL, params.toArray());
+				} else {
+					Double storeIn = Double.valueOf(String.valueOf(o));
+					Double lastAmount = storeIn + fs.getAmount();
+					params.clear();
+					params.add(lastAmount);
+					params.add(now);
+					params.add(thickness);
+					params.add(steelName);
+					jdbcTemplate.update(updateInSQL, params.toArray());
+				}
 			}
+			
 		}
 	}
 
