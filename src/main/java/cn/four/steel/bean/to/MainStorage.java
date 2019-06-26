@@ -2,7 +2,7 @@ package cn.four.steel.bean.to;
 
 public class MainStorage {
 	private Long storageId;
-	private String orderDate;
+	private String storeDate;
 	private String storeNo;
 	private String clientNo;
 	private Double cashAmount;
@@ -37,10 +37,10 @@ public class MainStorage {
 	public void setFactory(String factory) {
 		this.factory = factory;
 	}
-	public String getOrderDate() {
-		return orderDate;
+	public String getStoreDate() {
+		return storeDate;
 	}
-	public void setOrderDate(String orderDate) {
-		this.orderDate = orderDate;
+	public void setStoreDate(String storeDate) {
+		this.storeDate = storeDate;
 	}
 }

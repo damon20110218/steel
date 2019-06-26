@@ -151,7 +151,7 @@ public class SteelStoreInService {
 				ms.setClientNo(String.valueOf(m.get("client_no")));
 				ms.setCashAmount(Double.valueOf(String.valueOf(m.get("cash_amount"))));
 				ms.setFactory(String.valueOf(m.get("steel_factory")));
-				ms.setOrderDate(SteelUtil.formatDate((Date)m.get("order_date"), null));
+				ms.setStoreDate(SteelUtil.formatDate((Date)m.get("order_date"), null));
 				stores.add(ms);
 			}
 		}

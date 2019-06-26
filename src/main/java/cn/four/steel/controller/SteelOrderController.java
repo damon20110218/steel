@@ -1,10 +1,15 @@
 package cn.four.steel.controller;
 
+import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +23,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.four.steel.bean.from.FrontOrder;
 import cn.four.steel.service.SteelOrderService;
+import cn.four.steel.util.SteelExporter;
 
 @RestController
 public class SteelOrderController {
@@ -61,6 +67,59 @@ public class SteelOrderController {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return null;
+		}
+	}
+	@RequestMapping("/order/exportMain")
+	public void exportMainOrder(String search, String year, String month, String isSale, String isOut, 
+			HttpServletResponse response) {
+		try {
+			List<FrontOrder> orders = steelOrderService.queryOrder(search, year, month, isSale, isOut);
+			Date now = new Date();
+			String fileName = "main_order_" + now + ".xls";
+			response.setContentType("application/ms-excel;charset=UTF-8");
+			response.setHeader("Content-Disposition",
+					"attachment;filename=".concat(String.valueOf(URLEncoder.encode(fileName, "UTF-8"))));
+			OutputStream out = response.getOutputStream();
+			try {
+				String[] titles = new String[] { "日期", "订单单号", "客户", "价格", "是否出库", "是否销售", "备注" };
+				Workbook wb = SteelExporter.exportMainOrder(orders, titles);
+				wb.write(out);// 将数据写出去
+				logger.info("导出" + fileName + "成功！");
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.info("导出" + fileName + "失败！");
+			} finally {
+				out.close();
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+	}
+	
+	@RequestMapping("/order/exportSingle")
+	public void exportSingleOrder(String search, String year, String month, String isSale, String isOut, 
+			HttpServletResponse response) {
+		try {
+			List<FrontOrder> orders = steelOrderService.queryOrder(search, year, month, isSale, isOut);
+			Date now = new Date();
+			String fileName = "single_order_" + now + ".xls";
+			response.setContentType("application/ms-excel;charset=UTF-8");
+			response.setHeader("Content-Disposition",
+					"attachment;filename=".concat(String.valueOf(URLEncoder.encode(fileName, "UTF-8"))));
+			OutputStream out = response.getOutputStream();
+			try {
+				String[] titles = new String[] { "订单单号", "客户款号", "种类", "规格", "重量", "单位", "价格", "钢板张数", "备注" };
+				Workbook wb = SteelExporter.exportMainOrder(orders, titles);
+				wb.write(out);// 将数据写出去
+				logger.info("导出" + fileName + "成功！");
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.info("导出" + fileName + "失败！");
+			} finally {
+				out.close();
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
 		}
 	}
 }

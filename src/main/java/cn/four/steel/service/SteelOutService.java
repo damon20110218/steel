@@ -25,8 +25,8 @@ public class SteelOutService {
 		String insertSQL = "insert into steel_outbound(out_date, order_no, spec_id, actual_amount, year, month) "
 				+ "values(?,?,?,?,?,?)";
 		String updateOrderSQL = "update steel_order set is_out = ? where order_no = ?";
-		String updateSQL = "update steel_outbound set out_date = ?, order_no =?, spec_id = ?,"
-				+ "actual_amount = ? , year = ?, month = ? where out_id = ?";
+		String updateSQL = "update steel_outbound set order_no =?, spec_id = ?,"
+				+ "actual_amount = ? where out_id = ?";
 		
 		String categorySQL = "select sc.steel_name, ss.thickness from steel_specs ss, steel_category sc where ss.category_id = sc.category_id and ss.spec_id = ?";
 		String inventorySQL = "select store_out from steel_inventory where inventory_date = ? and thickness = ? and steel_name = ?";
@@ -106,12 +106,9 @@ public class SteelOutService {
 				jdbcTemplate.update(updateInSQL, params.toArray());
 				
 				// 出库
-				params.add(now);
 				params.add(out.getOrderNo());
 				params.add(out.getSpecId());
 				params.add(out.getActualAmount());
-				params.add(now.getYear());
-				params.add(now.getMonth() + 1);
 				params.add(out.getOutId());
 				jdbcTemplate.update(updateSQL, params.toArray());
 			}

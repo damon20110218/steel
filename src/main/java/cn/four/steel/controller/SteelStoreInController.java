@@ -73,7 +73,8 @@ public class SteelStoreInController {
 					"attachment;filename=".concat(String.valueOf(URLEncoder.encode(fileName, "UTF-8"))));
 			OutputStream out = response.getOutputStream();
 			try {
-				Workbook wb = SteelExporter.exportStorage(stores);
+				String[] titles = new String[] { "入库日期", "入库单号", "客户单号", "金额", "钢厂" };
+				Workbook wb = SteelExporter.exportStorage(stores, titles);
 				wb.write(out);// 将数据写出去
 				logger.info("导出" + fileName + "成功！");
 			} catch (Exception e) {

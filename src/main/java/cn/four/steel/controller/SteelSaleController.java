@@ -1,10 +1,15 @@
 package cn.four.steel.controller;
 
+import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +24,7 @@ import com.alibaba.fastjson.JSONObject;
 import cn.four.steel.bean.from.FrontSale;
 import cn.four.steel.bean.to.SingleSale;
 import cn.four.steel.service.SteelSaleService;
+import cn.four.steel.util.SteelExporter;
 
 @RestController
 public class SteelSaleController {
@@ -79,6 +85,31 @@ public class SteelSaleController {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return null;
+		}
+	}
+	@RequestMapping("/sale/export")
+	public void exportSale(String saleNo, String year, String month,
+			HttpServletResponse response) {
+		try {
+			List<FrontSale> sales = steelSaleService.querySale(saleNo, year, month);
+			Date now = new Date();
+			String fileName = "main_sale_" + now + ".xls";
+			response.setContentType("application/ms-excel;charset=UTF-8");
+			response.setHeader("Content-Disposition",
+					"attachment;filename=".concat(String.valueOf(URLEncoder.encode(fileName, "UTF-8"))));
+			OutputStream out = response.getOutputStream();
+			try {
+				String[] titles = new String[] { "销售日期", "销售单号", "金额" };
+				Workbook wb = SteelExporter.exportMainSale(sales, titles);
+				wb.write(out);// 将数据写出去
+				logger.info("导出" + fileName + "成功！");
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.info("导出" + fileName + "失败！");
+			} finally {
+				out.close();
+			}
+		} catch (Exception e) {
 		}
 	}
 }
