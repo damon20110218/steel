@@ -8,13 +8,13 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import cn.four.steel.bean.from.FrontOrder;
 import cn.four.steel.bean.from.FrontOut;
 import cn.four.steel.bean.to.MainOut;
 import cn.four.steel.bean.to.SingleOut;
 import cn.four.steel.util.SteelUtil;
-
+@Transactional
 @Service
 public class SteelOutService {
 

@@ -8,11 +8,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.four.steel.bean.from.Client;
 import cn.four.steel.bean.to.SteelCategory;
 import cn.four.steel.bean.to.SteelSpecication;
-
+@Transactional
 @Service
 public class BasicDataService {
 	@Autowired

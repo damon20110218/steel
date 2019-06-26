@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import cn.four.steel.bean.from.FrontStorage;
 import cn.four.steel.bean.to.MainStorage;
+import cn.four.steel.util.SteelUtil;
 
 @Transactional
 @Service
@@ -122,7 +123,7 @@ public class SteelStoreInService {
 	}
 
 	public List<MainStorage> queryStorage(String storageNo, String clientNo, String year, String month) {
-		String querySQL = "select storage_id, store_no, client_no, cash_amount, steel_factory from steel_storage where 1=1 ";
+		String querySQL = "select storage_id, store_no, client_no, cash_amount, steel_factory, order_date from steel_storage where 1=1 ";
 		List<Object> params = new ArrayList<Object>();
 		if (storageNo != null && !"".equals(storageNo)) {
 			querySQL += " and storage_no like ?";
@@ -150,6 +151,7 @@ public class SteelStoreInService {
 				ms.setClientNo(String.valueOf(m.get("client_no")));
 				ms.setCashAmount(Double.valueOf(String.valueOf(m.get("cash_amount"))));
 				ms.setFactory(String.valueOf(m.get("steel_factory")));
+				ms.setOrderDate(SteelUtil.formatDate((Date)m.get("order_date"), null));
 				stores.add(ms);
 			}
 		}

@@ -24,7 +24,18 @@ public class SteelExporter {
 		}
 		if(stores != null && stores.size() != 0){
 			for(int i = 0; i < stores.size() ; i ++){
-				
+				MainStorage store = stores.get(i);
+				HSSFRow row = sheet.createRow(i + 1);
+				HSSFCell storeDateCell = row.createCell(0);
+				storeDateCell.setCellValue(store.getOrderDate());
+				HSSFCell storeNoCell = row.createCell(1);
+				storeNoCell.setCellValue(store.getStoreNo());
+				HSSFCell clientNoCell = row.createCell(2);
+				clientNoCell.setCellValue(store.getClientNo());
+				HSSFCell amountCell = row.createCell(3);
+				amountCell.setCellValue(store.getCashAmount());
+				HSSFCell factoryCell = row.createCell(4);
+				factoryCell.setCellValue(store.getFactory());
 			}
 		}
 		return wb;

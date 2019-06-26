@@ -14,6 +14,7 @@ public class FrontOrder {
 	private String clientName;
 	private String isOut;
 	private String isSale;
+	private String orderDate;
 	public Long getOrderId() {
 		return orderId;
 	}
@@ -91,5 +92,11 @@ public class FrontOrder {
 	}
 	public void setIsSale(String isSale) {
 		this.isSale = isSale;
+	}
+	public String getOrderDate() {
+		return orderDate;
+	}
+	public void setOrderDate(String orderDate) {
+		this.orderDate = orderDate;
 	}
 }

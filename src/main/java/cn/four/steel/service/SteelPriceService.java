@@ -8,11 +8,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.four.steel.bean.from.PagePrice;
 import cn.four.steel.bean.to.Price;
 import cn.four.steel.util.SteelUtil;
-
+@Transactional
 @Service
 public class SteelPriceService {
 	@Autowired

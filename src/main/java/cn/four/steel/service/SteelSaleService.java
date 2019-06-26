@@ -8,12 +8,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.four.steel.bean.from.FrontSale;
-import cn.four.steel.bean.to.SingleOut;
 import cn.four.steel.bean.to.SingleSale;
 import cn.four.steel.util.SteelUtil;
-
+@Transactional
 @Service
 public class SteelSaleService {
 
@@ -60,7 +60,7 @@ public class SteelSaleService {
 	}
 	
 	public List<FrontSale> querySale(String saleNo, String year, String month){
-		String querySQL = "select sale_no, sum(cash_amout), max(sale_date) from steel_sale where 1=1";
+		String querySQL = "select sale_no, sum(cash_amount) as cash_amount, max(sale_date) from steel_sale where 1=1";
 		List<Object> params = new ArrayList<Object>();
 		if(year != null && !"".equals(year)){
 			querySQL += " and year = ?";
@@ -82,8 +82,8 @@ public class SteelSaleService {
 			for(Map<String, Object> m : list){
 				FrontSale sale = new FrontSale();
 				sale.setSaleNo(String.valueOf(m.get("sale_no")));
-				sale.setSaleDate(SteelUtil.formatDate((Date)m.get("client_name"), null));
-				sale.setCashAmount(Double.valueOf(String.valueOf(m.get("price"))));
+				sale.setSaleDate(SteelUtil.formatDate((Date)m.get("sale_date"), null));
+				sale.setCashAmount(Double.valueOf(String.valueOf(m.get("cash_amount"))));
 				sales.add(sale);
 			}
 		}

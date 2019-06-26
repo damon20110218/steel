@@ -8,9 +8,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.four.steel.bean.from.FrontOrder;
-
+import cn.four.steel.util.SteelUtil;
+@Transactional
 @Service
 public class SteelOrderService {
 
@@ -64,7 +66,7 @@ public class SteelOrderService {
 	}
 	
 	public List<FrontOrder> queryOrder(String search, String year, String month, String isSale, String isOut){
-		String querySQL = "select s.order_id, s.order_no, c.client_name, s.price, s.is_out, s.is_sale, s.comment from steel_order s, client_info c where s.client_id = c.client_id";
+		String querySQL = "select s.order_date, s.order_id, s.order_no, c.client_name, s.price, s.is_out, s.is_sale, s.comment from steel_order s, client_info c where s.client_id = c.client_id";
 		List<Object> params = new ArrayList<Object>();
 		if(year != null && !"".equals(year)){
 			querySQL += " and year = ?";
@@ -99,6 +101,7 @@ public class SteelOrderService {
 				order.setIsOut(String.valueOf(m.get("is_out")));
 				order.setIsSale(String.valueOf(m.get("is_sale")));
 				order.setComment(String.valueOf(m.get("comment")));
+				order.setOrderDate(SteelUtil.formatDate((Date) m.get("order_date"), null));
 				orders.add(order);
 			}
 		}
