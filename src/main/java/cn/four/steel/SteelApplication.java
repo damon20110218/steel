@@ -14,7 +14,7 @@ public class SteelApplication {
 		SpringApplication.run(SteelApplication.class, args);
 	}
 	
-	@Bean 
+	//@Bean 
 	public BaseDataCache baseDataCache(){
 		return new BaseDataCache();
 	}
