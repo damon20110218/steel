@@ -9,9 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import cn.four.steel.bean.from.Client;
+import cn.four.steel.bean.to.SingleInventory;
 import cn.four.steel.bean.to.SteelCategory;
 import cn.four.steel.bean.to.SteelSpecication;
 import cn.four.steel.service.BasicDataService;
@@ -33,9 +35,13 @@ public class BaseDataCache  implements CommandLineRunner {
 	private static Logger logger = LoggerFactory.getLogger(BaseDataCache.class);
 	@Autowired
 	private BasicDataService basicDataService;
+
+	@Autowired
+    private JdbcTemplate jdbcTemplate;
 	
 	private Map<Long, SteelCategory> steelCatrgoryMap = new HashMap<Long, SteelCategory>(16);
 	private Map<Long, SteelSpecication> steelSpcMap = new HashMap<Long, SteelSpecication>(64);
+	private Double[] density = new Double[11];
 	List<Client> companyList= new ArrayList<Client>();
 	Object companyListLock = new Object();
 	List<Client> customerList= new ArrayList<Client>();
@@ -53,6 +59,8 @@ public class BaseDataCache  implements CommandLineRunner {
 		loadCompanyList();
 		
 		loadCustomerList();
+		
+		loadDensity();
 	}
 	public Map<Long, SteelCategory> getCatetories(){
 		return steelCatrgoryMap;
@@ -83,6 +91,17 @@ public class BaseDataCache  implements CommandLineRunner {
 	private void loadCustomerList() {
 		synchronized(customerListLock) {
 			customerList = basicDataService.matchClient(null, "2");
+		}
+	}
+	
+	private void loadDensity() {
+		String querySQL = "select category_id, density from steel_parameter";
+		List<Object> params = new ArrayList<Object>();
+		List<Map<String, Object>> list = jdbcTemplate.queryForList(querySQL, params.toArray());
+		if(list != null){
+			for(Map<String, Object> m : list){
+				density[(int)m.get("category_id")] = (Double) m.get("density");
+			}
 		}
 	}
 	
@@ -179,6 +198,10 @@ public class BaseDataCache  implements CommandLineRunner {
 				}
 			}
 		}
+	}
+	
+	public double getDensityByCategory(Long category_id) {
+		return density[category_id.intValue()];
 	}
 	
 }

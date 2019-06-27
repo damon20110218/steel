@@ -20,7 +20,7 @@ public class SteelPriceService {
     private JdbcTemplate jdbcTemplate;
 	
 	public void addPrice(PagePrice price){
-		String insertSql = "insert into steel_price(price_code, price, price_date, priceType) values(?,?,?,?)";
+		String insertSql = "insert into steel_price(price_code, price, price_date, price_type) values(?,?,?,?)";
 		String futureSql = "insert into steel_future_price(price_code, price, price_date) values(?,?,?,?)";
 		List<Object> params = new ArrayList<Object>();
 		if("1".equals(price.getPriceType())){
@@ -57,12 +57,30 @@ public class SteelPriceService {
 		return 0;
 	}
 	public List<Price> loadTodayPrice(){
-		String querySQL = "select ss.thickness, sc.steel_name, sp.price from steel_specs ss, steel_category sc, steel_price sp"
-				+ "where ss.category_id = sc.category_id and ss.price_code = sp.price_code(+)"
-				+ "and sp.price_date = ? and sp.price_type = 2 order by sc.steel_name";
-		List<Object> params = new ArrayList<Object>();
-		params.add(new Date());
-		List<Map<String,Object>> list = jdbcTemplate.queryForList(querySQL, params.toArray());
+		String querySQL = "SELECT " + 
+				"	ss.thickness, " + 
+				"	sc.steel_name, " + 
+				"	sp.price " + 
+				"FROM " + 
+				"	steel_specs ss, " + 
+				"	steel_category sc, " + 
+				"	steel_price sp " + 
+				"WHERE " + 
+				"	(sp.price_code, sp.price_id) IN ( " + 
+				"		SELECT " + 
+				"			price_code, " + 
+				"			max(price_id) " + 
+				"		FROM " + 
+				"			steel_price " + 
+				"		WHERE " + 
+				"			price_type = 2 " + 
+				"		GROUP BY " + 
+				"			price_code " + 
+				"	)\n" + 
+				"AND sp.price_type = 2 " + 
+				"AND ss.category_id = sc.category_id " + 
+				"AND ss.price_code = sp.price_code";
+		List<Map<String,Object>> list = jdbcTemplate.queryForList(querySQL);
 		List<Price> prices = new ArrayList<>();
 		if(list != null){
 			for(Map<String,Object> m : list){

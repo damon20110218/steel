@@ -26,22 +26,25 @@ public class SteelUtil {
 			return res;
 		}
 		String steelName = "";
+		List<Price> sub = null; new ArrayList<>();
 		for(int i = 0 ;i < prices.size() ;i++){
 			Price p = prices.get(i);
 			String sn = p.getSteelName();
-			List<Price> sub = new ArrayList<>();
 			if( i ==0){
+				sub = new ArrayList<>();
 				steelName = sn;
+				
+			}
+			
+			if(steelName.equals(sn)){
 				sub.add(p);
 			} else {
-				if(steelName.equals(sn)){
-					sub.add(p);
-				} else {
-					res.add(sub);
-					sub = new ArrayList<>();
-					sub.add(p);
-				}
+				res.add(sub);
+				sub = new ArrayList<>();
+				sub.add(p);
+				steelName = sn;
 			}
+			
 			if( i == prices.size() -1){
 				res.add(sub);
 			}

@@ -150,13 +150,35 @@ public class BasicDataService {
 	* @throws
 	 */
 	public double loadSingleSteelPrice(Long specId){
-		String querySQL = "select ss.thickness, sc.length, sc.width, sp.density, sk.price from steel_specs ss, steel_category sc, steel_parameter sp, steel_price sk"
-				+ " where ss.categort_id = sc.category_id and ss.category_id = sp.category_id and ss.price_code = sk.price_code"
-				+ " and ss.spec_id = ? and sk.prcie_date = ?";
+		String querySQL = "SELECT\n" + 
+				"	ss.thickness,\n" + 
+				"	sc.length,\n" + 
+				"	sc.width,\n" + 
+				"	sp.density,\n" + 
+				"	sk.price\n" + 
+				"FROM\n" + 
+				"	steel_specs ss,\n" + 
+				"	steel_category sc,\n" + 
+				"	steel_parameter sp,\n" + 
+				"	steel_price sk\n" + 
+				"WHERE\n" + 
+				"	ss.category_id = sc.category_id\n" + 
+				"AND ss.category_id = sp.category_id\n" + 
+				"AND ss.price_code = sk.price_code\n" + 
+				"AND ss.spec_id = ?\n" + 
+				"AND (sk.price_code, sk.price_id) IN (\n" + 
+				"	SELECT\n" + 
+				"		price_code,\n" + 
+				"		max(price_id)\n" + 
+				"	FROM\n" + 
+				"		steel_price\n" + 
+				"	WHERE\n" + 
+				"		price_type = 2\n" + 
+				"	GROUP BY\n" + 
+				"		price_code\n" + 
+				")";
 		List<Object> params = new ArrayList<Object>();
-		Date now = new Date();
 		params.add(specId);
-		params.add(now);
 		Map<String, Object> map = jdbcTemplate.queryForMap(querySQL, params.toArray());
 		double singleSteelPrice = 0D;
 		if(map != null){

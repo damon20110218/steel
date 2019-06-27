@@ -23,8 +23,11 @@ public class CalculatorController {
 			double sl = Double.valueOf(standardLength);
 			int A = (int) (sl / cw);
 			int B = (int) (ca / A);
-			Long C = Math.floorMod(ca, A) * cw;
-			String res = String.valueOf(B) + "张" + String.valueOf(C) + "CM";
+			Long C = Math.floorMod(ca, A) * cw / 10;//all clientWidth mod 10 = 0
+			String res = String.valueOf(B) + "张";
+			if(C != 0L) {
+				res += String.valueOf(C) + "cm";
+			}
 			return res;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
