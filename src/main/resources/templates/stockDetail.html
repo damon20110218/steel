@@ -1,0 +1,123 @@
+<!DOCTYPE HTML>
+<html>
+    
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>库存</title>
+        <link rel="stylesheet" href="dist/css/site.min.css">
+        <script src="dist/js/highcharts.js"></script>
+        <script src="dist/js/highchart/exporting.js"></script>
+        <script src="dist/js/highchart/export-data.js"></script>
+        <script type="text/javascript" src="dist/js/jquery-3.4.1.min.js"></script>
+        <script type="text/javascript" src="dist/js/site.min.js"></script>
+        <script type="text/javascript" src="dist/js/four.js"></script>
+        <link rel="stylesheet" href="dist/css/bootstrap-table.min.css">
+        <link rel="stylesheet" href="dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="dist/css/bootstrap-datetimepicker.min.css">
+        <script type="text/javascript" src="dist/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="dist/js/bootstrap-table.min.js"></script>
+        <script type="text/javascript" src="dist/js/bootstrap-table-zh-CN.min.js"></script>
+        <script type="text/javascript" src="dist/js/bootstrap-datetimepicker.min.js"></script>
+    </head>
+    
+    <body>
+        <div class="container-fluid">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                     <h3 class="panel-title"><a href="javascript:void(0);" class="toggle-sidebar"><span class="fa fa-angle-double-left" data-toggle="offcanvas" title="Maximize Panel"></span></a>库存</h3>
+
+                </div>
+                <div class="panel-body">
+                    	<h3>总库存</h3>
+					<div class="col-md-2"><label class="control-label">规格:</label></div> <div class="col-md-3">
+                      <select name="selecter_basic" class="selecter_4" disabled="disabled">
+                        <option value="1">规格1</option>
+                        <option value="2">规则2</option>
+                        <option value="3">规格3</option>
+                      </select>
+                    </div>
+					<br/>
+                    <table id="stockContainer"></table>
+                    <br/>
+                    <div class="col-md-3" style="margin-left: -15px;">
+                        <button type="button" class="btn btn-default btn-block" onclick="entryStock()">入库</button>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-primary btn-block">提交</button>
+                    </div>
+                    <br/>
+                    <br/>
+                    <hr/>
+                     <h3>销售信息</h3>
+
+                    <div class="col-md-3" style="margin-left: -15px;">
+                        <div class='input-group date form_date' data-date-format="yyyymmdd">
+                            <input name="datetimepicker" id="datetimepicker" type='text' class="form-control input-sm" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-success btn-block">搜索</button>
+                    </div>
+                    <br/>
+                    <br/>
+                    <table id="sellContainer"></table>
+                    <br/>
+                    <div class="col-md-3" style="margin-left: -15px;">
+                        <button type="button" class="btn btn-default btn-block">导出Excel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            function entryStock() {
+                var row = $.map($('#exampleTable1').bootstrapTable('getSelections'), function(row) {
+                    return row;
+                });
+                alert(row);
+            }
+
+            $(function() {
+                $('#datetimepicker').datetimepicker({
+                    format: 'yyyymm',
+                    weekStart: 1,
+                    autoclose: true,
+                    startView: 3,
+                    minView: 3,
+                    forceParse: false,
+                    language: 'zh-CN'
+                });
+                //four.post();
+                four.table("stockContainer", '#', [{
+                    title: '总库存',
+                    field: 'specifications',
+                    sortable: true
+                }, {
+                    title: '重量（吨）',
+                    field: 'weight',
+                    sortable: true
+                }]);
+
+                four.table("sellContainer", '#', [{
+                    title: '日期',
+                    field: 'date',
+                    sortable: true
+                }, {
+                    title: '种类',
+                    field: 'type',
+                    sortable: true
+                }, {
+                    title: '规格',
+                    field: 'specifications'
+                }, {
+                    title: '出库',
+                    field: 'outStock'
+                }, {
+                    title: '入库',
+                    field: 'entryStock'
+                }])
+            });
+        </script>
+    </body>
+
+</html>

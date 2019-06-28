@@ -1,0 +1,164 @@
+<!DOCTYPE HTML>
+<html>
+    
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>价格维护</title>
+        <link rel="stylesheet" href="dist/css/site.min.css">
+        <script src="dist/js/highcharts.js"></script>
+        <script src="dist/js/highchart/exporting.js"></script>
+        <script src="dist/js/highchart/export-data.js"></script>
+        <script type="text/javascript" src="dist/js/jquery-3.4.1.min.js"></script>
+        <script type="text/javascript" src="dist/js/site.min.js"></script>
+        <script type="text/javascript" src="dist/js/four.js"></script>
+        <!-- <link rel="stylesheet" href="dist/css/bootstrap-table.min.css">
+		<link rel="stylesheet" href="dist/css/bootstrap.min.css">
+		<script type="text/javascript" src="dist/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="dist/js/bootstrap-table.min.js"></script>
+		<script type="text/javascript" src="dist/js/bootstrap-table-zh-CN.min.js"></script> -->
+    </head>
+    
+    <body>
+        <div class="container-fluid">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                     <h3 class="panel-title"><a href="javascript:void(0);" class="toggle-sidebar"><span class="fa fa-angle-double-left" data-toggle="offcanvas" title="Maximize Panel"></span></a>价格维护</h3>
+
+                </div>
+                <div class="panel-body">
+                <div class="col-md-6">
+                <h3>期货价格</h3>
+                     <table class="table">
+                          <thead>
+                            <tr>
+                              <th>热轧板</th>
+                              <th>1.5mm</th>
+                              <th>1.8mm</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td><label class="control-label">价格</label></td>
+                              <td><input name="sellCode" id="sellCode" type="text" class="form-control input-sm" placeholder=""></td>
+                              <td><input name="sellCode" id="sellCode" type="text" class="form-control input-sm" placeholder=""></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <br/>
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th>冷轧板</th>
+                              <th>0.5</th>
+                              <th>0.6</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td><label class="control-label">价格</label></td>
+                              <td><input name="sellCode" id="sellCode" type="text" class="form-control input-sm" placeholder=""></td>
+                              <td><input name="sellCode" id="sellCode" type="text" class="form-control input-sm" placeholder=""></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <br/>
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th>酸洗板</th>
+                              <th>1.8</th>
+                              <th>2</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td><label class="control-label">价格</label></td>
+                              <td><input name="sellCode" id="sellCode" type="text" class="form-control input-sm" placeholder=""></td>
+                              <td><input name="sellCode" id="sellCode" type="text" class="form-control input-sm" placeholder=""></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <div class="col-md-3" style="margin-left: -15px;">
+                        <button type="button" class="btn btn-default btn-block">保存</button>
+                    </div>
+                        </div>
+                        <div class="col-md-6">
+                <h3>零售价格</h3>
+                     <table class="table">
+                          <thead>
+                            <tr>
+                              <th>热轧板</th>
+                              <th>1.5mm</th>
+                              <th>1.8mm</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td><label class="control-label">价格</label></td>
+                              <td><input name="sellCode" id="sellCode" type="text" class="form-control input-sm" placeholder=""></td>
+                              <td><input name="sellCode" id="sellCode" type="text" class="form-control input-sm" placeholder=""></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <br/>
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th>冷轧板</th>
+                              <th>0.5</th>
+                              <th>0.6</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td><label class="control-label">价格</label></td>
+                              <td><input name="sellCode" id="sellCode" type="text" class="form-control input-sm" placeholder=""></td>
+                              <td><input name="sellCode" id="sellCode" type="text" class="form-control input-sm" placeholder=""></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <br/>
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th>酸洗板</th>
+                              <th>1.8</th>
+                              <th>2</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td><label class="control-label">价格</label></td>
+                              <td><input name="sellCode" id="sellCode" type="text" class="form-control input-sm" placeholder=""></td>
+                              <td><input name="sellCode" id="sellCode" type="text" class="form-control input-sm" placeholder=""></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <div class="col-md-3" style="margin-left: -15px;">
+                        <button type="button" class="btn btn-default btn-block">保存</button>
+                    </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(function() {
+                //four.post();
+                four.highChart("todayStockcontainer", '当日库存种类', 'column',
+                    ['AA', 'BB', 'CC', 'DD', 'HH', 'AAn', 'JCC', 'ADD', 'SSSS', 'OOO', 'NNN'], '重量',
+                    [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 95.6, 54.4], '规格');
+                four.highChart("todayOrdercontainer", '当日订单库存种类', 'column',
+                    ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], '重量',
+                    [43.9, 21.5, 186.4, 29.2, 24.0, 16.0, 115.6, 118.5, 16.4, 94.1, 25.6, 24.4], '规格');
+                four.highChart("todaySellcontainer", '当日销售库存种类', 'column',
+                    ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], '重量',
+                    [19.9, 21.5, 16.4, 19.2, 14.0, 126.0, 15.6, 48.5, 286.4, 194.1, 25.6, 54.4], '规格');
+                $("#singleDataContainer").append(four.singleTable("测试", ['种类1', '规格1', '规格2'], [1, 2, 3]));
+                $("#singleDataContainer").append(four.singleTable("测试1", ['种类1', '规格1', '规格2'], [1, 2, 3]));
+                $("#singleDataContainer").append(four.singleTable("测试2", ['种类1', '规格1', '规格2'], [1, 2, 3]));
+            });
+        </script>
+    </body>
+
+</html>

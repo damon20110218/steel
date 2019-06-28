@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html>
+    
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>入库</title>
+        <link rel="stylesheet" href="dist/css/site.min.css">
+        <script src="dist/js/highcharts.js"></script>
+        <script src="dist/js/highchart/exporting.js"></script>
+        <script src="dist/js/highchart/export-data.js"></script>
+        <script type="text/javascript" src="dist/js/jquery-3.4.1.min.js"></script>
+        <script type="text/javascript" src="dist/js/site.min.js"></script>
+        <script type="text/javascript" src="dist/js/four.js"></script>
+        <link rel="stylesheet" href="dist/css/bootstrap-table.min.css">
+		<link rel="stylesheet" href="dist/css/bootstrap.min.css">
+		<script type="text/javascript" src="dist/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="dist/js/bootstrap-table.min.js"></script>
+		<script type="text/javascript" src="dist/js/bootstrap-table-zh-CN.min.js"></script>
+    </head>
+    
+    <body>
+        <div class="container-fluid">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                     <h3 class="panel-title"><a href="javascript:void(0);" class="toggle-sidebar"><span class="fa fa-angle-double-left" data-toggle="offcanvas" title="Maximize Panel"></span></a>出库</h3>
+
+                </div>
+                <div class="panel-body">
+                	<h3>订单信息</h3>
+                    <table id="orderContainer"></table>
+                    <br/>
+                    <div class="col-md-3">
+                    <button type="button" class="btn btn-default btn-block" onclick="entryStock()">出库</button>
+                    </div>
+                    <div class="col-md-3">
+                    <button type="button" class="btn btn-primary btn-block">提交</button>
+                    </div>
+                    <br/><br/>
+                    <hr/>
+                    <h3>入库订单信息</h3>
+                    <table id="entryOrderContainer"></table>
+                    <br/>
+                    <div class="col-md-3">
+                    <button type="button" class="btn btn-default btn-block">导出Excel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+        	function entryStock() {
+        		var row = $.map($('#exampleTable1').bootstrapTable('getSelections'),function (row) {
+        		         return row;
+        		 });
+        		alert(row);
+        	}
+        	
+            $(function() {
+                //four.post();
+                four.table("orderContainer", '#', [ {
+                	checkbox: true,
+                	width : '3%'
+                },{
+            		title : '客户单号',
+            		field : 'customCode',
+            		sortable : true
+            	}, {
+            		title : '种类',
+            		field : 'type',
+            		sortable : true
+            	}, {
+            		title : '规格',
+            		field : 'specifications',
+            	}, {
+            		title : '重量（吨）',
+            		field : 'weigth'
+            	}, {
+            		title : '金额（元）',
+            		field : 'amnt'
+            	}, {
+            		title : '钢板张数',
+            		field : 'count'
+            	}, {
+            		title : '实际称重（吨）',
+            		field : 'totalWeigth'
+            	}   ]);
+                
+                four.table("entryOrderContainer", '#', [ {
+            		title : '日期',
+            		field : 'customCode',
+            		sortable : true
+            	}, {
+            		title : '订单单号',
+            		field : 'orderCode',
+            		sortable : true
+            	}, {
+            		title : '种类',
+            		field : 'type',
+            		sortable : true
+            	}, {
+            		title : '规格',
+            		field : 'specifications',
+            	}, {
+            		title : '实际称重（吨）',
+            		field : 'totalWeigth',
+            	}  ])
+            });
+    
+        </script>
+    </body>
+
+</html>
