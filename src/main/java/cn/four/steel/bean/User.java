@@ -3,7 +3,7 @@ package cn.four.steel.bean;
 public class User {
     private String name;
     private String password;
-    
+    private String role;
     public User(){
     }
     public User(String name, String password) {
@@ -26,4 +26,10 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
+	}
 }
