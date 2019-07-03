@@ -11,10 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 
+import cn.four.steel.bean.DataGridResult;
 import cn.four.steel.bean.from.Client;
 import cn.four.steel.bean.to.SteelCategory;
 import cn.four.steel.bean.to.SteelSpecication;
@@ -50,13 +52,18 @@ public class BasicDataController {
 		return specs;
 	}
 
-	@RequestMapping(value = "/basic/list_client", method = RequestMethod.POST)
-	public List<Client> client(String clientName, String clientType) {
-		return basicDataService.matchClient(clientName, clientType);
+	@RequestMapping(value = "/basic/list_client", method = {RequestMethod.POST, RequestMethod.GET})
+	@ResponseBody
+	public DataGridResult<Client> client(String clientName, String clientType, String page, String rows) {
+		 List<Client> clients = basicDataService.matchClient(clientName, clientType);
+		 DataGridResult<Client> result = new DataGridResult<Client>();
+		 result.setRows(clients);
+		 result.setTotal(100L);
+		 return result;
 	}
 
 	// 维护客户公司信息(新增和修改)
-	@RequestMapping(value = "/basic/update_client", method = RequestMethod.POST)
+	@RequestMapping(value = "/basic/update_client", method = {RequestMethod.POST, RequestMethod.GET})
 	public String clientAddAndUpdate(@RequestBody JSONObject jsonParam, HttpServletRequest request) {
 		try {
 			Client client = jsonParam.toJavaObject(Client.class);

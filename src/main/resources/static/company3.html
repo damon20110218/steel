@@ -1,0 +1,132 @@
+<!DOCTYPE HTML>
+<html>
+    
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>公司</title>
+        <link rel="stylesheet" href="dist/css/site.min.css">
+        <script src="dist/js/highcharts.js"></script>
+        <script src="dist/js/highchart/exporting.js"></script>
+        <script src="dist/js/highchart/export-data.js"></script>
+        <script type="text/javascript" src="dist/js/jquery-3.4.1.min.js"></script>
+        <script type="text/javascript" src="dist/js/site.min.js"></script>
+        <script type="text/javascript" src="dist/js/four.js"></script>
+        <link rel="stylesheet" href="dist/css/bootstrap-table.min.css">
+        <link rel="stylesheet" href="dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="dist/css/bootstrap-datetimepicker.min.css">
+        <script type="text/javascript" src="dist/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="dist/js/bootstrap-table.min.js"></script>
+        <script type="text/javascript" src="dist/js/bootstrap-table-zh-CN.min.js"></script>
+        <script type="text/javascript" src="dist/js/bootstrap-datetimepicker.min.js"></script>
+    </head>
+    
+    <body>
+        <div class="container-fluid">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                     <h3 class="panel-title"><a href="javascript:void(0);" class="toggle-sidebar"><span class="fa fa-angle-double-left" data-toggle="offcanvas" title="Maximize Panel"></span></a>公司</h3>
+
+                </div>
+                <div class="panel-body">
+                    	<h3>总库存</h3>
+					<div class="col-md-3">
+                        <input name="sellCode" id="sellCode" type='text' class="form-control input-sm" placeholder="销售单号" />
+                    </div>
+                    <div class="col-md-3" style="margin-left: -15px;">
+                        <button type="button" class="btn btn-default btn-block" onclick="addCompany()">增加</button>
+                    </div>
+					<br/>
+                    <table id="company"></table>
+                    <br/>
+                    <br/>
+                    <hr/>
+                     <h3>销售信息</h3>
+
+                    <div class="col-md-3">
+                        <input name="sellCode" id="sellCode" type='text' class="form-control input-sm" placeholder="销售单号" />
+                    </div>
+                    <div class="col-md-3" style="margin-left: -15px;">
+                        <button type="button" class="btn btn-default btn-block" onclick="addCompany()">增加</button>
+                    </div>
+                    <br/>
+                    <br/>
+                    <table id="custom"></table>
+                    <br/>
+                    <div class="col-md-3" style="margin-left: -15px;">
+                        <button type="button" class="btn btn-default btn-block">导出Excel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            function addCompany() {
+            	four.insertEditTable("stockContainer",{'specifications':'','weight':''});
+            }
+
+            $(function() {
+                //four.post();
+                four.editTable("company", '#', [{
+                    title: '公司名称',
+                    field: 'conpany',
+                    sortable: true
+                }, {
+                    title: '电话',
+                    field: 'telphone',
+                    sortable: true
+                }, {
+                    title: '手机',
+                    field: 'phone',
+                    sortable: true
+                }, {
+                    title: '邮箱',
+                    field: 'email',
+                    sortable: true
+                }, {
+                    title: '地址',
+                    field: 'addr',
+                    sortable: true
+                }, {
+                    title: '联系人名称',
+                    field: 'contextUesr',
+                    sortable: true
+                }, {
+                    title: '备注',
+                    field: 'mark',
+                    sortable: true
+                }]);
+
+                four.table("custom", '#', [{
+                    title: '客户名称',
+                    field: 'custom',
+                    sortable: true
+                }, {
+                    title: '电话',
+                    field: 'telphone',
+                    sortable: true
+                }, {
+                    title: '手机',
+                    field: 'phone',
+                    sortable: true
+                }, {
+                    title: '邮箱',
+                    field: 'email',
+                    sortable: true
+                }, {
+                    title: '地址',
+                    field: 'addr',
+                    sortable: true
+                }, {
+                    title: '联系人名称',
+                    field: 'contextUesr',
+                    sortable: true
+                }, {
+                    title: '备注',
+                    field: 'mark',
+                    sortable: true
+                }]);
+            });
+        </script>
+    </body>
+
+</html>

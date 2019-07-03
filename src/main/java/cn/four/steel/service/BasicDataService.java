@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import cn.four.steel.cache.BaseDataCache;
 @Transactional
 @Service
 public class BasicDataService {
+	private static Logger logger = LoggerFactory.getLogger(BasicDataService.class);
 	@Autowired
     private JdbcTemplate jdbcTemplate;
 	
@@ -107,7 +110,8 @@ public class BasicDataService {
 		String updateSQL = "update client_info set client_name = ?, create_date= ?, client_mark = ?, mobile = ? "
 				+ " telephone = ?, email = ?, address = ?, contact_person = ? where client_id = ? ";
 		List<Object> params = new ArrayList<Object>();
-		if(client.getClientId() != null){
+		logger.info("ClientId:" + client.getClientId());
+		if(client.getClientId() == null){
 			params.add(client.getClientName());
 			params.add(new Date());
 			params.add(client.getClientType());
