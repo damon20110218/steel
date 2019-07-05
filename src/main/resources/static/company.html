@@ -14,24 +14,6 @@
 	function doAdd() {
 		$('#addStaffWindow').window("open");
 	}
-
-	function doDelete() {
-		var rows = $("#grid").datagrid("getSelections");
-		if (rows.length == 0) {
-			$.messager.alert("提示", "请选择!", "warning");
-		} else {
-			$.messager.confirm("删除确认", "你确定要删除选中项吗?", function(r) {
-				if (r) {
-					//确定删除,发送请求
-					/* for(var i=0;i<rows.length;i++){
-					    } */
-					location.href = "staffAction_deleteBatch?ids="
-							+ JSON.stringify(rows);
-				}
-			});
-
-		}
-	}
 	//工具栏
 	var toolbar = [ {
 		id : 'button-add',
@@ -93,7 +75,8 @@
 				width : 300,
 				align : 'center',
 				formatter : function(value, row, index) {
-					var str = '<input class="easyui-linkbutton" type="button" value="修改"> &nbsp; <input class="easyui-linkbutton" type="button" value="删除">';
+					var str = '<input class="easyui-linkbutton" type="button" onclick="modify(' + index + ')" value="修改"> &nbsp; ' 
+					+ '<input class="easyui-linkbutton" type="button" onclick="deleteClient('+ row.clientId +')" value="删除">';
 					return str;
 				}
 			} ] ];
@@ -103,7 +86,6 @@
 		$("body").css({
 			visibility : "visible"
 		});
-
 		// 取派员信息表格
 		$('#company').datagrid({
 			iconCls : 'icon-forward',
@@ -123,7 +105,6 @@
 			idField : 'clientId', //识别id,重点
 			columns : columns
 		});
-
 		// 添加取派员窗口
 		$('#addStaffWindow').window({
 			title : '添加公司',
@@ -170,6 +151,38 @@
 			}
 		});
 	}
+	function modify(rowIndex){
+		var a = $('#company').datagrid('selectRow',rowIndex);
+		var row = $('#company').datagrid('getSelected'); 
+		$("#clientId").textbox('setValue', row.clientId);
+		$("#clientName").textbox('setValue', row.clientName);
+		$("#mobile").textbox('setValue', row.mobile);
+		$("#telephone").textbox('setValue', row.telephone);
+		$("#email").textbox('setValue', row.email);
+		$("#address").textbox('setValue', row.address);
+		$("#contactPerson").textbox('setValue', row.contactPerson);
+		$("#clientMark").textbox('setValue', row.clientMark);
+		doAdd();
+	}
+	function deleteClient(clientId){
+		$.messager.confirm("删除确认", "你确定要删除选中项吗?", function(r) {
+			if (r) {
+				$.ajax({
+					type : "post", //数据提交方式（post/get）
+					url : "/basic/del_client?clientId=" + clientId, //提交到的url
+					contentType: "application/json; charset=utf-8",
+					success : function(msg) {
+						if (msg == "Success") { //修改成功
+							query();
+						} else { //修改失败
+							//修改失败处理代码...
+							$.messager.alert('系统提示','公司信息删除失败','error');
+						}
+					}
+				});
+			}
+		});
+	}
 </script>
 </head>
 <body class="easyui-layout" style="visibility: hidden;">
@@ -197,51 +210,46 @@
 		<div region="center" style="overflow: auto; padding: 5px;"
 			border="false">
 			<form id="addStuffForm" method="post">
-				<table class="table-edit" width="80%" align="center">
-					<tr class="title">
-						<td colspan="2">公司信息</td>
-					</tr>
+				<table class="table-edit" align="center">
 					<tr hidden="true">
 						<td>公司ID</td>
-						<td><input type="text" name="clientId" />
-						<input type="text" name="clientType" value="1"/>
-						</td>
-						
+						<td><input type="text" class="easyui-textbox" id="clientId" name="clientId" /> <input type="text"
+							name="clientType" value="1" /></td>
 					</tr>
 					<tr>
 						<td>公司名称</td>
-						<td><input type="text" name="clientName" class="easyui-textbox"
-							required="true" /></td>
+						<td><input type="text" id="clientName" name="clientName" style="width: 400px;"
+							class="easyui-textbox" /></td>
 					</tr>
 					<tr>
 						<td>电话</td>
-						<td><input
-							name="telephone" class="easyui-textbox" required="true" /></td>
+						<td><input id="telephone" name="telephone" class="easyui-textbox" style="width: 400px;"
+							 /></td>
 					</tr>
 					<tr>
 						<td>手机</td>
-						<td><input type="text" name="mobile" class="easyui-textbox"
-							required="true" /></td>
+						<td><input type="text" id="mobile" name="mobile" class="easyui-textbox" style="width: 400px;"
+							/></td>
 					</tr>
 					<tr>
 						<td>邮箱</td>
-						<td><input type="text" name="email" class="easyui-textbox"
-							required="true" /></td>
+						<td><input type="text" id="email" name="email" class="easyui-textbox" style="width: 400px;"
+							/></td>
 					</tr>
 					<tr>
 						<td>地址</td>
-						<td><input type="text" name="address" class="easyui-textbox"
-							required="true" /></td>
+						<td><input type="text" id="address" name="address" class="easyui-textbox" style="width: 400px;"
+							/></td>
 					</tr>
 					<tr>
 						<td>联系人姓名</td>
-						<td><input type="text" name="contactPerson" class="easyui-textbox"
-							required="true" /></td>
+						<td><input type="text" id="contactPerson" name="contactPerson"  style="width: 400px;"
+							class="easyui-textbox"/></td>
 					</tr>
 					<tr>
 						<td>备注</td>
-						<td><input type="textarea" name="clientMark"
-							class="easyui-textbox" required="true" /></td>
+						<td ><input style="height:100px; width: 400px;" data-options="multiline:true" id="clientMark" name="clientMark"
+							class="easyui-textbox" /></td>
 					</tr>
 				</table>
 

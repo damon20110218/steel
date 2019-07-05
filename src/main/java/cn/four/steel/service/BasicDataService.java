@@ -107,7 +107,7 @@ public class BasicDataService {
 	public void updateClient(Client client){
 		String insertSQL = "insert into client_info(client_name, create_date, client_type, client_mark,"
 				+ " mobile, telephone, email, address, contact_person) values(?,?,?,?,?,?,?,?,?)";
-		String updateSQL = "update client_info set client_name = ?, create_date= ?, client_mark = ?, mobile = ? "
+		String updateSQL = "update client_info set client_name = ?, create_date= ?, client_mark = ?, mobile = ?, "
 				+ " telephone = ?, email = ?, address = ?, contact_person = ? where client_id = ? ";
 		List<Object> params = new ArrayList<Object>();
 		logger.info("ClientId:" + client.getClientId());
