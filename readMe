@@ -1,17 +1,24 @@
-			// params.clear();
-			// if (i == 0) {
-			// tof = true;
-			// if (fs.getClientId() == null) {
-			// String maxIdSql = "select max(client_id) from client_info";
-			// Long maxId = jdbcTemplate.queryForObject(maxIdSql,
-			// params.toArray(), Long.class);
-			// clientId = maxId + 1;
-			// String clientSql = "insert into client_info(client_id,
-			// client_name, client_type, create_date) values (?, ?, ?,?)";
-			// params.add(clientId);
-			// params.add(fs.getClientName());
-			// params.add("1");
-			// params.add(now);
-			// jdbcTemplate.update(clientSql, params.toArray());
-			// }
-			// }
+$("#categoryId0").combobox({
+			url:'/basic/category',
+		    valueField:'categoryId',
+		    textField:'steelName',
+		    onSelect: function(rec){
+		    	$("#specId0").combobox({
+		    		url:'/basic/spec?categoryId='+rec.categoryId,
+				    valueField:'specId',
+				    textField:'thickness',
+		    	});
+		    }
+		})
+$("#categoryId" + flag).combobox({
+				url:'/basic/category',
+			    valueField:'categoryId',
+			    textField:'steelName',
+			    onSelect: function(rec){
+			    	$("#specId" + flag).combobox({
+			    		url:'/basic/spec?categoryId='+rec.categoryId,
+					    valueField:'specId',
+					    textField:'thickness',
+			    	});
+			    }
+			})
