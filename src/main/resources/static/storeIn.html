@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>钢材入库</title>
+<!-- 导入jquery核心类库 -->
+<script type="text/javascript" src="dist/js/jquery-3.4.1.min.js"></script>
+<!-- 导入easyui类库 -->
+<link rel="stylesheet" type="text/css" href="css/easyui.css">
+<link rel="stylesheet" type="text/css" href="css/icon.css">
+<script type="text/javascript" src="dist/js/jquery.easyui.min.js"></script>
+<script src="dist/js/easyui-lang-zh_CN.js" type="text/javascript"></script>
+<script type="text/javascript">
+	$(function() {
+		// 先将body隐藏，再显示，不会出现页面刷新效果
+		$("body").css({
+			visibility : "visible"
+		});
+		// 初始化年份	
+		var date = new Date;
+		var curYear = date.getFullYear();
+		var curMonth = date.getMonth() + 1;
+		var yearVal = new Array();
+		for(var i =0; i<10; i++){
+			var single = {};
+			single.id = curYear - i;
+			single.text = curYear - i;
+			yearVal.push(single);
+		}
+		$('#year').combobox({
+			data : yearVal,
+			valueField : 'id',
+			textField : 'text'
+		});
+		// 初始化月份
+		var monthVal = new Array();
+		for (var i = 1; i < 13; i++) {
+			var single = {};
+			single.id = i;
+			single.text = i +"月";
+			monthVal.push(single);
+		}
+		$('#month').combobox({
+			data : monthVal,
+			valueField : 'id',
+			textField : 'text'
+		});
+		// 设置默认值
+		$('#year').combobox('setValue', curYear);
+		$('#month').combobox('setValue', curMonth);
+		$('#store')
+				.datagrid(
+						{
+							iconCls : 'icon-forward',
+							width : 1300,
+							height : 600,
+							border : true,
+							rownumbers : true,
+							striped : true,
+							queryParams : {"year":$('#year').combobox('getValue'),"month":$('#month').combobox('getValue')},
+							pageList : [ 10, 20, 30 ],
+							pagination : true,
+							toolbar : [ {
+								id : 'button-add',
+								text : '增加',
+								iconCls : 'icon-add',
+								handler : doAdd
+							} ],
+							url : "http://localhost:8080/store/query",
+							dataType : "jsonp",
+							idField : 'storageId',
+							columns : [ [
+									{
+										field : 'storageId',
+										checkbox : true,
+									},
+									{
+										field : 'storeDate',
+										title : '日期',
+										width : 120,
+										align : 'center'
+									},
+									{
+										field : 'storeNo',
+										title : '入库单号',
+										width : 120,
+										align : 'center'
+									},
+									{
+										field : 'clientNo',
+										title : '客户单号',
+										width : 120,
+										align : 'center'
+									},
+									{
+										field : 'cashAmount',
+										title : '金额',
+										width : 120,
+										align : 'center'
+									},
+									{
+										field : 'factory',
+										title : '钢厂',
+										width : 120,
+										align : 'center'
+									},
+									{
+										field : 'opt',
+										title : '操作栏',
+										width : 300,
+										align : 'center',
+										formatter : function(value, row, index) {
+											var str = '<input class="easyui-linkbutton" type="button" onclick="modify('
+													+ index
+													+ ')" value="修改"> &nbsp; ';
+											return str;
+										}
+									} ] ]
+						});
+		
+		
+		$('#addStoreWindow').window({
+			title : '钢材入库',
+			width : 1400,
+			modal : true,
+			shadow : true,
+			closed : true,
+			height : 850,
+			resizable : true
+		});
+	});
+	
+	function doAdd() {
+		$('#addStoreWindow').window("open");
+		// 加载 公司列表，并设置默认值
+		$("#companyList").combobox({
+			url :"http://" + location.host + "/basic/fuzzyMatch",
+			valueField : 'clientId',
+			textField : 'clientName'
+		});
+	}
+	function query() {
+		var queryParams = $('#store').datagrid('options').queryParams;
+		//var clientName = $('#search').val();
+		//queryParams.clientName = clientName;
+		$('#store').datagrid('options').queryParams = queryParams;
+		$("#store").datagrid('reload');
+	}
+	function modify(rowIndex) {
+	}
+</script>
+</head>
+<body class="easyui-layout" style="visibility: hidden;">
+	<div region="center" border="false">
+		<input class="easyui-combobox" id="year"
+			data-options="prompt:'请选择年份',iconCls:'icon-man'"
+			style="width: 200px; height: 40px" /> &nbsp; <input
+			class="easyui-combobox" id="month"
+			data-options="prompt:'请选择月份',iconCls:'icon-man'"
+			style="width: 200px; height: 40px" /> &nbsp; <input
+			class="easyui-textbox" id="storeNo"
+			data-options="prompt:'请输入入库单号',iconCls:'icon-man'"
+			style="width: 200px; height: 40px" /> &nbsp;<input
+			class="easyui-textbox" id="clientNo"
+			data-options="prompt:'请输入客户单号',iconCls:'icon-man'"
+			style="width: 200px; height: 40px" /> <input
+			class="easyui-linkbutton" type="button" value="查询" onclick="query()"
+			style="width: 100px; height: 34px" />
+		<table id="store"></table>
+	</div>
+	<div class="easyui-window" title="钢材入库" id="addStoreWindow"
+		collapsible="false" minimizable="false" maximizable="false"
+		style="top: 50px; left: 150px">
+		<div region="north" style="height: 31px; overflow: hidden;"
+			split="false" border="false">
+			<div class="datagrid-toolbar">
+				<a id="save" icon="icon-save" onclick="saveStore()"
+					class="easyui-linkbutton" plain="true">保存</a> <a id="save"
+					icon="icon-cancel" onclick="closeWindow()"
+					class="easyui-linkbutton" plain="true">关闭</a>
+			</div>
+		</div>
+		<div region="center" style="overflow: auto; padding: 5px;"
+			border="false">
+			<form id="addStoreForm" method="post">
+				<div>
+					<label>公司：</label><input id="companyList" class="easyui-combobox" data-options="prompt:'请选择公司',iconCls:'icon-man'"
+						style="width: 300px; height: 40px" />
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<label>入库单号：</label><input class="easyui-textbox"
+						style="width: 210px; height: 40px; align: right" disabled />
+				</div>
+				<p></p>
+				<table border="1" id="storeTable"
+					style="border-collapse: collapse; border-color: #C0C0C0; width: 100%;"
+					align="center">
+					<thead>
+						<tr style="height: 30px">
+							<th style="width: 0%;"></th>
+							<th style="width: 15%;">客户单号</th>
+							<th style="width: 15%;">种类</th>
+							<th style="width: 10%;">规格</th>
+							<th style="width: 12%;">重量(吨)</th>
+							<th style="width: 13%;">金额(元)</th>
+							<th style="width: 10%;">单价</th>
+							<th style="width: 15%;">钢厂</th>
+							<th>操作</th>
+						</tr>
+						<tr id="row0">
+							<td><input type="text" style="display: none;"
+								id="storageId0" name="storageId" /></td>
+							<td><input type="text" id="clientNo0" name="clientNo"
+								style="width: 95%; height: 32px" /></td>
+							<td><input type="text" id="categoryId0" name="categoryId"
+								style="width: 95%; height: 32px" /></td>
+							<td><input type="text" id="specId0" name="specId"
+								style="width: 95%; height: 32px" /></td>
+							<td><input type="text" id="amount0" name="amount"
+								style="width: 95%; height: 32px" /></td>
+							<td><input type="text" id="cashAmount0" name="cashAmount"
+								style="width: 95%; height: 32px" /></td>
+							<td><input type="text" id="price0" name="price"
+								style="width: 95%; height: 32px" /></td>
+							<td><input type="text" id="factory0" name="factory"
+								style="width: 95%; height: 32px" /></td>
+							<td><input type="button" name="delete" value="删 除"
+								style="width: 80px; height: 35px" class="easyui-linkbutton"
+								onclick="deleteSelectedRow(row0)" /></td>
+						</tr>
+						<tr>
+							<td align="center" colspan="9"><input type="button"
+								name="insert" class="easyui-linkbutton" value="增加一行"
+								style="width: 80px; height: 35px" onclick="insertNewRow()" /></td>
+						</tr>
+					</thead>
+				</table>
+			</form>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var formvalue = "";
+		var flag = 1;
+		var index = 1;
+		var firstCell = "";
+		var secondCell = "";
+		var thirdCell = "";
+		var fourthCell = "";
+		var fifthCell = "";
+		var sixthCell = "";
+		var seventhCell = "";
+		var eighthCell = "";
+		$(function() {
+			//初始化第一行
+			firstCell = $("#row0 td:eq(0)").html();
+			secondCell = $("#row0 td:eq(1)").html();
+			thirdCell = $("#row0 td:eq(2)").html();
+			fourthCell = $("#row0 td:eq(3)").html();
+			fifthCell = $("#row0 td:eq(4)").html();
+			sixthCell = $("#row0 td:eq(5)").html();
+			seventhCell = $("#row0 td:eq(6)").html();
+			eighthCell = $("#row0 td:eq(7)").html();
+		});
+		function insertNewRow() {
+			//获取表格有多少行
+			var rowLength = $("#storeTable tr").length;
+			//这里的rowId就是row加上标志位的组合。是每新增一行的tr的id。
+			var rowId = "row" + flag;
+			//每次往下标为flag+1的下面添加tr,因为append是往标签内追加。所以用 after
+			var insertStr = "<tr id=" + rowId + ">" + "<td style='width: 0%'>"
+					+ firstCell
+					+ "</td>"
+					+ "<td style='width: 15%'>"
+					+ secondCell
+					+ "</td>"
+					+ "<td style='width: 15%'>"
+					+ thirdCell
+					+ "</td>"
+					+ "<td style='width: 10%'>"
+					+ fourthCell
+					+ "</td>"
+					+ "<td style='width: 12%'>"
+					+ fifthCell
+					+ "</td>"
+					+ "<td style='width: 13%'>"
+					+ sixthCell
+					+ "</td>"
+					+ "<td style='width: 10%'>"
+					+ seventhCell
+					+ "</td>"
+					+ "<td style='width: 15%'>"
+					+ eighthCell
+					+ "</td>"
+					+ "<td><input type='button' name='delete' value='删除' style='width:80px; height:35px'  class='easyui-linkbutton' onclick='deleteSelectedRow(\""
+					+ rowId + "\")' />";
+			+"</tr>";
+			$("#storeTable tr:eq(" + (rowLength - 2) + ")").after(insertStr); //将新拼接的一行插入到当前行的下面
+			// 自动渲染每个easyui 控件
+			$("#" + rowId).children().each(function(i, e) {
+				$.parser.parse(e);
+			});
+			// 隐藏多余的框
+
+			//为新添加的行里面的控件添加新的id属性。
+			$("#" + rowId + " td:eq(0)").children().eq(0).attr("id",
+					"storageId" + flag);
+			$("#" + rowId + " td:eq(1)").children().eq(0).attr("id",
+					"clientNo" + flag);
+			$("#" + rowId + " td:eq(2)").children().eq(0).attr("id",
+					"categoryId" + flag);
+			$("#" + rowId + " td:eq(3)").children().eq(0).attr("id",
+					"specId" + flag);
+			$("#" + rowId + " td:eq(4)").children().eq(0).attr("id",
+					"amount" + flag);
+			$("#" + rowId + " td:eq(5)").children().eq(0).attr("id",
+					"cashAmount" + flag);
+			$("#" + rowId + " td:eq(6)").children().eq(0).attr("id",
+					"price" + flag);
+			$("#" + rowId + " td:eq(7)").children().eq(0).attr("id",
+					"factory" + flag);
+			//每插入一行，flag自增一次
+			flag++;
+		}
+
+		function deleteSelectedRow(rowID) {
+			$("#" + rowID).remove();
+		}
+
+		function saveStore() {
+			var stores = new Array();
+			var formObject = {};
+			var formArray = $("#addStoreForm").serializeArray();
+			$.each(formArray, function(i, item) {
+				formObject[item.name] = item.value;
+				if (i % 8 == 7) {
+					stores.push(formObject);
+					formObject = {};
+				}
+			});
+			var params = {
+				storage : stores
+			};
+			$.ajax({
+				type : "post", //数据提交方式（post/get）
+				url : "http://" + location.host + "/store/update", //提交到的url
+				contentType : "application/json; charset=utf-8",
+				data : JSON.stringify(params),
+				success : function(msg) {
+					if (msg == "Success") { //修改成功
+						//修改成功处理代码...
+						$('#addStoreWindow').window("close");
+						query();
+					} else { //修改失败
+						//修改失败处理代码...
+						$.messager.alert('系统提示', '钢材入库失败', 'error');
+					}
+				}
+			});
+		}
+	</script>
+</body>
+</html>

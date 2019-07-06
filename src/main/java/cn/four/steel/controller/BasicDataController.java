@@ -61,7 +61,13 @@ public class BasicDataController {
 		 result.setTotal(100L);
 		 return result;
 	}
-
+	
+	@RequestMapping(value = "/basic/fuzzyMatch", method = {RequestMethod.POST, RequestMethod.GET})
+	@ResponseBody
+	public List<Client> fuzzyMatch(String companyName){
+		 List<Client> clients = basicDataService.matchClient(companyName, "1");
+		 return clients;
+	}
 	// 维护客户公司信息(新增和修改)
 	@RequestMapping(value = "/basic/update_client", method = {RequestMethod.POST, RequestMethod.GET})
 	public String clientAddAndUpdate(@RequestBody JSONObject jsonParam, HttpServletRequest request) {

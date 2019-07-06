@@ -15,11 +15,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.four.steel.bean.DataGridResult;
 import cn.four.steel.bean.from.FrontStorage;
 import cn.four.steel.bean.to.MainStorage;
 import cn.four.steel.service.SteelStoreInService;
@@ -52,12 +55,18 @@ public class SteelStoreInController {
 		}
 	}
 
-	@RequestMapping("/store/query")
-	public List<MainStorage> queryStorage(String storageNo, String clientNo, String year, String month) {
+	@RequestMapping(value="/store/query", method = RequestMethod.POST)
+	@ResponseBody
+	public DataGridResult<MainStorage> queryStorage(String storageNo, String clientNo, String year, String month, String page, String rows) {
+		 DataGridResult<MainStorage> result = new DataGridResult<MainStorage>();
 		try {
-			return steelStorageService.queryStorage(storageNo, clientNo, year, month);
+			 List<MainStorage> stores = steelStorageService.queryStorage(storageNo, clientNo, year, month);
+			 result.setRows(stores);
+			 result.setTotal(20L);
+			 return result;
 		} catch (Exception e) {
-			return null;
+			logger.error(e.getMessage());
+			return result;
 		}
 	}
 
