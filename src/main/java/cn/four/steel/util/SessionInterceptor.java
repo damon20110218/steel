@@ -3,6 +3,7 @@ package cn.four.steel.util;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -21,6 +22,7 @@ public class SessionInterceptor implements HandlerInterceptor {
         if ("/login".equals(arg0.getRequestURI()) || "/loginReg".equals(arg0.getRequestURI())) {
             return true;
         }
+      
         //权限路径拦截
         Object object = arg0.getSession().getAttribute("user");
         if (null == object) {
