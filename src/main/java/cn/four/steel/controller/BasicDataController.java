@@ -1,7 +1,9 @@
 package cn.four.steel.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,15 +37,18 @@ public class BasicDataController {
 	public List<SteelCategory> category() {
 		// 采用缓存数据
 		Map<Long, SteelCategory> m = baseDataCache.getCatetories();
+		List<SteelCategory> categories = new ArrayList<>();
 		if (m.size() != 0) {
-			return (List<SteelCategory>) m.values();
+			for(Entry<Long, SteelCategory> e :m.entrySet()){
+				categories.add(e.getValue());
+			}
 		} else {
-			List<SteelCategory> categories = basicDataService.listAllCategory(null);
-			return categories;
+			categories = basicDataService.listAllCategory(null);
 		}
+		return categories;
 	}
 
-	@RequestMapping(value = "/basic/spec", method = RequestMethod.POST)
+	@RequestMapping(value = "/basic/spec", method = {RequestMethod.POST, RequestMethod.GET})
 	public List<SteelSpecication> spec(String categoryId, HttpServletRequest request) {
 		List<SteelSpecication> specs = baseDataCache.getSteelSpecicationByCategory(Long.valueOf(categoryId));
 		if(specs == null || specs.size() == 0){

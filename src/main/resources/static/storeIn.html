@@ -211,10 +211,12 @@
 								id="storageId0" name="storageId" /></td>
 							<td><input type="text" id="clientNo0" name="clientNo"
 								style="width: 95%; height: 32px" /></td>
-							<td><input type="text" id="categoryId0" name="categoryId"
-								style="width: 95%; height: 32px" /></td>
-							<td><input type="text" id="specId0" name="specId"
-								style="width: 95%; height: 32px" /></td>
+							<td><select id="categoryId0" name="categoryId"
+								style="width: 95%; height: 32px" > </select>
+								</td>
+							<td><select id="specId0" name="specId"
+								style="width: 95%; height: 32px"> </select>
+								</td>
 							<td><input type="text" id="amount0" name="amount"
 								style="width: 95%; height: 32px" /></td>
 							<td><input type="text" id="cashAmount0" name="cashAmount"
@@ -229,7 +231,7 @@
 						</tr>
 						<tr>
 							<td align="center" colspan="9"><input type="button"
-								name="insert" class="easyui-linkbutton" value="增加一行"
+								class="easyui-linkbutton" value="增加一行"
 								style="width: 80px; height: 35px" onclick="insertNewRow()" /></td>
 						</tr>
 					</thead>
@@ -238,9 +240,7 @@
 		</div>
 	</div>
 	<script type="text/javascript">
-		var formvalue = "";
 		var flag = 1;
-		var index = 1;
 		var firstCell = "";
 		var secondCell = "";
 		var thirdCell = "";
@@ -260,6 +260,7 @@
 			seventhCell = $("#row0 td:eq(6)").html();
 			eighthCell = $("#row0 td:eq(7)").html();
 		});
+		
 		function insertNewRow() {
 			//获取表格有多少行
 			var rowLength = $("#storeTable tr").length;
@@ -317,6 +318,7 @@
 					"price" + flag);
 			$("#" + rowId + " td:eq(7)").children().eq(0).attr("id",
 					"factory" + flag);
+			
 			//每插入一行，flag自增一次
 			flag++;
 		}
@@ -341,7 +343,7 @@
 			};
 			$.ajax({
 				type : "post", //数据提交方式（post/get）
-				url : "http://" + location.host + "/store/update", //提交到的url
+				url : "/store/update", //提交到的url
 				contentType : "application/json; charset=utf-8",
 				data : JSON.stringify(params),
 				success : function(msg) {
