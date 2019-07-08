@@ -20,10 +20,12 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.four.steel.bean.DataGridResult;
 import cn.four.steel.bean.from.Client;
+import cn.four.steel.bean.to.Price;
 import cn.four.steel.bean.to.SteelCategory;
 import cn.four.steel.bean.to.SteelSpecication;
 import cn.four.steel.cache.BaseDataCache;
 import cn.four.steel.service.BasicDataService;
+import cn.four.steel.util.SteelUtil;
 
 @RestController
 public class BasicDataController {
@@ -47,7 +49,18 @@ public class BasicDataController {
 		}
 		return categories;
 	}
-
+	@RequestMapping(value = "/basic/price", method = RequestMethod.POST)
+	public List<List<Price>> categoryforPrice(){
+		List<List<Price>> res = new ArrayList<>();
+		try{
+			List<Price> p = basicDataService.specForPriceCode();
+			res = SteelUtil.convert(p);
+			return res;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return res;
+		}
+	}
 	@RequestMapping(value = "/basic/spec", method = {RequestMethod.POST, RequestMethod.GET})
 	public List<SteelSpecication> spec(String categoryId, HttpServletRequest request) {
 		List<SteelSpecication> specs = baseDataCache.getSteelSpecicationByCategory(Long.valueOf(categoryId));

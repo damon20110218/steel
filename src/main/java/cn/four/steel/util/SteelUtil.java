@@ -9,9 +9,6 @@ import cn.four.steel.bean.to.Price;
 
 public class SteelUtil {
 
-	public String generateStorageNo(){
-		return null;
-	}
 	public static String formatDate(Date date, String pattern){
 		if(pattern == null || "".equals(pattern)){
 			pattern = "yyyyMMdd";

@@ -21,15 +21,22 @@ public class SteelPriceService {
 	
 	public void addPrice(PagePrice price){
 		String insertSql = "insert into steel_price(price_code, price, price_date, price_type) values(?,?,?,?)";
-		String futureSql = "insert into steel_future_price(price_code, price, price_date) values(?,?,?,?)";
+		String futureSql = "insert into steel_future_price(price_code, price, price_date, price_type) values(?,?,?,?)";
 		List<Object> params = new ArrayList<Object>();
 		if("1".equals(price.getPriceType())){
+			// TODO 当日期货价格会保存多条记录
+			if(price.getPrice() == null){
+				return;
+			}
 			params.add(price.getPriceCode());  // 钢材规格ID
 			params.add(price.getPrice());  // 钢材价格
 			params.add(new Date());  // 价格录入日期
 			params.add(price.getPriceType());
 			jdbcTemplate.update(futureSql, params.toArray());
 		} else {
+			if(price.getPrice() == null){
+				return;
+			}
 			String querySQL = "select count(*) from steel_price where price_code = ?";
 			params.add(price.getPriceCode());
 			Long cnt = jdbcTemplate.queryForObject(querySQL, params.toArray(), Long.class);

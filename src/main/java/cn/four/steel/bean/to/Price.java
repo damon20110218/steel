@@ -4,6 +4,7 @@ public class Price {
 
 	private String steelName;
 	private String thickness;
+	private String priceCode;
 	private String price;
 	private String priceDate;
 	public String getSteelName() {
@@ -29,5 +30,11 @@ public class Price {
 	}
 	public void setPriceDate(String priceDate) {
 		this.priceDate = priceDate;
+	}
+	public String getPriceCode() {
+		return priceCode;
+	}
+	public void setPriceCode(String priceCode) {
+		this.priceCode = priceCode;
 	}
 }

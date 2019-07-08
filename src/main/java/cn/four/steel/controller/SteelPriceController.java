@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 
@@ -30,22 +31,33 @@ public class SteelPriceController {
 	private Logger logger = LoggerFactory.getLogger(SteelPriceController.class);
 
 	@RequestMapping(value = "/price/update", method = { RequestMethod.POST,
-			RequestMethod.GET }, produces = "application/json;charset=UTF-8")
-	public String addPrice(@RequestBody JSONObject json, HttpServletRequest request) {
-		logger.info("Receive price from front client" + json);
+			RequestMethod.GET })
+	public String addPrice(@RequestBody JSONObject jsonParam, HttpServletRequest request) {
+		logger.info("Receive price from front client" + jsonParam);
 		try {
-			String priceCode = json.getString("priceCode");
-			double price = Double.valueOf(json.getString("price"));
-			String priceType = json.getString("priceType");
-			PagePrice params = new PagePrice();
-			params.setPrice(price);
-			params.setPriceCode(priceCode);
-			params.setPriceType(priceType);
-			steelPriceService.addPrice(params);
+			JSONArray array = jsonParam.getJSONArray("prices");
+			if (array != null && array.size() != 0) {
+				for(int i = 0; i < array.size(); i++) {
+					JSONObject json = array.getJSONObject(i);
+					String priceCode = json.getString("priceCode");
+					if(json.getString("price") == null || "".equals(json.getString("price"))){
+						continue;
+					}
+					double price = Double.valueOf(json.getString("price"));
+					String priceType = json.getString("priceType");
+					PagePrice params = new PagePrice();
+					params.setPrice(price);
+					params.setPriceCode(priceCode);
+					params.setPriceType(priceType);
+					steelPriceService.addPrice(params);
+				}
+			}
+			return "Success";
 		} catch (JSONException e) {
 			logger.error(e.getMessage());
+			return "Failed";
 		}
-		return "Success";
+		
 	}
 
 	@RequestMapping(value = "/price/today")

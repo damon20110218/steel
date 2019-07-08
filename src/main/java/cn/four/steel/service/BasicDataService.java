@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import cn.four.steel.bean.from.Client;
+import cn.four.steel.bean.to.Price;
 import cn.four.steel.bean.to.SteelCategory;
 import cn.four.steel.bean.to.SteelSpecication;
 import cn.four.steel.cache.BaseDataCache;
@@ -27,6 +28,21 @@ public class BasicDataService {
 	@Autowired
 	private BaseDataCache baseDataCache;
 	
+	public List<Price> specForPriceCode(){
+		String sql = "select price_code, max(thickness) thickness, max(steel_name) steel_name from (select ss.thickness,ss.price_code,sc.steel_name from steel_specs ss, steel_category sc where ss.category_id = sc.category_id) tt group by price_code order by steel_name, thickness";
+		List<Map<String, Object>> list = jdbcTemplate.queryForList(sql);
+		List<Price> prices = new ArrayList<>();
+		if(list != null ){
+			for(Map<String, Object> m : list){
+				Price price = new Price();
+				price.setPriceCode(String.valueOf(m.get("price_code")));
+				price.setThickness(String.valueOf(m.get("thickness")));
+				price.setSteelName(String.valueOf(m.get("steel_name")));
+				prices.add(price);
+			}
+		}
+		return prices;
+	}
 	public List<SteelCategory> listAllCategory(Long categoryId){
 		String sql = "Select * From steel_category Where 1=1 ";
 		List<Object> params = new ArrayList<Object>();

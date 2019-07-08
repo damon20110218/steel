@@ -7,7 +7,7 @@ public class PagePrice implements java.io.Serializable{
 	private static final long serialVersionUID = 9177583169242016623L;
 	private String priceCode;
 	private String specName;
-	private double price;
+	private Double price;
 	private String priceType;
 	public String getPriceCode() {
 		return priceCode;
@@ -21,10 +21,10 @@ public class PagePrice implements java.io.Serializable{
 	public void setSpecName(String specName) {
 		this.specName = specName;
 	}
-	public double getPrice() {
+	public Double getPrice() {
 		return price;
 	}
-	public void setPrice(double price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
 	public String getPriceType() {

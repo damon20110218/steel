@@ -1,0 +1,146 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>价格维护</title>
+<link rel="stylesheet" href="dist/css/site.min.css">
+<script type="text/javascript" src="dist/js/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="dist/js/site.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/easyui.css">
+<link rel="stylesheet" type="text/css" href="css/icon.css">
+<script type="text/javascript" src="dist/js/jquery.easyui.min.js"></script>
+<script src="dist/js/easyui-lang-zh_CN.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+	$(function() {
+		// 获取所有规格列表
+		$
+				.ajax({
+					type : "post",
+					url : "/basic/price",
+					contentType : "application/json; charset=utf-8",
+					dataType : 'json',
+					success : function(data) {
+						//$("#future").append('<div class="col-md-2"><button type="button" class="btn btn-default btn-block">保存期货价格</button></div>');
+						//$("#sale").append('<div class="col-md-2"><button type="button" class="btn btn-default btn-block">保存零售价格</button></div>');
+						$
+								.each(
+										data,
+										function(i, cate) {
+											var futureTitle = "&nbsp;";
+											var saleTitle = "&nbsp;";
+											if (i == 0) {
+												futureTitle = "期货价格";
+												saleTitle = "零售价格";
+											}
+											var futureTable = '<div class="col-md-2"><h3>'
+													+ futureTitle
+													+ '</h3><table <thead><tr><th>'
+													+ cate[0].steelName
+													+ '</th><th>价格</th>';
+											var saleTable = '<div class="col-md-2"><h3>'
+													+ saleTitle
+													+ '</h3><table <thead><tr><th>'
+													+ cate[0].steelName
+													+ '</th><th>价格</th>';
+											$
+													.each(
+															cate,
+															function(j, spec) {
+																futureTable += '<tbody><tr><td>'
+																		+ spec.thickness
+																		+ 'mm</td><td><input style="display:none" name="priceCode" value="'+ spec.priceCode + '"/><input type="text" name="price" class="form-control input-sm" ></td></tr></tbody>';
+																saleTable += '<tbody><tr><td>'
+																		+ spec.thickness
+																		+ 'mm</td><td><input style="display:none" name="priceCode" value="'+ spec.priceCode + '"/><input type="text" name="price" class="form-control input-sm" ></td></tr></tbody>';
+															});
+											futureTable += '</table>';
+											saleTable += '</table>';
+											$("#future").append(futureTable);
+											$("#sale").append(saleTable);
+										});
+						$("#future").append('<div class="col-md-2"><button type="button" onclick="savePrice()" class="btn btn-default btn-block">保存</button></div>');
+					}
+				});
+	});
+	function savePrice(){
+		var futurePrices = new Array();
+		var formArray = $("#futureForm").serializeArray();
+		var formObject = {};
+		$.each(formArray, function(i, item) {
+			formObject[item.name] = item.value;
+			if (i % 2 == 1) {
+				formObject.priceType = '1';
+				futurePrices.push(formObject);
+				formObject = {};
+			}
+		});
+		var params = {
+				prices : futurePrices
+			};
+		var flag = false;
+		$.ajax({
+			type : "post",
+			url : "/price/update", 
+			contentType : "application/json; charset=utf-8",
+			data : JSON.stringify(params),
+			success : function(msg) {
+				if (msg == "Success") { //修改成功
+					// 保存 零售价格
+					var salePrices = new Array();
+					var formArray = $("#saleForm").serializeArray();
+					var formObject = {};
+					$.each(formArray, function(i, item) {
+						formObject[item.name] = item.value;
+						if (i % 2 == 1) {
+							formObject.priceType = '2';
+							salePrices.push(formObject);
+							formObject = {};
+						}
+					});
+					var params = {
+							prices : salePrices
+						};
+					$.ajax({
+						type : "post",
+						url : "/price/update", 
+						contentType : "application/json; charset=utf-8",
+						data : JSON.stringify(params),
+						success : function(msg) {
+							if (msg == "Success") { //修改成功
+								$.messager.alert('系统提示', '价格保存成功', 'info');
+							} else { //修改失败
+								$.messager.alert('系统提示', '零售价格保存失败', 'error');
+							}
+						}
+					});
+				} else { //修改失败
+					$.messager.alert('系统提示', '期货价格保存失败', 'error');
+				}
+			}
+		});
+		
+	}
+</script>
+<body>
+	<div class="container-fluid">
+		<div class="panel panel-default">
+			<!--div class="panel-heading">
+				<h3 class="panel-title">
+					<a href="javascript:void(0);" class="toggle-sidebar"><span
+						class="fa fa-angle-double-left" data-toggle="offcanvas"
+						title="Maximize Panel"></span></a>价格维护
+				</h3>
+			</div-->
+			<form id="futureForm">
+				<div class="panel-body" id="future"></div>
+			</form>
+			<form id="saleForm">
+			<div id="sale"></div>
+			</form>
+		</div>
+	</div>
+</body>
+
+</html>
