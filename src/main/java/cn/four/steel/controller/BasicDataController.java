@@ -69,8 +69,8 @@ public class BasicDataController {
 	
 	@RequestMapping(value = "/basic/fuzzyMatch", method = {RequestMethod.POST, RequestMethod.GET})
 	@ResponseBody
-	public List<Client> fuzzyMatch(String companyName){
-		 List<Client> clients = basicDataService.matchClient(companyName, "1");
+	public List<Client> fuzzyMatch(String companyName, String clientType){
+		 List<Client> clients = basicDataService.matchClient(companyName, clientType);
 		 return clients;
 	}
 	// 维护客户公司信息(新增和修改)

@@ -1,24 +1,17 @@
-$("#categoryId0").combobox({
-			url:'/basic/category',
-		    valueField:'categoryId',
-		    textField:'steelName',
-		    onSelect: function(rec){
-		    	$("#specId0").combobox({
-		    		url:'/basic/spec?categoryId='+rec.categoryId,
-				    valueField:'specId',
-				    textField:'thickness',
-		    	});
-		    }
-		})
-$("#categoryId" + flag).combobox({
-				url:'/basic/category',
-			    valueField:'categoryId',
-			    textField:'steelName',
-			    onSelect: function(rec){
-			    	$("#specId" + flag).combobox({
-			    		url:'/basic/spec?categoryId='+rec.categoryId,
-					    valueField:'specId',
-					    textField:'thickness',
-			    	});
-			    }
-			})
+			firstCell = $("#row0 td:eq(0)").html();
+			secondCell = $("#row0 td:eq(1)").html();
+			thirdCell = $("#row0 td:eq(2)").html();
+			fourthCell = $("#row0 td:eq(3)").html();
+			fifthCell = $("#row0 td:eq(4)").html();
+			sixthCell = $("#row0 td:eq(5)").html();
+			seventhCell = $("#row0 td:eq(6)").html();
+			eighthCell = $("#row0 td:eq(7)").html();
+
+			
+			$("#storeTable tr").each(function(i) {
+			       if (i >= 1) {
+			    	   $(this).children().each(function(j) {
+			    		   alert($("#row" + (i -1) +" td:eq(" + j + ")").attr('name'));
+			    	   });
+				   }
+			});

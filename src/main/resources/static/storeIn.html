@@ -21,7 +21,7 @@
 		var curYear = date.getFullYear();
 		var curMonth = date.getMonth() + 1;
 		var yearVal = new Array();
-		for(var i =0; i<10; i++){
+		for (var i = 0; i < 10; i++) {
 			var single = {};
 			single.id = curYear - i;
 			single.text = curYear - i;
@@ -37,7 +37,7 @@
 		for (var i = 1; i < 13; i++) {
 			var single = {};
 			single.id = i;
-			single.text = i +"月";
+			single.text = i + "月";
 			monthVal.push(single);
 		}
 		$('#month').combobox({
@@ -57,7 +57,10 @@
 							border : true,
 							rownumbers : true,
 							striped : true,
-							queryParams : {"year":$('#year').combobox('getValue'),"month":$('#month').combobox('getValue')},
+							queryParams : {
+								"year" : $('#year').combobox('getValue'),
+								"month" : $('#month').combobox('getValue')
+							},
 							pageList : [ 10, 20, 30 ],
 							pagination : true,
 							toolbar : [ {
@@ -117,8 +120,7 @@
 										}
 									} ] ]
 						});
-		
-		
+
 		$('#addStoreWindow').window({
 			title : '钢材入库',
 			width : 1400,
@@ -129,24 +131,90 @@
 			resizable : true
 		});
 	});
-	
-	function doAdd() {
+
+	function doAdd(isModify) {
 		$('#addStoreWindow').window("open");
 		// 加载 公司列表，并设置默认值
 		$("#companyList").combobox({
-			url :"http://" + location.host + "/basic/fuzzyMatch",
+			url : '/basic/fuzzyMatch?clientType=1',
 			valueField : 'clientId',
 			textField : 'clientName'
 		});
+		// 从后台获取入库单号
+		if(isModify != true){
+			//清除页面值
+			$("#companyList").combobox('setValue', '');
+			$("#storageNo").textbox('setValue', '');
+			$("#storageId0").val('');
+			$("#clientNo0").textbox('setValue', '');
+			$("#categoryId0").combobox('setValue', '');
+			$("#specId0").combobox('setValue', '');
+			$("#amount0").textbox('setValue', '');
+			$("#cashAmount0").textbox('setValue', '');
+			$("#price0").textbox('setValue', '');
+			$("#factory0").textbox('setValue', '');
+			$.ajax({
+				type : "post",
+				url : "/store/storeNo", //提交到的url
+				contentType : "application/json; charset=utf-8",
+				success : function(msg) {
+					if (msg == "failed") { //获取失败
+						$.messager.alert('系统提示', '生成入库单号失败', 'error');
+					} else {
+						$("#storageNo").textbox("setValue", msg)
+					}
+				}
+			});
+		}
 	}
 	function query() {
 		var queryParams = $('#store').datagrid('options').queryParams;
-		//var clientName = $('#search').val();
-		//queryParams.clientName = clientName;
+		var year = $('#year').textbox('getValue');
+		var month = $('#month').textbox('getValue');
+		var storeNo = $('#storeNoQuery').textbox('getValue');
+		var clientNo = $('#clientNo').textbox('getValue');
+		queryParams.year = year;
+		queryParams.month = month;
+		queryParams.storeNo = storeNo;
+		queryParams.clientNo = clientNo;
 		$('#store').datagrid('options').queryParams = queryParams;
 		$("#store").datagrid('reload');
 	}
 	function modify(rowIndex) {
+		var a = $('#store').datagrid('selectRow', rowIndex);
+		var row = $('#store').datagrid('getSelected');
+		// 从后台入库详细信息
+		doAdd(true);
+		$.ajax({
+			type : "post",
+			url : '/store/show?storageNo=' + row.storeNo + "&clientNo=" + row.clientNo,
+			contentType : "application/json; charset=utf-8",
+			dataType : "json",
+			success : function(data) {
+				$.each(data, function(index, item) {
+					// 公司设置值
+					$("#companyList").combobox('setValue', item.clientId);
+					$("#storageNo").textbox('setValue', item.storageNo);
+					// 入库单号设置值		
+					if(index == 0){
+						$("#storageId0").val(item.storageId);
+						$("#clientNo0").textbox('setValue', item.clientNo);
+						$("#categoryId0").combobox('setValue', item.categoryId);
+						$("#specId0").combobox('setValue', item.specId);
+						$("#amount0").textbox('setValue', item.amount);
+						$("#cashAmount0").textbox('setValue', item.cashAmount);
+						$("#price0").textbox('setValue', item.price);
+						$("#factory0").textbox('setValue', item.factory);
+					} else {
+						// 多条 调用insertNewRow，并赋值
+					}
+				});
+			}
+		});
+		// disable 删除与新增一行按钮
+	}
+	function closeWindow() {
+		$('#addStoreWindow').window("close");
 	}
 </script>
 </head>
@@ -158,7 +226,7 @@
 			class="easyui-combobox" id="month"
 			data-options="prompt:'请选择月份',iconCls:'icon-man'"
 			style="width: 200px; height: 40px" /> &nbsp; <input
-			class="easyui-textbox" id="storeNo"
+			class="easyui-textbox" id="storeNoQuery"
 			data-options="prompt:'请输入入库单号',iconCls:'icon-man'"
 			style="width: 200px; height: 40px" /> &nbsp;<input
 			class="easyui-textbox" id="clientNo"
@@ -184,10 +252,11 @@
 			border="false">
 			<form id="addStoreForm" method="post">
 				<div>
-					<label>公司：</label><input id="companyList" class="easyui-combobox" data-options="prompt:'请选择公司',iconCls:'icon-man'"
+					<label>公司：</label><input id="companyList" class="easyui-combobox"
+						data-options="prompt:'请选择公司',iconCls:'icon-man'"
 						style="width: 300px; height: 40px" />
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<label>入库单号：</label><input class="easyui-textbox"
+					<label>入库单号：</label><input class="easyui-textbox" id="storageNo"
 						style="width: 210px; height: 40px; align: right" disabled />
 				</div>
 				<p></p>
@@ -209,22 +278,23 @@
 						<tr id="row0">
 							<td><input type="text" style="display: none;"
 								id="storageId0" name="storageId" /></td>
-							<td><input type="text" id="clientNo0" name="clientNo"
+							<td><input type="text" class="easyui-textbox" id="clientNo0"
+								name="clientNo" style="width: 95%; height: 32px" /></td>
+							<td><select id="categoryId0" class="easyui-combobox"
+								name="categoryId" style="width: 95%; height: 32px">
+							</select></td>
+							<td><select id="specId0" class="easyui-combobox"
+								name="specId" style="width: 95%; height: 32px">
+							</select></td>
+							<td><input type="text" class="easyui-textbox" id="amount0"
+								name="amount" style="width: 95%; height: 32px" /></td>
+							<td><input type="text" class="easyui-textbox"
+								id="cashAmount0" name="cashAmount"
 								style="width: 95%; height: 32px" /></td>
-							<td><select id="categoryId0" name="categoryId"
-								style="width: 95%; height: 32px" > </select>
-								</td>
-							<td><select id="specId0" name="specId"
-								style="width: 95%; height: 32px"> </select>
-								</td>
-							<td><input type="text" id="amount0" name="amount"
-								style="width: 95%; height: 32px" /></td>
-							<td><input type="text" id="cashAmount0" name="cashAmount"
-								style="width: 95%; height: 32px" /></td>
-							<td><input type="text" id="price0" name="price"
-								style="width: 95%; height: 32px" /></td>
-							<td><input type="text" id="factory0" name="factory"
-								style="width: 95%; height: 32px" /></td>
+							<td><input type="text" class="easyui-textbox" id="price0"
+								name="price" style="width: 95%; height: 32px" /></td>
+							<td><input type="text" class="easyui-textbox" id="factory0"
+								name="factory" style="width: 95%; height: 32px" /></td>
 							<td><input type="button" name="delete" value="删 除"
 								style="width: 80px; height: 35px" class="easyui-linkbutton"
 								onclick="deleteSelectedRow(row0)" /></td>
@@ -241,26 +311,26 @@
 	</div>
 	<script type="text/javascript">
 		var flag = 1;
-		var firstCell = "";
-		var secondCell = "";
-		var thirdCell = "";
-		var fourthCell = "";
-		var fifthCell = "";
-		var sixthCell = "";
-		var seventhCell = "";
-		var eighthCell = "";
-		$(function() {
-			//初始化第一行
-			firstCell = $("#row0 td:eq(0)").html();
-			secondCell = $("#row0 td:eq(1)").html();
-			thirdCell = $("#row0 td:eq(2)").html();
-			fourthCell = $("#row0 td:eq(3)").html();
-			fifthCell = $("#row0 td:eq(4)").html();
-			sixthCell = $("#row0 td:eq(5)").html();
-			seventhCell = $("#row0 td:eq(6)").html();
-			eighthCell = $("#row0 td:eq(7)").html();
-		});
-		
+		var firstCell = '<input type="text" style="display: none;" id="storageId0" name="storageId" />';
+		var secondCell = '<input type="text" class="easyui-textbox" id="clientNo0" name="clientNo" style="width: 95%; height: 32px" />';
+		var thirdCell = '<select id="categoryId0" class="easyui-combobox"  name="categoryId" style="width: 95%; height: 32px" > </select>';
+		var fourthCell = '<select id="specId0" class="easyui-combobox" name="specId" style="width: 95%; height: 32px">';
+		var fifthCell = '<input type="text" class="easyui-textbox"  id="amount0" name="amount" style="width: 95%; height: 32px" />';
+		var sixthCell = '<input type="text" class="easyui-textbox"  id="cashAmount0" name="cashAmount" style="width: 95%; height: 32px" />';
+		var seventhCell = '<input type="text" class="easyui-textbox"  id="price0" name="price" style="width: 95%; height: 32px" />';
+		var eighthCell = '<input type="text" class="easyui-textbox"  id="factory0" name="factory" style="width: 95%; height: 32px" />';
+		$("#categoryId0").combobox({
+			url : '/basic/category',
+			valueField : 'categoryId',
+			textField : 'steelName',
+			onSelect : function(rec) {
+				$("#specId0").combobox({
+					url : '/basic/spec?categoryId=' + rec.categoryId,
+					valueField : 'specId',
+					textField : 'thickness'
+				});
+			}
+		})
 		function insertNewRow() {
 			//获取表格有多少行
 			var rowLength = $("#storeTable tr").length;
@@ -318,7 +388,19 @@
 					"price" + flag);
 			$("#" + rowId + " td:eq(7)").children().eq(0).attr("id",
 					"factory" + flag);
-			
+			$("#categoryId" + flag).combobox({
+				url : '/basic/category',
+				valueField : 'categoryId',
+				textField : 'steelName',
+				onSelect : function(rec) {
+					thisId = $(this).attr("id");
+					$("#specId" + thisId.substring(10)).combobox({
+						url : '/basic/spec?categoryId=' + rec.categoryId,
+						valueField : 'specId',
+						textField : 'thickness'
+					});
+				}
+			});
 			//每插入一行，flag自增一次
 			flag++;
 		}
@@ -329,11 +411,15 @@
 
 		function saveStore() {
 			var stores = new Array();
+			var clientId = $("#companyList").combobox('getValue');
+			var storageNo = $("#storageNo").textbox('getValue');
 			var formObject = {};
 			var formArray = $("#addStoreForm").serializeArray();
 			$.each(formArray, function(i, item) {
 				formObject[item.name] = item.value;
 				if (i % 8 == 7) {
+					formObject.clientId = clientId;
+					formObject.storageNo = storageNo;
 					stores.push(formObject);
 					formObject = {};
 				}

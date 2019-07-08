@@ -11,6 +11,7 @@ public class FrontStorage implements java.io.Serializable{
 	private String clientName;
 	private String storageNo;
 	private String clientNo;
+	private Long categoryId;
 	private Long specId;
 	private Double amount;
 	private Double cashAmount;
@@ -75,5 +76,11 @@ public class FrontStorage implements java.io.Serializable{
 	}
 	public void setStorageId(Long storageId) {
 		this.storageId = storageId;
+	}
+	public Long getCategoryId() {
+		return categoryId;
+	}
+	public void setCategoryId(Long categoryId) {
+		this.categoryId = categoryId;
 	}
 }

@@ -25,7 +25,7 @@ public class SteelStoreInService {
 		String insertSQL = "insert steel_storage(store_date, client_no, store_no, steel_amount, steel_factory,"
 				+ " year, month, spec_id, client_id, price, cash_amount) values(?,?,?,?,?,?,?,?,?,?,?)";
 
-		String updateSQL = "update steel_storage set client_no = ?, store_no = ?, steel_amount = ?"
+		String updateSQL = "update steel_storage set client_no = ?, store_no = ?, steel_amount = ?,"
 				+ " steel_factory = ?, spec_id = ?, client_id = ?, price = ?, cash_amount = ? where storage_id = ?";
 		String categorySQL = "select sc.steel_name, ss.thickness from steel_specs ss, steel_category sc where ss.category_id = sc.category_id and ss.spec_id = ?";
 		String inventorySQL = "select store_in from steel_inventory where inventory_date = ? and thickness = ? and steel_name = ?";
@@ -93,7 +93,7 @@ public class SteelStoreInService {
 				
 				// Firstly query today's store in, lastly update inventory position
 				params.clear();
-				params.add(now);
+				params.add(SteelUtil.formatDate(now, null));
 				params.add(thickness);
 				params.add(steelName);
 				//
@@ -131,7 +131,7 @@ public class SteelStoreInService {
 		String querySQL = "select storage_id, store_no, client_no, cash_amount, steel_factory, store_date from steel_storage where 1=1 ";
 		List<Object> params = new ArrayList<Object>();
 		if (storageNo != null && !"".equals(storageNo)) {
-			querySQL += " and storage_no like ?";
+			querySQL += " and store_no like ?";
 			params.add("%" + storageNo + "%");
 		}
 		if (clientNo != null && !"".equals(clientNo)) {
@@ -163,11 +163,15 @@ public class SteelStoreInService {
 		return stores;
 	}
 	
-	public List<FrontStorage> queryStorageById(String storageNo){
+	public List<FrontStorage> queryStorageById(String storageNo, String clientNo){
 		String querySQL = "select storage_id, store_no, client_no, cash_amount, steel_factory, steel_amount, "
 				+ "price, spec_id, client_id  from steel_storage where store_no = ? ";
 		List<Object> params = new ArrayList<Object>();
 		params.add(storageNo);
+		if(clientNo !=null && !"".equals(clientNo)){
+			querySQL += "and client_no = ?";
+			params.add(clientNo);
+		}
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(querySQL, params.toArray());
 		List<FrontStorage> stores = new ArrayList<>();
 		if (list != null) {
@@ -191,5 +195,25 @@ public class SteelStoreInService {
 	public void todayStorage(){
 		String storeInSQL = "";
 		String storeOutSQL = "";
+	}
+	
+	public String generateStoreNo(){
+		String querySQL = "select store_no from steel_storage where store_date = ? order by store_no desc";
+		List<Object> params = new ArrayList<Object>();
+		Date now = new Date();
+		params.add(SteelUtil.formatDate(now, null));
+		String newStoreNo = "";
+		List<Map<String, Object>> list = jdbcTemplate.queryForList(querySQL, params.toArray());
+		
+		if(list == null || list.size() == 0){
+			newStoreNo = "RK" + SteelUtil.formatDate(now, null) + "01";
+		} else {
+			Map<String, Object> m = list.get(0);
+			String curMaxStoreNo = String.valueOf(m.get("store_no"));
+			Long l = Long.valueOf(curMaxStoreNo.substring(10));
+			String str = String.format("%02d", l+1);
+			newStoreNo = "RK" + SteelUtil.formatDate(now, null) + str;
+		}
+		return newStoreNo;
 	}
 }

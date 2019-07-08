@@ -25,6 +25,7 @@ import com.alibaba.fastjson.JSONObject;
 import cn.four.steel.bean.DataGridResult;
 import cn.four.steel.bean.from.FrontStorage;
 import cn.four.steel.bean.to.MainStorage;
+import cn.four.steel.cache.BaseDataCache;
 import cn.four.steel.service.SteelStoreInService;
 import cn.four.steel.util.SteelExporter;
 
@@ -33,7 +34,8 @@ public class SteelStoreInController {
 	private static Logger logger = LoggerFactory.getLogger(SteelStoreInController.class);
 	@Autowired
 	private SteelStoreInService steelStorageService;
-
+	@Autowired
+	private BaseDataCache baseDataCache;
 	// 入库新增 及修改
 	@RequestMapping("/store/update")
 	public String storeSteel(@RequestBody JSONObject jsonParam, HttpServletRequest request) {
@@ -54,13 +56,22 @@ public class SteelStoreInController {
 			return "failed";
 		}
 	}
-
+	@RequestMapping(value="/store/storeNo", method = RequestMethod.POST)
+	public String generateStoreNo(){
+		try {
+			String storeNo = steelStorageService.generateStoreNo();
+			return storeNo;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return "failed";
+		}
+	}
 	@RequestMapping(value="/store/query", method = RequestMethod.POST)
 	@ResponseBody
-	public DataGridResult<MainStorage> queryStorage(String storageNo, String clientNo, String year, String month, String page, String rows) {
+	public DataGridResult<MainStorage> queryStorage(String storeNo, String clientNo, String year, String month, String page, String rows) {
 		 DataGridResult<MainStorage> result = new DataGridResult<MainStorage>();
 		try {
-			 List<MainStorage> stores = steelStorageService.queryStorage(storageNo, clientNo, year, month);
+			 List<MainStorage> stores = steelStorageService.queryStorage(storeNo, clientNo, year, month);
 			 result.setRows(stores);
 			 result.setTotal(20L);
 			 return result;
@@ -96,10 +107,15 @@ public class SteelStoreInController {
 		}
 	}
 
-	@RequestMapping("/store/show")
-	public List<FrontStorage> showSingleStorage(String storageNo) {
+	@RequestMapping(value="/store/show", method = RequestMethod.POST)
+	@ResponseBody
+	public List<FrontStorage> showSingleStorage(String storageNo, String clientNo) {
 		try {
-			return steelStorageService.queryStorageById(storageNo);
+			List<FrontStorage> stores = steelStorageService.queryStorageById(storageNo, clientNo);
+			for(FrontStorage store : stores){
+				store.setCategoryId(baseDataCache.getCategoryId(store.getSpecId()));
+			}
+			return stores;
 		} catch (Exception e) {
 			logger.error("show single storage:" + storageNo + ", " + e.getMessage());
 			return null;
