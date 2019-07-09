@@ -96,7 +96,7 @@ public class SteelExporter {
 					HSSFCell orderNoCell = row.createCell(0);
 					orderNoCell.setCellValue(order.getOrderNo());
 					HSSFCell clientNoCell = row.createCell(1);
-					clientNoCell.setCellValue(order.getClientNo());
+					clientNoCell.setCellValue(order.getAccountNo());
 					HSSFCell categoryCell = row.createCell(2);
 					categoryCell.setCellValue(order.getSpecId()); // TODO 种类
 					HSSFCell specCell = row.createCell(3);

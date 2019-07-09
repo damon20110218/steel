@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html>
+    
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>订单</title>
+        <link rel="stylesheet" href="dist/css/site.min.css">
+        <script src="dist/js/highcharts.js"></script>
+        <script src="dist/js/highchart/exporting.js"></script>
+        <script src="dist/js/highchart/export-data.js"></script>
+        <script type="text/javascript" src="dist/js/jquery-3.4.1.min.js"></script>
+        <script type="text/javascript" src="dist/js/site.min.js"></script>
+        <script type="text/javascript" src="dist/js/four.js"></script>
+        <link rel="stylesheet" href="dist/css/bootstrap-table.min.css">
+		<link rel="stylesheet" href="dist/css/bootstrap.min.css">
+		<script type="text/javascript" src="dist/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="dist/js/bootstrap-table.min.js"></script>
+		<script type="text/javascript" src="dist/js/bootstrap-table-zh-CN.min.js"></script>
+    </head>
+    
+    <body>
+        <div class="container-fluid">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                     <h3 class="panel-title"><a href="javascript:void(0);" class="toggle-sidebar"><span class="fa fa-angle-double-left" data-toggle="offcanvas" title="Maximize Panel"></span></a>订单</h3>
+
+                </div>
+                <div class="panel-body">
+                	<h3>订单信息</h3>
+                    <table id="orderContainer"></table>
+                    <br/>
+                    <div class="col-md-3">
+                    <button type="button" class="btn btn-default btn-block" onclick="entryStock()">导入Excel</button>
+                    </div>
+                    <div class="col-md-3">
+                    <button type="button" class="btn btn-primary btn-block">导出Excel</button>
+                    </div>
+                    <div class="col-md-3">
+                    <button type="button" class="btn btn-primary btn-block">保存</button>
+                    </div>
+                    <br/><br/>
+                    <hr/>
+                    <h3>入库订单信息</h3>
+                    <table id="outputOrderContainer"></table>
+                    <br/>
+                    <div class="col-md-3">
+                    <button type="button" class="btn btn-default btn-block" onclick="entryStock()">导出Excel</button>
+                    </div>
+                    <div class="col-md-3">
+                    <button type="button" class="btn btn-primary btn-block">出库</button>
+                    </div>
+                    <div class="col-md-3">
+                    <button type="button" class="btn btn-primary btn-block">销售</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+        	function entryStock() {
+        		var row = $.map($('#exampleTable1').bootstrapTable('getSelections'),function (row) {
+        		         return row;
+        		 });
+        		alert(row);
+        	}
+        	
+            $(function() {
+                //four.post();
+                four.table("orderContainer", '#', [{
+            		title : '订单单号',
+            		field : 'orderCode',
+            		sortable : true
+            	},{
+            		title : '客户款号',
+            		field : 'customCode',
+            		sortable : true
+            	}, {
+            		title : '种类',
+            		field : 'type',
+            		sortable : true
+            	}, {
+            		title : '规格',
+            		field : 'specifications',
+            	}, {
+            		title : '数量（重量）',
+            		field : 'weigth'
+            	}, {
+            		title : '单价',
+            		field : 'price'
+            	}, {
+            		title : '价格',
+            		field : 'amnt'
+            	}, {
+            		title : '钢板张数',
+            		field : 'count'
+            	}, {
+            		title : '备注',
+            		field : 'mark'
+            	}   ]);
+                
+                four.table("outputOrderContainer", '#', [  {
+                	checkbox: true,
+                	width : '3%'
+                },{
+            		title : '日期',
+            		field : 'customCode',
+            		sortable : true
+            	}, {
+            		title : '订单单号',
+            		field : 'orderCode',
+            		sortable : true
+            	}, {
+            		title : '客户单号',
+            		field : 'specifications',
+            	}, {
+            		title : '价格（元）',
+            		field : 'amnt'
+            	}, {
+            		title : '是否出库',
+            		field : 'isOut',
+					formatter : function(value, row, index) {
+            			
+            		}
+            	}, {
+            		title : '是否销售',
+            		field : 'isSell',
+            		formatter : function(value, row, index) {
+            			
+            		}
+            	}]);
+            });
+    
+        </script>
+    </body>
+
+</html>

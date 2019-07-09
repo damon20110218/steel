@@ -3,7 +3,7 @@ package cn.four.steel.bean.from;
 public class FrontOrder {
 	private Long orderId;
 	private String orderNo;
-	private String clientNo;
+	private String accountNo;
 	private Long clientId;
 	private Long specId;
 	private Double clientAmount;
@@ -27,11 +27,11 @@ public class FrontOrder {
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
 	}
-	public String getClientNo() {
-		return clientNo;
+	public String getAccountNo() {
+		return accountNo;
 	}
-	public void setClientNo(String clientNo) {
-		this.clientNo = clientNo;
+	public void setAccountNo(String accountNo) {
+		this.accountNo = accountNo;
 	}
 	public Long getClientId() {
 		return clientId;

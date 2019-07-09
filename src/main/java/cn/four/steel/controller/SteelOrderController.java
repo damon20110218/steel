@@ -49,11 +49,21 @@ public class SteelOrderController {
 			return "failed";
 		}
 	}
-
-	@RequestMapping(value = "/order/query", method = RequestMethod.POST)
-	public List<FrontOrder> queryOrder(String search, String year, String month, String isSale, String isOut) {
+	@RequestMapping(value="/order/orderNo", method = RequestMethod.POST)
+	public String generateStoreNo(){
 		try {
-			return steelOrderService.queryOrder(search, year, month, isSale, isOut);
+			String orderNo = steelOrderService.generateOrderNo();
+			return orderNo;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return "failed";
+		}
+	}
+	
+	@RequestMapping(value = "/order/query", method = RequestMethod.POST)
+	public List<FrontOrder> queryOrder(String orderNo, String clientId, String year, String month, String isSale, String isOut) {
+		try {
+			return steelOrderService.queryOrder(orderNo, clientId, year, month, isSale, isOut);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return null;
@@ -70,10 +80,10 @@ public class SteelOrderController {
 		}
 	}
 	@RequestMapping("/order/exportMain")
-	public void exportMainOrder(String search, String year, String month, String isSale, String isOut, 
+	public void exportMainOrder(String orderNo, String clientId, String year, String month, String isSale, String isOut, 
 			HttpServletResponse response) {
 		try {
-			List<FrontOrder> orders = steelOrderService.queryOrder(search, year, month, isSale, isOut);
+			List<FrontOrder> orders = steelOrderService.queryOrder(orderNo, clientId, year, month, isSale, isOut);
 			Date now = new Date();
 			String fileName = "main_order_" + now + ".xls";
 			response.setContentType("application/ms-excel;charset=UTF-8");
@@ -97,10 +107,10 @@ public class SteelOrderController {
 	}
 	
 	@RequestMapping("/order/exportSingle")
-	public void exportSingleOrder(String search, String year, String month, String isSale, String isOut, 
+	public void exportSingleOrder(String orderNo, String clientId, String year, String month, String isSale, String isOut, 
 			HttpServletResponse response) {
 		try {
-			List<FrontOrder> orders = steelOrderService.queryOrder(search, year, month, isSale, isOut);
+			List<FrontOrder> orders = steelOrderService.queryOrder(orderNo, clientId, year, month, isSale, isOut);
 			Date now = new Date();
 			String fileName = "single_order_" + now + ".xls";
 			response.setContentType("application/ms-excel;charset=UTF-8");
