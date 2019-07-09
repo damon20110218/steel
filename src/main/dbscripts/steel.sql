@@ -20,10 +20,13 @@ DROP TABLE steel_storage;
 CREATE TABLE steel_storage (storage_id int NOT NULL AUTO_INCREMENT, store_date date, client_no varchar(100), store_no varchar(100), steel_amount double(10,4), steel_factory varchar(200), year int, month int, spec_id int, client_id int, cash_amount double(10,2), price double(10,4), PRIMARY KEY (storage_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci COMMENT='工厂钢板入库信息表';
 DROP TABLE user;
 CREATE TABLE user (user_id int NOT NULL, user_name varchar(45), password varchar(45), role varchar(45), PRIMARY KEY (user_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci;
-CREATE TABLE steel_future_price (
-  price_id int(11) NOT NULL,
-  price double(10,4) DEFAULT NULL,
-  price_date date DEFAULT NULL,
-  price_code varchar(45) DEFAULT NULL,
-  PRIMARY KEY (price_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
+CREATE TABLE steel_future_price
+    (
+        price_id INT NOT NULL AUTO_INCREMENT,
+        price DOUBLE(10,4),
+        price_date DATE,
+        price_code VARCHAR(45),
+        price_type INT(2),
+        PRIMARY KEY (price_id)
+    )
+    ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci;
