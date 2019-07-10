@@ -71,9 +71,9 @@ public class SteelOrderController {
 	}
 
 	@RequestMapping(value = "/order/show", method = RequestMethod.POST)
-	public List<FrontOrder> showSingleOrder(String orderNo) {
+	public List<FrontOrder> showSingleOrder(String orderId) {
 		try {
-			return steelOrderService.showSingleOrder(orderNo);
+			return steelOrderService.showSingleOrder(orderId);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return null;

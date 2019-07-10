@@ -5,6 +5,7 @@ public class FrontOrder {
 	private String orderNo;
 	private String accountNo;
 	private Long clientId;
+	private Long categoryId;
 	private Long specId;
 	private Double clientAmount;
 	private Double price;
@@ -26,6 +27,12 @@ public class FrontOrder {
 	}
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
+	}
+	public Long getCategoryId() {
+		return categoryId;
+	}
+	public void setCategoryId(Long categoryId) {
+		this.categoryId = categoryId;
 	}
 	public String getAccountNo() {
 		return accountNo;

@@ -68,6 +68,8 @@
 			textField : 'text'
 		});
 		
+		
+		
 		$('#isOut').combobox({
 			data : boolVal,
 			valueField : 'id',
@@ -181,14 +183,15 @@
 		if(isModify != true){
 			//清除页面值
 			$("#customerList").combobox('setValue', '');
+			$("#orderId0").textbox('setValue', '');
 			$("#orderNo0").textbox('setValue', '');
-			$("#accoutNo0").val('');
-			$("#categoryId0").textbox('setValue', '');
+			$("#accountNo0").textbox('setValue', '');
+			$("#categoryId0").combobox('setValue', '');
 			$("#specId0").combobox('setValue', '');
-			$("#amount0").combobox('setValue', '');
-			$("#unit0").textbox('setValue', '');
+			$("#clientAmount0").textbox('setValue', '');
+			$("#unit0").combobox('setValue', '');
 			$("#price0").textbox('setValue', '');
-			$("#calcAmout0").textbox('setValue', '');
+			$("#steelCalcAmount0").textbox('setValue', '');
 			$("#comment0").textbox('setValue', '');
 			
 			
@@ -228,33 +231,29 @@
 		$("#order").datagrid('reload');
 	}
 	function modify(rowIndex) {
-		var a = $('#order').datagrid('selectRow', rowIndex);
-		var row = $('#order').datagrid('getSelected');
+		var row = $('#order').datagrid('getData').rows[rowIndex];
 		// 从后台订单详细信息
 		doAdd(true);
 		$.ajax({
 			type : "post",
-			url : '/order/show?orderNo=' + row.storeNo + "&clientNo=" + row.clientNo,
+			url : '/order/show?orderId=' + row.orderId,
 			contentType : "application/json; charset=utf-8",
 			dataType : "json",
 			success : function(data) {
 				$.each(data, function(index, item) {
 					// 公司设置值
 					$("#customerList").combobox('setValue', item.clientId);
-					$("#orderNo").textbox('setValue', item.orderNo);
-					// 入库单号设置值		
-					if(index == 0){
-						$("#storageId0").val(item.storageId);
-						$("#clientNo0").textbox('setValue', item.clientNo);
-						$("#categoryId0").combobox('setValue', item.categoryId);
-						$("#specId0").combobox('setValue', item.specId);
-						$("#amount0").textbox('setValue', item.amount);
-						$("#cashAmount0").textbox('setValue', item.cashAmount);
-						$("#price0").textbox('setValue', item.price);
-						$("#factory0").textbox('setValue', item.factory);
-					} else {
-						// 多条 调用insertNewRow，并赋值
-					}
+					$("#orderId0").val(item.orderId);
+					$("#orderNo0").textbox('setValue', item.orderNo);
+					$("#clientId0").textbox('setValue', item.clientId);
+					$("#accountNo0").textbox('setValue', item.accountNo);
+					$("#categoryId0").combobox('setValue', item.categoryId);
+					$("#specId0").combobox('setValue', item.specId);
+					$("#clientAmount0").textbox('setValue', item.clientAmount);
+					$("#unit0").combobox('setValue', item.unit);
+					$("#price0").textbox('setValue', item.price);
+					$("#steelCalcAmount0").textbox('setValue', item.steelCalcAmount);
+					$("#comment0").textbox('setValue', item.comment);
 				});
 			}
 		});
@@ -328,27 +327,27 @@
 							<th>操作</th>
 						</tr>
 						<tr id="row0">
-							<td><input type="text" style="display: none;"
+							<td><input type="text"  style="display: none;"
 								id="orderId0" name="orderId" /></td>
 							<td><input type="text" class="easyui-textbox" id="orderNo0"
 								name="orderNo" style="width: 95%; height: 32px" /></td>
-							<td><input type="text" class="easyui-textbox" id="accoutNo0"
-								name="accoutNo" style="width: 95%; height: 32px" /></td>
+							<td><input type="text" class="easyui-textbox" id="accountNo0"
+								name="accountNo" style="width: 95%; height: 32px" /></td>
 							<td><select id="categoryId0" class="easyui-combobox"
 								name="categoryId" style="width: 95%; height: 32px">
 							</select></td>
 							<td><select id="specId0" class="easyui-combobox"
 								name="specId" style="width: 95%; height: 32px">
 							</select></td>
-							<td><input type="text" class="easyui-textbox" id="amount0"
-								name="amount" style="width: 95%; height: 32px" /></td>
+							<td><input type="text" class="easyui-textbox" id="clientAmount0"
+								name="clientAmount" style="width: 95%; height: 32px" /></td>
 							<td><select id="unit0" class="easyui-combobox"
 								name="unit" style="width: 95%; height: 32px">
 							</select></td>
 							<td><input type="text" class="easyui-textbox" id="price0"
 								name="price" style="width: 95%; height: 32px" /></td>
-							<td><input type="text" class="easyui-textbox" id="calcAmout0"
-								name="calcAmout" style="width: 95%; height: 32px" /></td>
+							<td><input type="text" class="easyui-textbox" id="steelCalcAmount0"
+								name="steelCalcAmount" style="width: 95%; height: 32px" /></td>
 							<td><input type="text" class="easyui-textbox" id="comment0"
 								name="comment" style="width: 95%; height: 32px" /></td>
 							<td><input type="button" name="delete" value="删 除"
@@ -369,14 +368,33 @@
 		var flag = 0;
 		var firstCell = '<input type="text" style="display: none;" id="orderId0" name="orderId" />';
 		var secondCell = '<input type="text" class="easyui-textbox" id="orderNo0" name="orderNo" style="width: 95%; height: 32px" />';
-		var thirdCell = '<input type="text" class="easyui-textbox" id="accoutNo0" name="accoutNo" style="width: 95%; height: 32px" />';
+		var thirdCell = '<input type="text" class="easyui-textbox" id="accountNo0" name="accountNo" style="width: 95%; height: 32px" />';
 		var fourthCell = '<select id="categoryId0" class="easyui-combobox" name="categoryId" style="width: 95%; height: 32px"> </select>';
 		var fifthCell = '<select id="specId0" class="easyui-combobox" name="specId" style="width: 95%; height: 32px"> </select>';
-		var sixthCell = '<input type="text" class="easyui-textbox" id="amount0" name="amount" style="width: 95%; height: 32px" />';
+		var sixthCell = '<input type="text" class="easyui-textbox" id="clientAmount0" name="clientAmount" style="width: 95%; height: 32px" />';
 		var seventhCell = '<select id="unit0" class="easyui-combobox" name="unit" style="width: 95%; height: 32px"> </select>';
 		var eighthCell = '<input type="text" class="easyui-textbox" id="price0" name="price" style="width: 95%; height: 32px" />';
-		var nineCell = '<input type="text" class="easyui-textbox" id="calcAmout0" name="calcAmout" style="width: 95%; height: 32px" />';
+		var nineCell = '<input type="text" class="easyui-textbox" id="steelCalcAmount0" name="steelCalcAmount" style="width: 95%; height: 32px" />';
 		var tenCell = '<input type="text" class="easyui-textbox" id="comment0" name="comment" style="width: 95%; height: 32px" />';
+		
+		var unitVal = new Array();
+		
+		var unitZhang = {};
+		unitZhang.id = '张';
+		unitZhang.text = '张';
+		unitVal.push(unitZhang);
+		
+		var unitDun = {};
+		unitDun.id = '吨';
+		unitDun.text = '吨';
+		unitVal.push(unitDun);
+		
+		$('#unit0').combobox({
+			data : unitVal,
+			valueField : 'id',
+			textField : 'text'
+		});
+		
 		$("#categoryId0").combobox({
 			url : '/basic/category',
 			valueField : 'categoryId',
@@ -389,6 +407,8 @@
 				});
 			}
 		})
+		
+		
 		function insertNewRow() {
 			flag++;
 			//获取表格有多少行
@@ -442,7 +462,7 @@
 			$("#" + rowId + " td:eq(1)").children().eq(0).attr("id",
 					"orderNo" + flag);
 			$("#" + rowId + " td:eq(2)").children().eq(0).attr("id",
-					"accoutNo" + flag);
+					"accountNo" + flag);
 			$("#" + rowId + " td:eq(3)").children().eq(0).attr("id",
 					"categoryId" + flag);
 			$("#" + rowId + " td:eq(4)").children().eq(0).attr("id",
@@ -454,9 +474,16 @@
 			$("#" + rowId + " td:eq(7)").children().eq(0).attr("id",
 					"price" + flag);
 			$("#" + rowId + " td:eq(8)").children().eq(0).attr("id",
-					"calcAmout" + flag);
+					"steelCalcAmount" + flag);
 			$("#" + rowId + " td:eq(9)").children().eq(0).attr("id",
 					"comment" + flag);
+					
+			$('#unit' + flag).combobox({
+				data : unitVal,
+				valueField : 'id',
+				textField : 'text'
+			});
+		
 			$("#categoryId" + flag).combobox({
 				url : '/basic/category',
 				valueField : 'categoryId',
@@ -478,7 +505,8 @@
 					if (msg == "failed") { //获取失败
 						$.messager.alert('系统提示', '生成订单单号失败', 'error');
 					} else {
-						$("#orderNo"+flag).textbox("setValue", msg);
+						var orderNoFlag = msg.substring(0,2) + (parseInt(msg.substring(2))+flag);
+						$("#orderNo"+flag).textbox("setValue", orderNoFlag);
 					}
 				}
 			});
