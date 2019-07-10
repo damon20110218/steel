@@ -327,7 +327,18 @@
 				$("#specId0").combobox({
 					url : '/basic/spec?categoryId=' + rec.categoryId,
 					valueField : 'specId',
-					textField : 'thickness'
+					textField : 'thickness',
+					onSelect : function(spec){
+						// 获取最新价格
+						$.ajax({
+							type : "get",
+							url : "/price/cur_sale_price?specId=" + spec.specId, //提交到的url
+							contentType : "application/json; charset=utf-8",
+							success : function(price) {
+								$("#price0").textbox("setValue", price)
+							}
+						});
+					}
 				});
 			}
 		})
@@ -397,7 +408,19 @@
 					$("#specId" + thisId.substring(10)).combobox({
 						url : '/basic/spec?categoryId=' + rec.categoryId,
 						valueField : 'specId',
-						textField : 'thickness'
+						textField : 'thickness',
+						onSelect : function(spec){
+							thisId = $(this).attr("id");
+							// 获取最新价格
+							$.ajax({
+								type : "get",
+								url : "/price/cur_sale_price?specId=" + spec.specId, //提交到的url
+								contentType : "application/json; charset=utf-8",
+								success : function(price) {
+									$("#price" + thisId.substring(6)).textbox("setValue", price)
+								}
+							});
+						}
 					});
 				}
 			});

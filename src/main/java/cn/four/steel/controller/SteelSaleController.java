@@ -16,13 +16,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.four.steel.bean.DataGridResult;
 import cn.four.steel.bean.from.FrontSale;
 import cn.four.steel.bean.to.SingleSale;
+import cn.four.steel.cache.BaseDataCache;
 import cn.four.steel.service.SteelSaleService;
 import cn.four.steel.util.SteelExporter;
 
@@ -31,6 +34,9 @@ public class SteelSaleController {
 	private static Logger logger = LoggerFactory.getLogger(SteelSaleController.class);
 	@Autowired
 	private SteelSaleService steelSaleService;
+	
+	@Autowired
+	private BaseDataCache baseDataCache;
 
 	@RequestMapping(value = "/sale/update", method = RequestMethod.POST)
 	public String orderUpdate(@RequestBody JSONObject jsonParam, HttpServletRequest request) {
@@ -52,19 +58,40 @@ public class SteelSaleController {
 	}
 
 	@RequestMapping(value = "/sale/query", method = RequestMethod.POST)
-	public List<FrontSale> querySale(String saleNo, String year, String month) {
+	@ResponseBody
+	public DataGridResult<FrontSale> querySale(String saleNo, String year, String month, String page, String rows) {
+		DataGridResult<FrontSale> result = new DataGridResult<FrontSale>();
 		try {
-			return steelSaleService.querySale(saleNo, year, month);
+			List<FrontSale> sales = steelSaleService.querySale(saleNo, year, month);
+			result.setRows(sales);
+			 result.setTotal(20L);
+			 return result;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			return null;
+			return result;
 		}
 	}
-
+	@RequestMapping(value="/sale/saleNo", method = RequestMethod.POST)
+	public String generateStoreNo(){
+		try {
+			String storeNo = steelSaleService.generateSaleNo();
+			return storeNo;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return "failed";
+		}
+	}
 	@RequestMapping(value = "/sale/show", method = RequestMethod.POST)
 	public List<SingleSale> showSingleSale(String saleNo) {
+		List<SingleSale> sales = new ArrayList<>();
 		try {
-			return steelSaleService.showSingleSale(saleNo);
+			 sales = steelSaleService.showSingleSale(saleNo);
+			 for(SingleSale sale : sales){
+					Long categoryId = baseDataCache.getCategoryId(sale.getSpecId());
+					sale.setDisplay(baseDataCache.getSteelCategory(categoryId).getDisplay());
+					sale.setThickness(baseDataCache.getSteelSpecication(sale.getSpecId()).getThickness() + " mm");
+			 }
+			 return sales;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return null;
@@ -73,6 +100,7 @@ public class SteelSaleController {
 	
 	@RequestMapping(value = "/sale/load", method = RequestMethod.POST)
 	public List<SingleSale> loadSaleByOrderNo(@RequestBody JSONObject jsonParam) {
+		List<SingleSale> sales = new ArrayList<>();
 		try {
 			JSONArray array = jsonParam.getJSONArray("orderNos");
 			List<String> saleNos = new ArrayList<>();
@@ -81,10 +109,16 @@ public class SteelSaleController {
 					saleNos.add(array.getJSONObject(i).toJavaObject(String.class));
 				}
 			}
-			return steelSaleService.loadSaleByOrderNo(saleNos);
+			sales = steelSaleService.loadSaleByOrderNo(saleNos);
+			for(SingleSale sale : sales){
+				Long categoryId = baseDataCache.getCategoryId(sale.getSpecId());
+				sale.setDisplay(baseDataCache.getSteelCategory(categoryId).getDisplay());
+				sale.setThickness(baseDataCache.getSteelSpecication(sale.getSpecId()).getThickness() + "mm");
+			}
+			return sales;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			return null;
+			return sales;
 		}
 	}
 	@RequestMapping("/sale/export")
