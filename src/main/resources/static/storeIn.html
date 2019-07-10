@@ -322,7 +322,7 @@
 		$("#categoryId0").combobox({
 			url : '/basic/category',
 			valueField : 'categoryId',
-			textField : 'steelName',
+			textField : 'display',
 			onSelect : function(rec) {
 				$("#specId0").combobox({
 					url : '/basic/spec?categoryId=' + rec.categoryId,
@@ -391,7 +391,7 @@
 			$("#categoryId" + flag).combobox({
 				url : '/basic/category',
 				valueField : 'categoryId',
-				textField : 'steelName',
+				textField : 'display',
 				onSelect : function(rec) {
 					thisId = $(this).attr("id");
 					$("#specId" + thisId.substring(10)).combobox({

@@ -24,12 +24,12 @@
 			<!--div class="panel-heading">
                      <h3 class="panel-title"><a href="javascript:void(0);" class="toggle-sidebar"><span class="fa fa-angle-double-left" data-toggle="offcanvas" title="Maximize Panel"></span></a>首页</h3>
                 </div-->
-			<!--div class="panel-body">
-                    <div id="todayStockcontainer" style="min-width: 310px; height: 300px; margin: 0 auto"></div>
+			<div class="panel-body">
+                    <!--div id="todayStockcontainer" style="min-width: 310px; height: 300px; margin: 0 auto"></div>
                     <div id="todayOrdercontainer" style="min-width: 310px; height: 300px; margin: 0 auto"></div>
-                    <div id="todaySellcontainer" style="min-width: 310px; height: 300px; margin: 0 auto"></div>
+                    <div id="todaySellcontainer" style="min-width: 310px; height: 300px; margin: 0 auto"></div-->
                     <div class="content-row" id="singleDataContainer"></div>
-                </div-->
+                </div>
 			<div class="panel-body">
 				<div class="col-md-6">
 					<h3>张数转换器</h3>
@@ -41,14 +41,14 @@
 								class="easyui-textbox" id="clientAmount"
 								data-options="prompt:'请输入客户钢板数量',iconCls:'icon-man'"
 								style="width: 200px; height: 40px" /></td>
-							<td><input class="easyui-textbox"
+							<td><input class="easyui-textbox" id="standardAmount"
 								style="width: 200px; height: 40px" disabled /></td>
 						</tr>
 						<tr>
 							<td><select id="categoryId0" class="easyui-combobox"
 								name="categoryId" style="width: 200px; height: 32px">
 							</select>&nbsp;</td>
-							<td><input class="easyui-linkbutton"
+							<td><input class="btn btn-success btn-block" type="button"
 								style="width: 200px; height: 40px" value="计算"
 								onclick="calcStandardAmount()" /></td>
 						</tr>
@@ -59,17 +59,19 @@
 					<h3>理论价格器</h3>
 					<table class="table">
 						<tr>
-							<td><input class="easyui-textbox" id="clientWidth"
+							<td><input class="easyui-textbox" id="amount"
 								data-options="prompt:'请输入钢板张数',iconCls:'icon-man'"
 								style="width: 200px; height: 40px" />&nbsp;</td>
-							<td><input class="easyui-textbox"
+							<td><input class="easyui-textbox" id="price"
 								style="width: 200px; height: 40px" disabled /></td>
 						</tr>
 						<tr>
 							<td><select id="categoryId1" class="easyui-combobox"
 								name="categoryId" style="width: 200px; height: 32px">
-							</select>&nbsp;</td>
-							<td><input class="easyui-linkbutton"
+							</select>&nbsp;<select id="specId1" class="easyui-combobox" name="specId"
+								style="width: 200px; height: 32px">
+							</select></td>
+							<td><input class="btn btn-success btn-block" type="button"
 								style="width: 200px; height: 40px" value="计算"
 								onclick="calcPrice()" /></td>
 						</tr>
@@ -80,43 +82,89 @@
 	</div>
 	<script type="text/javascript">
 		$(function() {
-			for (var i = 0; i < 2; i++) {
-				$("#categoryId" + i).combobox({
-					url : '/basic/category',
-					valueField : 'categoryId',
-					textField : 'steelName'
-				});
-			}
-		});
-		function calcStandardAmount() {
-			var params = {};
+			$("#categoryId0").combobox({
+				url : '/basic/category',
+				valueField : 'categoryId',
+				textField : 'display'
+			});
+			$("#categoryId1").combobox({
+				url : '/basic/category',
+				valueField : 'categoryId',
+				textField : 'display',
+				onSelect : function(rec){
+					$("#specId1").combobox({
+						url : '/basic/spec?categoryId=' + rec.categoryId,
+						valueField : 'specId',
+						textField : 'thickness'
+					});
+				}
+			});
+			// 加载当日规格价格表
 			$.ajax({
 				type : "post",
-				url : "/calc/standart_amount", //提交到的url
+				url : "/price/today", //提交到的url
+				contentType : "application/json; charset=utf-8",
+				dataType : "json",
+				success : function(data) {
+					$.each(data,function(i, cate) {
+						var title = cate[0].steelName;
+						var titles = new Array();
+						var columns = new Array();
+						$.each(cate,function(j, spec) {
+							titles.push(spec.thickness +' mm');
+							columns.push(spec.price)
+						});
+						 $("#singleDataContainer").append(four.singleTable(title, titles, columns));
+					});
+				}
+			});
+		});
+		function calcStandardAmount() {
+			var clientWidth = $("#clientWidth").textbox('getValue');
+			if(clientWidth == ''){
+				$.messager.alert('系统提示', '请输入客户钢板宽度', 'error');
+				return;
+			}
+			var clientAmount = $("#clientAmount").textbox('getValue');
+			if(clientAmount == ''){
+				$.messager.alert('系统提示', '请输入客户钢板数量', 'error');
+				return;
+			}
+			var categoryId = $("#categoryId0").combobox('getValue');
+			if(categoryId == ''){
+				$.messager.alert('系统提示', '请选择钢板种类', 'error');
+				return;
+			}
+			var params = {'clientWidth':clientWidth, 'clientAmount':clientAmount, 'categoryId':categoryId};
+			$.ajax({
+				type : "post",
+				url : "/calc/standartamount", //提交到的url
 				contentType : "application/json; charset=utf-8",
 				data : JSON.stringify(params),
 				success : function(msg) {
-					if (msg == "Success") { //修改成功		
-
-					} else { //修改失败
-
-					}
+					$("#standardAmount").textbox('setValue', msg);
 				}
 			});
 		}
 		function calcPrice() {
-			var params = {};
+			var amount = $("#amount").textbox('getValue');
+			if(clientWidth == ''){
+				$.messager.alert('系统提示', '请输入客户钢板数量', 'error');
+				return;
+			}
+			var specId = $("#specId1").combobox('getValue');
+			if(specId == ''){
+				$.messager.alert('系统提示', '请选择钢板规格', 'error');
+				return;
+			}
+			var params = {'amount':amount, 'specId':specId};
 			$.ajax({
 				type : "post",
-				url : "/calc/standart_amount", //提交到的url
+				url : "/calc/formula_price", //提交到的url
 				contentType : "application/json; charset=utf-8",
 				data : JSON.stringify(params),
 				success : function(msg) {
-					if (msg == "Success") { //修改成功		
-
-					} else { //修改失败
-
-					}
+					$("#price").textbox('setValue', msg);
 				}
 			});
 		}

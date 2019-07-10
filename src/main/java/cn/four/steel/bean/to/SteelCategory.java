@@ -9,6 +9,7 @@ public class SteelCategory {
 	private String steelCode;
 	private Long length;
 	private Long width;
+	private String display;
 	private List<SteelSpecication> specs;
 	public SteelCategory(){
 		specs = new ArrayList<>();
@@ -51,5 +52,11 @@ public class SteelCategory {
 	}
 	public void setSpecs(List<SteelSpecication> specs) {
 		this.specs = specs;
+	}
+	public String getDisplay() {
+		return display;
+	}
+	public void setDisplay(String display) {
+		this.display = display;
 	}
 }

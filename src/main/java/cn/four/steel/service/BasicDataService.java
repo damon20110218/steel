@@ -61,6 +61,7 @@ public class BasicDataService {
 				category.setWidth(Long.valueOf(String.valueOf(map.get("width"))));
 				category.setSteelName(String.valueOf(map.get("steel_name")));
 				category.setSpecs(loadSpecs(null, categId));
+				category.setDisplay(category.getSteelName() + category.getLength() + "*" + category.getWidth());
 				categories.add(category);
 			}
 		}
@@ -199,7 +200,12 @@ public class BasicDataService {
 				")";
 		List<Object> params = new ArrayList<Object>();
 		params.add(specId);
-		Map<String, Object> map = jdbcTemplate.queryForMap(querySQL, params.toArray());
+		Map<String, Object> map = null;
+		try{
+		   map = jdbcTemplate.queryForMap(querySQL, params.toArray());
+		} catch(Exception e){
+			
+		}
 		double singleSteelPrice = 0D;
 		if(map != null){
 			double thickness = Double.valueOf(String.valueOf(map.get("thickness")));

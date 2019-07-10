@@ -23,16 +23,30 @@ public class SteelPriceService {
 		String insertSql = "insert into steel_price(price_code, price, price_date, price_type) values(?,?,?,?)";
 		String futureSql = "insert into steel_future_price(price_code, price, price_date, price_type) values(?,?,?,?)";
 		List<Object> params = new ArrayList<Object>();
+		Date now = new Date();
 		if("1".equals(price.getPriceType())){
 			// TODO 当日期货价格会保存多条记录
 			if(price.getPrice() == null){
 				return;
 			}
-			params.add(price.getPriceCode());  // 钢材规格ID
-			params.add(price.getPrice());  // 钢材价格
-			params.add(new Date());  // 价格录入日期
-			params.add(price.getPriceType());
-			jdbcTemplate.update(futureSql, params.toArray());
+			String querySQL = "select count(*) from steel_future_price where price_code = ? and price_date = ?";
+			params.add(price.getPriceCode());
+			params.add(SteelUtil.formatDate(now , null));
+			Long cnt = jdbcTemplate.queryForObject(querySQL, params.toArray(), Long.class);
+			if(cnt == 0){
+				params.clear();
+				params.add(price.getPriceCode()); // 钢材规格ID
+				params.add(price.getPrice()); // 钢材价格
+				params.add(now); // 价格录入日期
+				params.add(price.getPriceType());
+				jdbcTemplate.update(futureSql, params.toArray());
+			} else{
+				String updateSQL = "update steel_future_price set price = ? where price_code = ? and price_date = ?";
+				params.add(price.getPrice());  // 钢材价格
+				params.add(price.getPriceCode());  // 钢材规格ID
+				params.add(SteelUtil.formatDate(now , null));  
+				jdbcTemplate.update(updateSQL, params.toArray());
+			}
 		} else {
 			if(price.getPrice() == null){
 				return;
@@ -44,13 +58,13 @@ public class SteelPriceService {
 			if(cnt == 0){
 				params.add(price.getPriceCode());  // 钢材规格ID
 				params.add(price.getPrice());  // 钢材价格
-				params.add(new Date());  // 价格录入日期
+				params.add(now);  // 价格录入日期
 				params.add(price.getPriceType());
 				jdbcTemplate.update(insertSql, params.toArray());
 			} else{
 				String updateSQL = "update steel_price set price = ?, price_date = ? where price_code = ?";
 				params.add(price.getPrice());  // 钢材价格
-				params.add(new Date());  // 价格录入日期
+				params.add(now);  // 价格录入日期
 				params.add(price.getPriceCode());  // 钢材规格ID
 				jdbcTemplate.update(updateSQL, params.toArray());
 			}
@@ -64,29 +78,8 @@ public class SteelPriceService {
 		return 0;
 	}
 	public List<Price> loadTodayPrice(){
-		String querySQL = "SELECT " + 
-				"	ss.thickness, " + 
-				"	sc.steel_name, " + 
-				"	sp.price " + 
-				"FROM " + 
-				"	steel_specs ss, " + 
-				"	steel_category sc, " + 
-				"	steel_price sp " + 
-				"WHERE " + 
-				"	(sp.price_code, sp.price_id) IN ( " + 
-				"		SELECT " + 
-				"			price_code, " + 
-				"			max(price_id) " + 
-				"		FROM " + 
-				"			steel_price " + 
-				"		WHERE " + 
-				"			price_type = 2 " + 
-				"		GROUP BY " + 
-				"			price_code " + 
-				"	)\n" + 
-				"AND sp.price_type = 2 " + 
-				"AND ss.category_id = sc.category_id " + 
-				"AND ss.price_code = sp.price_code";
+		String querySQL = " select distinct sp.price, ss.thickness, sc.steel_name from steel_price sp, steel_specs ss, steel_category sc "
+						 +" where sp.price_code = ss.price_code and ss.category_id = sc.category_id order by sc.steel_name, thickness";
 		List<Map<String,Object>> list = jdbcTemplate.queryForList(querySQL);
 		List<Price> prices = new ArrayList<>();
 		if(list != null){
