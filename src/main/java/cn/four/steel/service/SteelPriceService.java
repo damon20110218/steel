@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ import cn.four.steel.util.SteelUtil;
 @Transactional
 @Service
 public class SteelPriceService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(SteelPriceService.class);
 	@Autowired
     private JdbcTemplate jdbcTemplate;
 	
@@ -72,7 +76,16 @@ public class SteelPriceService {
 	}
 	
 	public double findPrice(long specId){
-		return 0;
+		String querySQL = "select sp.price from steel_specs ss, steel_price sp where ss.price_code = sp.price_code and ss.spec_id = ?";
+		List<Object> params = new ArrayList<Object>();
+		params.add(specId);
+		Double p = 0.0;
+		try {
+			p = jdbcTemplate.queryForObject(querySQL, params.toArray(), Double.class);
+		} catch(Exception e){
+			logger.error(e.getMessage());
+		}
+		return p;
 	}
 	public double findPrice(long specId, Date date){
 		return 0;

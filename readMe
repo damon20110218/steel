@@ -15,3 +15,24 @@
 			    	   });
 				   }
 			});
+			
+									<tr id="row0">
+							<td><input type="text" style="display: none;"
+								id="saleId0" name="saleId" /></td>
+							<td><input type="text" class="easyui-textbox" id="orderNo0"
+								name="orderNo" style="width: 95%; height: 32px" disabled/></td>
+							<td><input id="accountNo0" class="easyui-textbox"
+								name="accountNo" style="width: 95%; height: 32px" disabled/></td>
+							<td><input id="catgoryId0" class="easyui-textbox"
+								name="catgoryId" style="width: 95%; height: 32px" disabled /></td>
+							<td><input type="text" class="easyui-textbox" id="specId0"
+								name="specId" style="width: 95%; height: 32px" disabled/></td>
+							<td><input type="text" class="easyui-textbox" id="saleAmount0" 
+								name="saleAmount" style="width: 95%; height: 32px" /></td>
+							<td><input type="text" class="easyui-textbox" id="unit0"
+								name="unit" style="width: 95%; height: 32px" /></td>
+							<td><input type="text" class="easyui-textbox" id="price0"
+								name="price" style="width: 95%; height: 32px" /></td>
+							<td><input type="text" class="easyui-textbox" id="cashAmount0"
+								name="cashAmount" style="width: 95%; height: 32px" /></td>
+						</tr>

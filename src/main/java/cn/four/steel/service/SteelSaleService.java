@@ -91,7 +91,7 @@ public class SteelSaleService {
 	}
 	
 	public List<SingleSale> showSingleSale(String saleNo){
-		String showSQL = "select s.sale_id, s.sale_no, o.client_id, o.client_no, o.spec_id, price, s.sale_amount, s.cash_amount, o.unit "
+		String showSQL = "select s.sale_id, s.sale_no, o.client_id, o.account_no, o.spec_id, price, s.sale_amount, s.cash_amount, o.unit "
 				+ "from steel_sale s, steel_order o where s.order_no = o.order_no sale_no = ?";
 		List<Object> params = new ArrayList<Object>();
 		params.add(saleNo);
@@ -103,7 +103,7 @@ public class SteelSaleService {
 				sale.setSaleId(Long.valueOf(String.valueOf(m.get("sale_id"))));
 				sale.setSaleNo(String.valueOf(m.get("sale_no")));
 				sale.setClientId(Long.valueOf(String.valueOf(m.get("client_id"))));
-				sale.setClientNo(String.valueOf(m.get("client_no")));
+				sale.setAccountNo(String.valueOf(m.get("account_no")));
 				sale.setSpecId(Long.valueOf(String.valueOf(m.get("spec_id"))));
 				sale.setPrice(Double.valueOf(String.valueOf(m.get("price"))));
 				sale.setSaleAmount(Double.valueOf(String.valueOf(m.get("sale_amount"))));
@@ -116,7 +116,7 @@ public class SteelSaleService {
 	}
 	
 	public List<SingleSale> loadSaleByOrderNo(List<String> orderNos){
-		String showSQL = "select order_no, client_no, spec_id, client_id, unit, price from steel_order  where order_no = ?";
+		String showSQL = "select order_no, account_no, spec_id, client_id, unit, price from steel_order  where order_no = ?";
 		List<Object> params = new ArrayList<Object>();
 		List<SingleSale> sales = new ArrayList<>();
 		if (orderNos != null) {
@@ -128,7 +128,7 @@ public class SteelSaleService {
 					for (Map<String, Object> m : list) {
 						SingleSale sale = new SingleSale();
 						sale.setOrderNo(String.valueOf(m.get("order_no")));
-						sale.setClientNo(String.valueOf(m.get("client_no")));
+						sale.setAccountNo(String.valueOf(m.get("account_no")));
 						sale.setSpecId(Long.valueOf(String.valueOf(m.get("spec_id"))));
 						sale.setClientId(Long.valueOf(String.valueOf(m.get("client_id"))));
 						sale.setUnit(String.valueOf(m.get("unit")));
@@ -139,5 +139,25 @@ public class SteelSaleService {
 			}
 		}
 		return sales;
+	}
+	
+	public String generateSaleNo(){
+		String querySQL = "select sale_no from steel_sale where sale_date = ? order by sale_no desc";
+		List<Object> params = new ArrayList<Object>();
+		Date now = new Date();
+		params.add(SteelUtil.formatDate(now, null));
+		String newStoreNo = "";
+		List<Map<String, Object>> list = jdbcTemplate.queryForList(querySQL, params.toArray());
+		
+		if(list == null || list.size() == 0){
+			newStoreNo = "XS" + SteelUtil.formatDate(now, null) + "01";
+		} else {
+			Map<String, Object> m = list.get(0);
+			String curMaxStoreNo = String.valueOf(m.get("sale_no"));
+			Long l = Long.valueOf(curMaxStoreNo.substring(10));
+			String str = String.format("%02d", l+1);
+			newStoreNo = "XS" + SteelUtil.formatDate(now, null) + str;
+		}
+		return newStoreNo;
 	}
 }
