@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>钢材库存</title>
+<link rel="stylesheet" href="dist/css/site.min.css">
+
+<script type="text/javascript" src="dist/js/four.js"></script>
+
+
+<!-- 导入jquery核心类库 -->
+<script type="text/javascript" src="dist/js/jquery-3.4.1.min.js"></script>
+<!-- 导入easyui类库 -->
+<link rel="stylesheet" type="text/css" href="css/easyui.css">
+<link rel="stylesheet" type="text/css" href="css/icon.css">
+<script type="text/javascript" src="dist/js/jquery.easyui.min.js"></script>
+<script src="dist/js/easyui-lang-zh_CN.js" type="text/javascript"></script>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<a href="javascript:void(0);" class="toggle-sidebar"><span
+						class="fa fa-angle-double-left" data-toggle="offcanvas"
+						title="Maximize Panel"></span></a>库存
+				</h3>
+
+			</div>
+			<div class="panel-body">
+				<div class="col-md-2">
+					<select id="categoryId" class="easyui-combobox"
+						style="width: 95%; height: 32px">
+					</select>
+				</div>
+				<br />
+				<table id="stockContainer"></table>
+				<br /> <br /> <br />
+				<hr />
+				<h3>钢材出入库信息</h3>
+
+				<div class="col-md-3" style="margin-left: -15px;">
+					<input class="easyui-combobox" id="year"
+						data-options="prompt:'请选择年份',iconCls:'icon-man'"
+						style="width: 200px; height: 40px" /> &nbsp; <input
+						class="easyui-combobox" id="month"
+						data-options="prompt:'请选择月份',iconCls:'icon-man'"
+						style="width: 200px; height: 40px" />
+				</div>
+				<div class="col-md-3">
+					<button type="button" class="btn btn-success btn-block">搜索</button>
+				</div>
+				<br /> <br />
+				<table id="sellContainer"></table>
+				<br />
+				<div class="col-md-3" style="margin-left: -15px;">
+					<button type="button" class="btn btn-default btn-block">导出Excel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+	$(function() {
+		$("#categoryId").combobox({
+			url : '/inventory/category',
+			valueField : 'steelName',
+			textField : 'steelName',
+			onSelect : function(rec) {
+				//刷新table
+			}
+		});
+	});
+	</script>
+</body>
+
+</html>

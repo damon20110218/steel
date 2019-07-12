@@ -22,11 +22,11 @@ public class SteelInventoryService {
 		String querySQL = "select inventory_date, steel_name, thickness, store_in, store_out from steel_inventory si where 1=1";
 		List<Object> params = new ArrayList<Object>();
 		if(year != null && !"".equals(year)){
-			querySQL += "and year = ?";
+			querySQL += " and year = ?";
 			params.add(year);
 		}
 		if(month != null && !"".equals(month)){
-			querySQL += "and month = ?";
+			querySQL += " and month = ?";
 			params.add(month);
 		}
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(querySQL, params.toArray());
@@ -45,8 +45,9 @@ public class SteelInventoryService {
 		return inventories;
 	}
 	public List<SingleInventory> calcAllInventory(String steelName){
-		String querySQL = "select thickness, sum(diff) as sum from (select thickness, (steel_in-store_out) as diff from steel_inventory si steel_name = ?) group by thickness order by thickness";
+		String querySQL = "select thickness, sum(diff) as sum from (select thickness, (store_in-store_out) as diff from steel_inventory si where steel_name = ?) tt group by thickness order by thickness";
 		List<Object> params = new ArrayList<Object>();
+		params.add(steelName);
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(querySQL, params.toArray());
 		List<SingleInventory> inventories = new ArrayList<>();
 		if(list != null){

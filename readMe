@@ -36,3 +36,21 @@
 							<td><input type="text" class="easyui-textbox" id="cashAmount0"
 								name="cashAmount" style="width: 95%; height: 32px" /></td>
 						</tr>
+
+						
+						onSelect : function(rec) {
+				$.ajax({
+					type : "post",
+					url : "/inventory/calc?steelName="+ rec.steelName, //提交到的url
+					contentType : "application/json; charset=utf-8",
+					dataType : "json",
+					success : function(data) {
+						var titles = new Array();
+						var columns = new Array();
+						$.each(data,function(i, cate) {
+							titles.push(cate.thickness +' mm');
+							columns.push(cate.inventory)
+						});
+						$("#stockContainer").append(four.singleTable('', titles, columns));
+					}
+				})

@@ -3,7 +3,20 @@ CREATE TABLE client_info (client_id int NOT NULL AUTO_INCREMENT, client_name var
 DROP TABLE steel_category;
 CREATE TABLE steel_category (category_id int NOT NULL, steel_name varchar(200), steel_en_name varchar(200), steel_code varchar(45), length int, width int, calc_type varchar(45), PRIMARY KEY (category_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci COMMENT='钢板种类表，维护钢板名称，长度与宽度';
 DROP TABLE steel_inventory;
-CREATE TABLE steel_inventory (inventory_id int NOT NULL AUTO_INCREMENT, spec_id varchar(45), inventory_date varchar(45), store_in double(10,4), store_out double(10,4), year int, month int, PRIMARY KEY (inventory_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci;
+CREATE TABLE
+    steel_inventory
+    (
+        inventory_id INT NOT NULL AUTO_INCREMENT,
+        inventory_date DATE,
+        store_in DOUBLE(10,4) DEFAULT 0.0000,
+        store_out DOUBLE(10,4) DEFAULT 0.0000,
+        YEAR INT,
+        MONTH VARCHAR(200),
+        steel_name VARCHAR(200),
+        thickness DOUBLE(10,4),
+        PRIMARY KEY (inventory_id)
+    )
+    ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci;
 DROP TABLE steel_order;
 CREATE TABLE steel_order (order_id int NOT NULL AUTO_INCREMENT, order_date date not null, order_no varchar(45) not null, client_id int not null, account_no varchar(45) not null, spec_id int  not null, client_amount double(10,4)  not null, price double(10,4)  not null, steel_calc_amount varchar(100)  not null, comment varchar(400), is_out int(2)  not null COMMENT '0-未出库  1-已出库', is_sale int(2)   not null COMMENT '0-未销售  1-已销售', is_delete int(2) not null, unit varchar(45)  not null, year int(4)  not null, month int(2)  not null, PRIMARY KEY (order_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci COMMENT='钢板订单表';
 DROP TABLE steel_outbound;
