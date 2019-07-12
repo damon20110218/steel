@@ -21,13 +21,13 @@ public class SteelSaleService {
 	private JdbcTemplate jdbcTemplate;
 
 	public void updateSale(List<FrontSale> sales) {
-		String insertSQL = "insert into steel_sale(sale_date, sale_no, sale_amount, cash_amount "
+		String insertSQL = "insert into steel_sale(sale_date, sale_no, order_no, sale_amount, cash_amount, "
 				+ " year, month) "
-				+ "values(?,?,?,?,?,?)";
-		String updateOrderSQL = "update steel_order set is_sale = ?, price = ? where sale_no = ?";
+				+ "values(?,?,?,?,?,?,?)";
+		String updateOrderSQL = "update steel_order set is_sale = ?, price = ? where order_no = ?";
 		String updateSQL = "update steel_sale set sale_date = ?, "
 				+ "sale_no = ?, sale_amount =?,"
-				+ "client_amount = ?, year = ?, month = ? where sale_id = ?";
+				+ "cash_amount = ?, year = ?, month = ? where sale_id = ?";
 		Date now = new Date();
 		List<Object> params = new ArrayList<Object>();
 		for (int i = 0; i < sales.size(); i++) {
@@ -36,9 +36,10 @@ public class SteelSaleService {
 			if(sale.getSaleId() == null){
 				params.add(now);
 				params.add(sale.getSaleNo());
+				params.add(sale.getOrderNo());
 				params.add(sale.getSaleAmount());
 				params.add(sale.getCashAmount());
-				params.add(now.getYear());
+				params.add(now.getYear() + 1900);
 				params.add(now.getMonth() + 1);
 				jdbcTemplate.update(insertSQL, params.toArray());
 			} else{
@@ -46,7 +47,7 @@ public class SteelSaleService {
 				params.add(sale.getSaleNo());
 				params.add(sale.getSaleAmount());
 				params.add(sale.getCashAmount());
-				params.add(now.getYear());
+				params.add(now.getYear() + 1900);
 				params.add(now.getMonth() + 1);
 				params.add(sale.getSaleId());
 				jdbcTemplate.update(updateSQL, params.toArray());
@@ -54,13 +55,13 @@ public class SteelSaleService {
 			params.clear();
 			params.add("1");
 			params.add(sale.getPrice());
-			params.add(sale.getSaleNo());
+			params.add(sale.getOrderNo());
 			jdbcTemplate.update(updateOrderSQL, params.toArray());
 		}
 	}
 	
 	public List<FrontSale> querySale(String saleNo, String year, String month){
-		String querySQL = "select sale_no, sum(cash_amount) as cash_amount, max(sale_date) from steel_sale where 1=1";
+		String querySQL = "select sale_no, sum(cash_amount) as cash_amount, max(sale_date) as sale_date from steel_sale where 1=1";
 		List<Object> params = new ArrayList<Object>();
 		if(year != null && !"".equals(year)){
 			querySQL += " and year = ?";
@@ -71,11 +72,10 @@ public class SteelSaleService {
 			params.add(month);
 		}
 		if(saleNo != null && !"".equals(saleNo)){
-			querySQL += " and  sale_no = ?";
-			params.add("%" + saleNo + "%");
+			querySQL += " and  sale_no like ?";
 			params.add("%" + saleNo + "%");
 		}
-		querySQL += "group by sale_no";
+		querySQL += " group by sale_no";
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(querySQL, params.toArray());
 		List<FrontSale> sales = new ArrayList<>();
 		if(list != null && list.size() != 0){
@@ -91,8 +91,8 @@ public class SteelSaleService {
 	}
 	
 	public List<SingleSale> showSingleSale(String saleNo){
-		String showSQL = "select s.sale_id, s.sale_no, o.client_id, o.account_no, o.spec_id, price, s.sale_amount, s.cash_amount, o.unit "
-				+ "from steel_sale s, steel_order o where s.order_no = o.order_no sale_no = ?";
+		String showSQL = "select s.sale_id, s.sale_no, o.client_id, o.order_no, o.account_no, o.spec_id, price, s.sale_amount, s.cash_amount, o.unit "
+				+ "from steel_sale s, steel_order o where s.order_no = o.order_no and sale_no = ?";
 		List<Object> params = new ArrayList<Object>();
 		params.add(saleNo);
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(showSQL, params.toArray());
@@ -101,8 +101,9 @@ public class SteelSaleService {
 			for(Map<String, Object> m : list){
 				SingleSale sale = new SingleSale();
 				sale.setSaleId(Long.valueOf(String.valueOf(m.get("sale_id"))));
-				sale.setSaleNo(String.valueOf(m.get("sale_no")));
+				sale.setSaleNo(saleNo);
 				sale.setClientId(Long.valueOf(String.valueOf(m.get("client_id"))));
+				sale.setOrderNo(String.valueOf(m.get("order_no")));
 				sale.setAccountNo(String.valueOf(m.get("account_no")));
 				sale.setSpecId(Long.valueOf(String.valueOf(m.get("spec_id"))));
 				sale.setPrice(Double.valueOf(String.valueOf(m.get("price"))));
@@ -116,7 +117,7 @@ public class SteelSaleService {
 	}
 	
 	public List<SingleSale> loadSaleByOrderNo(List<String> orderNos){
-		String showSQL = "select order_no, account_no, spec_id, client_id, unit, price from steel_order  where order_no = ?";
+		String showSQL = "select order_no, account_no, spec_id, client_id, unit, price from steel_order where order_no = ? ";
 		List<Object> params = new ArrayList<Object>();
 		List<SingleSale> sales = new ArrayList<>();
 		if (orderNos != null) {

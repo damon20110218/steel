@@ -102,14 +102,15 @@ public class SteelSaleController {
 	public List<SingleSale> loadSaleByOrderNo(@RequestBody JSONObject jsonParam) {
 		List<SingleSale> sales = new ArrayList<>();
 		try {
-			JSONArray array = jsonParam.getJSONArray("orderNos");
-			List<String> saleNos = new ArrayList<>();
-			if (array != null && array.size() != 0) {
-				for (int i = 0; i < array.size(); i++) {
-					saleNos.add(array.getJSONObject(i).toJavaObject(String.class));
+			String array = jsonParam.getString("orderNos");
+			List<String> orderNos = new ArrayList<>();
+			if (array != null && !"".equals(array)) {
+				String[] ons = array.split(",");
+				for(int i = 0; i < ons.length; i++){
+					orderNos.add(ons[i]);
 				}
 			}
-			sales = steelSaleService.loadSaleByOrderNo(saleNos);
+			sales = steelSaleService.loadSaleByOrderNo(orderNos);
 			for(SingleSale sale : sales){
 				Long categoryId = baseDataCache.getCategoryId(sale.getSpecId());
 				sale.setDisplay(baseDataCache.getSteelCategory(categoryId).getDisplay());

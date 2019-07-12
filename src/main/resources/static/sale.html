@@ -113,8 +113,18 @@
 			height : 850,
 			resizable : true
 		});
+		var type = getQueryString('type');
+		
+		if( type == undefined || type == null || type != 'query'){
+			doAdd(false);
+		}
+		
 	});
-
+	function getQueryString(name) {                                       //name为传入参数
+	    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");     
+	    var r = window.location.search.substr(1).match(reg);
+	    if (r != null) return unescape(r[2]); return null;            
+	}
 	function doAdd(isModify) {
 		$('#addSaleWindow').window("open");
 		// 加载 公司列表，并设置默认值
@@ -133,8 +143,25 @@
 					if (msg == "failed") { //获取失败
 						$.messager.alert('系统提示', '生成入库单号失败', 'error');
 					} else {
-						$("#saleNo").textbox("setValue", msg)
+						$("#saleNo").textbox("setValue", msg);
 					}
+				}
+			});
+			
+			var orderNos = getQueryString('orderNos');
+			console.log(orderNos);
+			// 根据 OrderNos 查询订单数据，打开销售新增页面
+			var params = {"orderNos" : orderNos}
+			$.ajax({
+				type : "post",
+				url : "/sale/load", //提交到的url
+				contentType : "application/json; charset=utf-8",
+				data : JSON.stringify(params),
+				dataType : 'json',
+				success : function(data) {
+					$.each(data,function(i, sale) {
+						addRow(i, sale);
+					});
 				}
 			});
 		}
@@ -154,6 +181,11 @@
 		var a = $('#sale').datagrid('selectRow', rowIndex);
 		var row = $('#sale').datagrid('getSelected');
 		doAdd(true);
+		// 先删除之前生成的table行
+		var rowLength = $("#saleTable tr").length;
+		for(var i = 0; i < rowLength-2; i++){
+			$("#row" + i).remove();
+		}
 		// 根据后台订单的数据 动态画表格，填充数据
 		$.ajax({
 				type : "post",
@@ -162,41 +194,49 @@
 				dataType : 'json',
 				success : function(data) {
 					$.each(data,function(i, sale) {
-						var tr = '<tr id="row' + i + '">';
-						tr += '<td><input type="text" style="display: none;" id="saleId" ' + i +' name="saleId"/></td>';
-						tr += '<td><input class="easyui-textbox" id="orderNo" ' + i +' name="orderNo" style="width: 95%; height: 32px" disabled/></td>';
-						tr += '<td><input class="easyui-textbox" id="accountNo" ' + i +' name="accountNo" style="width: 95%; height: 32px" disabled/></td>';
-						tr += '<td><input class="easyui-textbox" id="catgoryId" ' + i +' name="catgoryId" style="width: 95%; height: 32px" disabled /></td>';
-						tr += '<td><input class="easyui-textbox" id="specId" ' + i +' name="specId" style="width: 95%; height: 32px" disabled/></td>';
-						tr += '<td><input class="easyui-textbox" id="saleAmount" ' + i +' name="saleAmount" style="width: 95%; height: 32px" /></td>';
-						tr += '<td><input class="easyui-combobox" id="unit" ' + i +' name="unit" style="width: 95%; height: 32px" /></td>';
-						tr += '<td><input class="easyui-textbox" id="price" ' + i +' name="price" style="width: 95%; height: 32px" /></td>';
-						tr += '<td><input class="easyui-textbox" id="cashAmount" ' + i +' name="cashAmount" style="width: 95%; height: 32px" /></td>';
-						tr +='</tr>';
-						var rowLength = $("#saleTable tr").length;
-						$("#saleTable tr:eq(" + (rowLength - 2) + ")").after(tr); //将新拼接的一行插入到当前行的下面
-						// 自动渲染每个easyui 控件
-						$("#row" + i).children().each(function(i, e) {
-							$.parser.parse(e);
-						});		
-						$('#unit' + i).combobox({
-							data : [{"id":"张", "text":"张"}, {"id":"吨", "text":"吨"}],
-							valueField : 'id',
-							textField : 'text'
-						});
-						// 设置单元格值
-						$("saleId" + i).val(sale.saleId);
-						$("#orderNo" + i).textbox('setValue', item.clientNo);
-						$("#accountNo" + i).textbox('setValue', item.clientNo);
-						$("#catgoryId" + i).textbox('setValue', item.clientNo);
-						$("#specId" + i).textbox('setValue', item.clientNo);
-						$("#saleAmount" + i).textbox('setValue', item.clientNo);
-						$("#unit" + i).textbox('setValue', item.clientNo);
-						$("#price" + i).textbox('setValue', item.clientNo);
-						$("#cashAmount" + i).textbox('setValue', item.clientNo);
+						if(i == 0){
+							$("#saleNo").textbox("setValue", sale.saleNo)
+						}
+						addRow(i, sale);
 					});
 				}
 		});
+	}
+	function addRow(i, sale){
+		var tr = '<tr id="row' + i + '">';
+		tr += '<td><input type="text" style="display: none;" id="saleId' + i +'" name="saleId"/></td>';
+		tr += '<td><input class="easyui-textbox" id="orderNo' + i +'" style="width: 95%; height: 32px" disabled/><input type="text" style="display: none;" id="orderNoHide' + i +'" name="orderNo"/></td>';
+		tr += '<td><input class="easyui-textbox" id="accountNo' + i +'" name="accountNo" style="width: 95%; height: 32px" disabled/></td>';
+		tr += '<td><input class="easyui-textbox" id="catgoryId' + i +'" style="width: 95%; height: 32px" disabled /></td>';
+		tr += '<td><input class="easyui-textbox" id="specId' + i +'" style="width: 95%; height: 32px" disabled/></td>';
+		tr += '<td><input class="easyui-textbox" id="saleAmount' + i +'" name="saleAmount" style="width: 95%; height: 32px" /></td>';
+		tr += '<td><input class="easyui-combobox" id="unit' + i +'" name="unit" style="width: 95%; height: 32px" disabled/></td>';
+		tr += '<td><input class="easyui-textbox" id="price' + i +'" name="price" style="width: 95%; height: 32px" /></td>';
+		tr += '<td><input class="easyui-textbox" id="cashAmount' + i +'" name="cashAmount" style="width: 95%; height: 32px" /></td>';
+		tr +='</tr>';
+		var rowLength = $("#saleTable tr").length;
+		$("#saleTable tr:eq(" + (rowLength - 2) + ")").after(tr); //将新拼接的一行插入到当前行的下面
+		// 自动渲染每个easyui 控件
+		$("#row" + i).children().each(function(i, e) {
+			$.parser.parse(e);
+		});		
+		$('#unit' + i).combobox({
+			data : [{"id":"张", "text":"张"}, {"id":"吨", "text":"吨"}],
+			valueField : 'id',
+			textField : 'text'
+		});
+		// 设置单元格值
+		$("#saleId" + i).val(sale.saleId);
+		$("#orderNo" + i).textbox('setValue', sale.orderNo);
+		$("#orderNoHide" + i).val(sale.orderNo);
+		$("#accountNo" + i).textbox('setValue', sale.accountNo);
+		$("#catgoryId" + i).textbox('setValue', sale.display);
+		$("#specId" + i).textbox('setValue', sale.thickness);
+		$("#saleAmount" + i).textbox('setValue', sale.saleAmount);
+		$("#unit" + i).combobox('setValue', sale.unit);
+		$("#price" + i).textbox('setValue', sale.price);
+		$("#cashAmount" + i).textbox('setValue', sale.cashAmount);
+		$("#clientList").combobox('setValue', sale.clientId);
 	}
 	function closeWindow() {
 		$('#addSaleWindow').window("close");
@@ -235,7 +275,7 @@
 				<div>
 					<label>客户：</label><input id="clientList" class="easyui-combobox"
 						data-options="prompt:'请选择公司',iconCls:'icon-man'"
-						style="width: 300px; height: 40px" />
+						style="width: 300px; height: 40px" disabled/>
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					<label>销售单号：</label><input class="easyui-textbox" id="saleNo"
 						style="width: 210px; height: 40px; align: right" disabled />
@@ -265,29 +305,28 @@
 								onclick="exportSale()" /></td>
 						</tr>
 					</thead>
-				</table>
-				
+				</table>	
 			</form>
 		</div>
 	</div>
 	<script type="text/javascript">
 		function saveSale() {
-			var stores = new Array();
+			var sales = new Array();
 			var clientId = $("#clientList").combobox('getValue');
 			var saleNo = $("#saleNo").textbox('getValue');
 			var formObject = {};
 			var formArray = $("#addSaleForm").serializeArray();
 			$.each(formArray, function(i, item) {
 				formObject[item.name] = item.value;
-				if (i % 10 == 9) {
+				if (i % 5 == 4) {
 					formObject.clientId = clientId;
 					formObject.saleNo = saleNo;
-					stores.push(formObject);
+					sales.push(formObject);
 					formObject = {};
 				}
 			});
 			var params = {
-				storage : stores
+				sales : sales
 			};
 			$.ajax({
 				type : "post", //数据提交方式（post/get）
@@ -305,6 +344,9 @@
 					}
 				}
 			});
+		}
+		function exportSale(){
+			
 		}
 	</script>
 </body>

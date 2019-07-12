@@ -3,6 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>订单</title>
+<link rel="stylesheet" href="dist/css/site.min.css">
 <!-- 导入jquery核心类库 -->
 <script type="text/javascript" src="dist/js/jquery-3.4.1.min.js"></script>
 <!-- 导入easyui类库 -->
@@ -183,7 +184,7 @@
 		if(isModify != true){
 			//清除页面值
 			$("#customerList").combobox('setValue', '');
-			$("#orderId0").textbox('setValue', '');
+			$("#orderId0").val('');
 			$("#orderNo0").textbox('setValue', '');
 			$("#accountNo0").textbox('setValue', '');
 			$("#categoryId0").combobox('setValue', '');
@@ -262,6 +263,15 @@
 	function closeWindow() {
 		$('#addOrderWindow').window("close");
 	}
+	function sale(){
+		var rows = $('#order').datagrid('getSelections');
+		var orderNos = new Array();
+		for(var i=0; i<rows.length; i++){
+			orderNos.push(rows[i].orderNo);
+		}
+		var url="sale.html?orderNos=" + orderNos;
+		$("#saleHref").attr("href",url)
+	}
 </script>
 </head>
 <body class="easyui-layout" style="visibility: hidden;">
@@ -286,6 +296,17 @@
 			style="width: 200px; height: 40px" /> &nbsp; <input
 			class="easyui-linkbutton" type="button" value="查询" onclick="query()"
 			style="width: 100px; height: 34px" />
+			<br/>
+			<table style="width:70%">
+				<tr style="height:10px"></tr>
+				<tr>
+					<td style="width:70%">&nbsp;</td>
+					<td style="width:100px"><a id="saleHref" href="" target="main" class="btn btn-success btn-block" onclick="sale()">销售</a></td>
+					<td style="width:5%">&nbsp;</td>
+					<td style="width:100px"><a href="out.html" target="main" class="btn btn-success btn-block" >出库</a>	</td>
+				</tr>
+				<tr style="height:10px"></tr>
+			</table>
 		<table id="order"></table>
 	</div>
 	<div class="easyui-window" title="增加订单" id="addOrderWindow"
@@ -398,7 +419,7 @@
 		$("#categoryId0").combobox({
 			url : '/basic/category',
 			valueField : 'categoryId',
-			textField : 'steelName',
+			textField : 'display',
 			onSelect : function(rec) {
 				$("#specId0").combobox({
 					url : '/basic/spec?categoryId=' + rec.categoryId,
@@ -487,7 +508,7 @@
 			$("#categoryId" + flag).combobox({
 				url : '/basic/category',
 				valueField : 'categoryId',
-				textField : 'steelName',
+				textField : 'display',
 				onSelect : function(rec) {
 					thisId = $(this).attr("id");
 					$("#specId" + thisId.substring(10)).combobox({
