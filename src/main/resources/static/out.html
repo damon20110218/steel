@@ -49,7 +49,7 @@
 		// 设置默认值
 		$('#year').combobox('setValue', curYear);
 		$('#month').combobox('setValue', curMonth);
-		$('#sale')
+		$('#outBound')
 				.datagrid(
 						{
 							iconCls : 'icon-forward',
@@ -70,29 +70,41 @@
 								iconCls : 'icon-add',
 								handler : doAdd
 							} ],
-							url : "/sale/query",
+							url : "/out/query",
 							dataType : "jsonp",
-							idField : 'saleId',
+							idField : 'outId',
 							columns : [ [
 									{
-										field : 'saleId',
+										field : 'outId',
 										checkbox : true,
 									},
 									{
-										field : 'saleDate',
+										field : 'outDate',
 										title : '日期',
 										width : 150,
 										align : 'center'
 									},
 									{
-										field : 'saleNo',
-										title : '销售单号',
+										field : 'orderNo',
+										title : '订单单号',
 										width : 200,
 										align : 'center'
 									},
 									{
-										field : 'cashAmount',
-										title : '金额',
+										field : 'categoryDesc',
+										title : '种类',
+										width : 200,
+										align : 'center'
+									},
+									{
+										field : 'specDesc',
+										title : '规格',
+										width : 200,
+										align : 'center'
+									},
+									{
+										field : 'actualAmount',
+										title : '实际称重(吨)',
 										width : 200,
 										align : 'center'
 									},
@@ -110,8 +122,8 @@
 									} ] ]
 						});
 
-		$('#addSaleWindow').window({
-			title : '钢材销售',
+		$('#addOutBoundWindow').window({
+			title : '钢材出库',
 			width : 1400,
 			modal : true,
 			shadow : true,
@@ -119,18 +131,30 @@
 			height : 850,
 			resizable : true
 		});
+		
+		var type = getQueryString('type');
+		
+		if( type == undefined || type == null || type != 'query'){
+			doAdd(false);
+		}
 	});
+	
+	function getQueryString(name) {                                       //name为传入参数
+	    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");     
+	    var r = window.location.search.substr(1).match(reg);
+	    if (r != null) return unescape(r[2]); return null;            
+	}
 
 	function doAdd(isModify) {
-		$('#addSaleWindow').window("open");
+		$('#addOutBoundWindow').window("open");
 		// 加载 公司列表，并设置默认值
-		$("#clientList").combobox({
+		/*$("#clientList").combobox({
 			url : '/basic/fuzzyMatch?clientType=2',
 			valueField : 'clientId',
 			textField : 'clientName'
-		});
+		});*/
 		// 从后台获取入库单号
-		if(isModify != true){
+		/*if(isModify != true){
 			$.ajax({
 				type : "post",
 				url : "/sale/saleNo", //提交到的url
@@ -143,25 +167,96 @@
 					}
 				}
 			});
+		}*/
+		if(isModify != true){
+			
+			var orderNos = getQueryString('orderNos');
+			console.log(orderNos);
+			// 根据 OrderNos 查询订单数据，打开销售新增页面
+			var params = {"orderNos" : orderNos}
+			$.ajax({
+				type : "post",
+				url : "/out/load", //提交到的url
+				contentType : "application/json; charset=utf-8",
+				data : JSON.stringify(params),
+				dataType : 'json',
+				success : function(data) {
+					$.each(data,function(i, out) {
+						addRow(i, out);
+					});
+				}
+			});
 		}
 	}
+	
+	function addRow(i, out){
+		var tr = '<tr id="row' + i + '">';
+		tr += '<td><input type="text" style="display: none;" id="outId' + i +'" name="outId"/></td>';
+		tr += '<td><input class="easyui-textbox" id="orderNo' + i +'" style="width: 95%; height: 32px" disabled/><input type="text" style="display: none;" id="orderNoHide' + i +'" name="orderNo"/></td>';
+		tr += '<td><input class="easyui-textbox" id="catgoryId' + i +'" style="width: 95%; height: 32px" disabled /></td>';
+		tr += '<td><input class="easyui-textbox" id="specId' + i +'" style="width: 95%; height: 32px" disabled/></td>';
+		tr += '<td><input class="easyui-textbox" id="clientAmount' + i +'" name="clientAmount" style="width: 95%; height: 32px" disabled /></td>';
+		tr += '<td><input class="easyui-combobox" id="unit' + i +'" name="unit" style="width: 95%; height: 32px" disabled /></td>';
+		tr += '<td><input class="easyui-textbox" id="steelCalcAmount' + i +'" name="steelCalcAmount" style="width: 95%; height: 32px" disabled /></td>';
+		tr += '<td><input class="easyui-textbox" id="actualAmount' + i +'" name="actualAmount" style="width: 95%; height: 32px" /></td>';
+		tr +='</tr>';
+		var rowLength = $("#outBoundTable tr").length;
+		$("#outBoundTable tr:eq(" + (rowLength - 2) + ")").after(tr); //将新拼接的一行插入到当前行的下面
+		// 自动渲染每个easyui 控件
+		$("#row" + i).children().each(function(i, e) {
+			$.parser.parse(e);
+		});		
+		$('#unit' + i).combobox({
+			data : [{"id":"张", "text":"张"}, {"id":"吨", "text":"吨"}],
+			valueField : 'id',
+			textField : 'text'
+		});
+		// 设置单元格值
+		$("#outId" + i).val(out.outId);
+		$("#orderNo" + i).textbox('setValue', out.orderNo);
+		$("#orderNoHide" + i).val(out.orderNo);
+		$("#specId" + i).textbox('setValue', out.thickness);
+		$("#catgoryId" + i).textbox('setValue', out.display);
+		$("#clientAmount" + i).textbox('setValue', out.clientAmount);
+		$("#unit" + i).combobox('setValue', out.unit);
+		$("#steelCalcAmount" + i).textbox('setValue', out.steelCalcAmount);
+		
+	}
 	function query() {
-		var queryParams = $('#sale').datagrid('options').queryParams;
+		var queryParams = $('#outBound').datagrid('options').queryParams;
 		var year = $('#year').textbox('getValue');
 		var month = $('#month').textbox('getValue');
-		var saleNo = $('#saleNoQuery').textbox('getValue');
+		var orderNo = $('#orderNoQuery').textbox('getValue');
 		queryParams.year = year;
 		queryParams.month = month;
-		queryParams.saleNo = saleNo;
-		$('#sale').datagrid('options').queryParams = queryParams;
-		$("#sale").datagrid('reload');
+		queryParams.orderNo = orderNo;
+		$('#outBound').datagrid('options').queryParams = queryParams;
+		$("#outBound").datagrid('reload');
 	}
 	function modify(rowIndex) {
-		var a = $('#sale').datagrid('selectRow', rowIndex);
-		var row = $('#sale').datagrid('getSelected');
+		var a = $('#outBound').datagrid('selectRow', rowIndex);
+		var row = $('#outBound').datagrid('getSelected');
+		doAdd(true);
+		// 先删除之前生成的table行
+		var rowLength = $("#outBoundTable tr").length;
+		for(var i = 0; i < rowLength-2; i++){
+			$("#row" + i).remove();
+		}
+		// 根据后台订单的数据 动态画表格，填充数据
+		$.ajax({
+				type : "post",
+				url : "/out/show?outId=" + row.outId, //提交到的url
+				contentType : "application/json; charset=utf-8",
+				dataType : 'json',
+				success : function(data) {
+					$.each(data,function(i, sale) {
+						addRow(i, sale);
+					});
+				}
+		});
 	}
 	function closeWindow() {
-		$('#addSaleWindow').window("close");
+		$('#addOutBoundWindow').window("close");
 	}
 </script>
 </head>
@@ -173,14 +268,14 @@
 			class="easyui-combobox" id="month"
 			data-options="prompt:'请选择月份',iconCls:'icon-man'"
 			style="width: 200px; height: 40px" /> &nbsp; <input
-			class="easyui-textbox" id="saleNoQuery"
-			data-options="prompt:'请输入销售单号',iconCls:'icon-man'"
+			class="easyui-textbox" id="orderNoQuery"
+			data-options="prompt:'请输入订单单号',iconCls:'icon-man'"
 			style="width: 200px; height: 40px" /> &nbsp;<input
 			class="easyui-linkbutton" type="button" value="查询" onclick="query()"
 			style="width: 100px; height: 34px" />
-		<table id="sale"></table>
+		<table id="outBound"></table>
 	</div>
-	<div class="easyui-window" title="钢材销售" id="addSaleWindow"
+	<div class="easyui-window" title="钢材出库" id="addOutBoundWindow"
 		collapsible="false" minimizable="false" maximizable="false"
 		style="top: 50px; left: 150px">
 		<div region="north" style="height: 31px; overflow: hidden;"
@@ -193,59 +288,29 @@
 		</div>
 		<div region="center" style="overflow: auto; padding: 5px;"
 			border="false">
-			<form id="addSaleForm" method="post">
-				<div>
-					<label>客户：</label><input id="clientList" class="easyui-combobox"
-						data-options="prompt:'请选择公司',iconCls:'icon-man'"
-						style="width: 300px; height: 40px" />
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<label>销售单号：</label><input class="easyui-textbox" id="saleNo"
-						style="width: 210px; height: 40px; align: right" disabled />
-				</div>
-				<p></p>
-				<table border="1" id="saleTable"
+			<form id="addOutBoundForm" method="post">
+				<table border="1" id="outBoundTable"
 					style="border-collapse: collapse; border-color: #C0C0C0; width: 100%;"
 					align="center">
 					<thead>
 						<tr style="height: 30px">
 							<th style="width: 0%;"></th>
 							<th style="width: 12%;">订单单号</th>
-							<th style="width: 12%;">客户款号</th>
 							<th style="width: 12%;">种类</th>
 							<th style="width: 7%;">规格</th>
-							<th style="width: 11%;">数量</th>
+							<th style="width: 11%;">数量(重量)</th>
 							<th style="width: 6%;">单位</th>
-							<th style="width: 10%;">单价</th>
-							<th style="width: 15%;">金额</th>
+							<th style="width: 10%;">钢板张数</th>
+							<th style="width: 15%;">实际称重(吨)</th>
 						</tr>
-						<tr id="row0">
-							<td><input type="text" style="display: none;"
-								id="saleId0" name="saleId" /></td>
-							<td><input type="text" class="easyui-textbox" id="orderNo0"
-								name="orderNo" style="width: 95%; height: 32px" disabled/></td>
-							<td><input id="accountNo0" class="easyui-textbox"
-								name="accountNo" style="width: 95%; height: 32px" disabled/></td>
-							<td><input id="catgoryId0" class="easyui-textbox"
-								name="catgoryId" style="width: 95%; height: 32px" disabled /></td>
-							<td><input type="text" class="easyui-textbox" id="specId0"
-								name="specId" style="width: 95%; height: 32px" disabled/></td>
-							<td><input type="text" class="easyui-textbox"
-								id="saleAmount0" name="saleAmount"
-								style="width: 95%; height: 32px" /></td>
-							<td><input type="text" class="easyui-textbox" id="unit0"
-								name="unit" style="width: 95%; height: 32px" /></td>
-							<td><input type="text" class="easyui-textbox" id="price0"
-								name="price" style="width: 95%; height: 32px" /></td>
-							<td><input type="text" class="easyui-textbox" id="cashAmount0"
-							name="price" style="width: 95%; height: 32px" /></td>
-						</tr>
+						
 						<tr >
 							<td colspan="5" style="align:center;"><input class="btn btn-success btn-block" type="button"
 								style="width: 200px; height: 40px" value="提交"
-								onclick="saveSale()" /></td>
+								onclick="saveOut()" /></td>
 							<td colspan="5"><input class="btn btn-success btn-block" type="button"
 								style="width: 200px; height: 40px" value="导出"
-								onclick="exportSale()" /></td>
+								onclick="exportOut()" /></td>
 						</tr>
 					</thead>
 				</table>
@@ -254,37 +319,33 @@
 		</div>
 	</div>
 	<script type="text/javascript">
-		function saveSale() {
-			var stores = new Array();
-			var clientId = $("#clientList").combobox('getValue');
-			var saleNo = $("#saleNo").textbox('getValue');
+		function saveOut() {
+			var outs = new Array();
 			var formObject = {};
-			var formArray = $("#addSaleForm").serializeArray();
+			var formArray = $("#addOutBoundForm").serializeArray();
 			$.each(formArray, function(i, item) {
 				formObject[item.name] = item.value;
-				if (i % 10 == 9) {
-					formObject.clientId = clientId;
-					formObject.saleNo = saleNo;
-					stores.push(formObject);
+				if (i % 3 == 2) {
+					outs.push(formObject);
 					formObject = {};
 				}
 			});
 			var params = {
-				storage : stores
+				storage : outs
 			};
 			$.ajax({
 				type : "post", //数据提交方式（post/get）
-				url : "/sale/update", //提交到的url
+				url : "/out/update", //提交到的url
 				contentType : "application/json; charset=utf-8",
 				data : JSON.stringify(params),
 				success : function(msg) {
 					if (msg == "Success") { //修改成功
 						//修改成功处理代码...
-						$('#addSaleWindow').window("close");
+						$('#addOutBoundWindow').window("close");
 						query();
 					} else { //修改失败
 						//修改失败处理代码...
-						$.messager.alert('系统提示', '钢材销售失败', 'error');
+						$.messager.alert('系统提示', '钢材出库失败', 'error');
 					}
 				}
 			});

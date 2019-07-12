@@ -8,11 +8,25 @@ public class SingleOut {
 	private String unit;
 	private String steelCalcAmount;
 	private Double actualAmount;
+	private String display;
+	private String thickness;
 	public Long getOutId() {
 		return outId;
 	}
 	public void setOutId(Long outId) {
 		this.outId = outId;
+	}
+	public String getDisplay() {
+		return display;
+	}
+	public void setDisplay(String display) {
+		this.display = display;
+	}
+	public String getThickness() {
+		return thickness;
+	}
+	public void setThickness(String thickness) {
+		this.thickness = thickness;
 	}
 	public Long getSpecId() {
 		return specId;

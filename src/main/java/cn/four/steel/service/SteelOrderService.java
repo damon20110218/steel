@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import cn.four.steel.bean.from.FrontOrder;
+import cn.four.steel.cache.BaseDataCache;
 import cn.four.steel.controller.SteelOrderController;
 import cn.four.steel.util.SteelUtil;
 @Transactional
@@ -47,16 +48,15 @@ public class SteelOrderService {
 		String insertSQL = "insert into steel_order(order_date, order_no, client_id, account_no, spec_id, "
 				+ "client_amount, price, steel_calc_amount, comment,is_out,is_sale,is_delete, unit, year, month) "
 				+ "values(?,?,?,?,?,?,?,?,?,0,0,0,?,?,?)";
-		String updateSQL = "update steel_order set  "
+		String updateSQL = "update steel_order set order_date = ?, "
 				+ "order_no =?, client_id =?, account_no=?, spec_id = ?,"
 				+ "client_amount = ?, price = ?, steel_calc_amount = ?, comment = ?, unit = ?,"
-				+ "  where order_id = ?";
+				+ " year = ?, month = ? where order_id = ?";
 		Date now = new Date();
 		List<Object> params = new ArrayList<Object>();
 		for (int i = 0; i < orders.size(); i++) {
 			params.clear();
 			FrontOrder order = orders.get(i);
-			
 			if(order.getOrderId() == null){
 				params.add(now);
 				params.add(order.getOrderNo());
@@ -70,10 +70,9 @@ public class SteelOrderService {
 				params.add(order.getUnit());
 				params.add(now.getYear()+ 1900);
 				params.add(now.getMonth() + 1);
-				logger.info("updateOrder: sql:" + insertSQL + "; params:"+params.toString());
 				jdbcTemplate.update(insertSQL, params.toArray());
 			} else{
-				
+				params.add(now);
 				params.add(order.getOrderNo());
 				params.add(order.getClientId());
 				params.add(order.getAccountNo());
@@ -83,17 +82,16 @@ public class SteelOrderService {
 				params.add(order.getSteelCalcAmount());
 				params.add(order.getComment());
 				params.add(order.getUnit());
+				params.add(now.getYear()+ 1900);
+				params.add(now.getMonth() + 1);
 				params.add(order.getOrderId());
-				logger.info("updateOrder: sql:" + updateSQL + "; params:"+params.toString());
 				jdbcTemplate.update(updateSQL, params.toArray());
 			}
 		}
 	}
 	
 	public List<FrontOrder> queryOrder(String orderNo, String clientId, String year, String month, String isSale, String isOut){
-		String querySQL = "select s.order_date, s.order_id, s.order_no, c.client_name, s.price, "
-				+ "case s.is_out when 1 then '是'  else '否' end as is_out, "
-				+ "case s.is_sale when 1 then '是'  else '否'  end as is_sale, s.comment "
+		String querySQL = "select s.order_date, s.order_id, s.order_no, c.client_name, s.price, s.is_out, s.is_sale, s.comment "
 				+ "from steel_order s, client_info c where s.client_id = c.client_id";
 		List<Object> params = new ArrayList<Object>();
 		if(year != null && !"".equals(year)){
@@ -140,13 +138,10 @@ public class SteelOrderService {
 		return orders;
 	}
 	
-	public List<FrontOrder> showSingleOrder(String orderId){
-		String showSQL = "select order_id, order_no, client_id, account_no, client_amount,a.spec_id, b.category_id , price, steel_calc_amount, comment, unit from "
-				+ " steel_order a , steel_specs b where order_id = ?"
-				+ " and a.spec_id = b.spec_id";
-		logger.info("showSingleOrder, sql: " + showSQL + "; params:" + orderId);
+	public List<FrontOrder> showSingleOrder(String orderNo){
+		String showSQL = "select order_id, order_no, client_id, account_no, spec_id, price, steel_calc_amount, comment, unit from steel_order where order_no = ?";
 		List<Object> params = new ArrayList<Object>();
-		params.add(orderId);
+		params.add(orderNo);
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(showSQL, params.toArray());
 		List<FrontOrder> orders = new ArrayList<>();
 		if(list != null && list.size() != 0){
@@ -156,8 +151,6 @@ public class SteelOrderService {
 				order.setOrderNo(String.valueOf(m.get("order_no")));
 				order.setClientId(Long.valueOf(String.valueOf(m.get("client_id"))));
 				order.setAccountNo(String.valueOf(m.get("account_no")));
-				order.setClientAmount(Double.valueOf(String.valueOf(m.get("client_amount"))));
-				order.setCategoryId(Long.valueOf(String.valueOf(m.get("category_id"))));
 				order.setSpecId(Long.valueOf(String.valueOf(m.get("spec_id"))));
 				order.setPrice(Double.valueOf(String.valueOf(m.get("price"))));
 				order.setSteelCalcAmount(String.valueOf(m.get("steel_calc_amount")));

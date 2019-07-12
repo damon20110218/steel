@@ -155,9 +155,9 @@ public class SteelExporter {
 					HSSFCell orderNoCell = row.createCell(1);
 					orderNoCell.setCellValue(out.getOrderNo());
 					HSSFCell categotyCell = row.createCell(2);
-					categotyCell.setCellValue(out.getCategory());
+					categotyCell.setCellValue(out.getCategoryDesc());
 					HSSFCell specCell = row.createCell(2);
-					specCell.setCellValue(out.getSpec());
+					specCell.setCellValue(out.getSpecDesc());
 					HSSFCell actualAmountCell = row.createCell(2);
 					actualAmountCell.setCellValue(out.getActualAmount());
 				}

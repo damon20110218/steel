@@ -25,6 +25,8 @@ import cn.four.steel.bean.from.FrontOut;
 import cn.four.steel.bean.to.MainOut;
 import cn.four.steel.bean.to.MainStorage;
 import cn.four.steel.bean.to.SingleOut;
+import cn.four.steel.bean.to.SingleSale;
+import cn.four.steel.cache.BaseDataCache;
 import cn.four.steel.service.SteelOutService;
 import cn.four.steel.util.SteelExporter;
 
@@ -33,11 +35,15 @@ public class SteelOutController {
 	private static Logger logger = LoggerFactory.getLogger(SteelOutController.class);
 	@Autowired
 	private SteelOutService steelOutService;
+	
 
+	@Autowired
+	private BaseDataCache baseDataCache;
+	
 	@RequestMapping(value = "/out/update", method = RequestMethod.POST)
 	public String orderUpdate(@RequestBody JSONObject jsonParam, HttpServletRequest request) {
 		try {
-			JSONArray array = jsonParam.getJSONArray("out");
+			JSONArray array = jsonParam.getJSONArray("storage");
 			if (array != null && array.size() != 0) {
 				List<FrontOut> outs = new ArrayList<>();
 				for (int i = 0; i < array.size(); i++) {
@@ -54,9 +60,9 @@ public class SteelOutController {
 	}
 
 	@RequestMapping(value = "/out/query", method = RequestMethod.POST)
-	public List<MainOut> queryOut(String saleNo, String year, String month) {
+	public List<MainOut> queryOut(String orderNo, String year, String month) {
 		try {
-			return steelOutService.queryOut(saleNo, year, month);
+			return steelOutService.queryOut(orderNo, year, month);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return null;
@@ -65,8 +71,15 @@ public class SteelOutController {
 
 	@RequestMapping(value = "/out/show", method = RequestMethod.POST)
 	public List<SingleOut> showSingleOut(String outId) {
+		List<SingleOut> outs = new ArrayList<>();
 		try {
-			return steelOutService.showSingleOut(Long.valueOf(outId));
+			outs = steelOutService.showSingleOut(Long.valueOf(outId));
+			for(SingleOut out : outs){
+				Long categoryId = baseDataCache.getCategoryId(out.getSpecId());
+				out.setDisplay(baseDataCache.getSteelCategory(categoryId).getDisplay());
+				out.setThickness(baseDataCache.getSteelSpecication(out.getSpecId()).getThickness() + "mm");
+			}
+			return outs;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return null;
@@ -75,15 +88,24 @@ public class SteelOutController {
 
 	@RequestMapping(value = "/out/load", method = RequestMethod.POST)
 	public List<SingleOut> loadOutBySaleNo(@RequestBody JSONObject jsonParam) {
+		List<SingleOut> outs = new ArrayList<>();
 		try {
-			JSONArray array = jsonParam.getJSONArray("orderNos");
-			List<String> saleNos = new ArrayList<>();
-			if (array != null && array.size() != 0) {
-				for (int i = 0; i < array.size(); i++) {
-					saleNos.add(array.getJSONObject(i).toJavaObject(String.class));
+			logger.info("load jsonParam " + jsonParam.toString());
+			String array = jsonParam.getString("orderNos");
+			List<String> orderNos = new ArrayList<>();
+			if (array != null && !"".equals(array)) {
+				String[] ons = array.split(",");
+				for(int i = 0; i < ons.length; i++){
+					orderNos.add(ons[i]);
 				}
 			}
-			return steelOutService.loadOutByOrderNo(saleNos);
+			outs = steelOutService.loadOutByOrderNo(orderNos);
+			for(SingleOut out : outs){
+				Long categoryId = baseDataCache.getCategoryId(out.getSpecId());
+				out.setDisplay(baseDataCache.getSteelCategory(categoryId).getDisplay());
+				out.setThickness(baseDataCache.getSteelSpecication(out.getSpecId()).getThickness() + "mm");
+			}
+			return outs;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return null;

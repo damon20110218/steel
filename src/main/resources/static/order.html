@@ -272,6 +272,16 @@
 		var url="sale.html?orderNos=" + orderNos;
 		$("#saleHref").attr("href",url)
 	}
+	
+	function steelOut(){
+		var rows = $('#order').datagrid('getSelections');
+		var orderNos = new Array();
+		for(var i=0; i<rows.length; i++){
+			orderNos.push(rows[i].orderNo);
+		}
+		var url="out.html?orderNos=" + orderNos;
+		$("#steelOutHref").attr("href",url)
+	}
 </script>
 </head>
 <body class="easyui-layout" style="visibility: hidden;">
@@ -303,7 +313,7 @@
 					<td style="width:70%">&nbsp;</td>
 					<td style="width:100px"><a id="saleHref" href="" target="main" class="btn btn-success btn-block" onclick="sale()">销售</a></td>
 					<td style="width:5%">&nbsp;</td>
-					<td style="width:100px"><a href="out.html" target="main" class="btn btn-success btn-block" >出库</a>	</td>
+					<td style="width:100px"><a id="steelOutHref" href="" target="main" class="btn btn-success btn-block" onclick="steelOut()">出库</a>	</td>
 				</tr>
 				<tr style="height:10px"></tr>
 			</table>

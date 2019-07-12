@@ -3,8 +3,8 @@ package cn.four.steel.bean.to;
 public class MainOut {
 	private Long outId;
 	private String orderNo;
-	private String category;
-	private Double spec;
+	private String categoryDesc;
+	private String specDesc;
 	private String outDate;
 	private Double actualAmount;
 	public Long getOutId() {
@@ -19,17 +19,18 @@ public class MainOut {
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
 	}
-	public String getCategory() {
-		return category;
+
+	public String getCategoryDesc() {
+		return categoryDesc;
 	}
-	public void setCategory(String category) {
-		this.category = category;
+	public void setCategoryDesc(String categoryDesc) {
+		this.categoryDesc = categoryDesc;
 	}
-	public Double getSpec() {
-		return spec;
+	public String getSpecDesc() {
+		return specDesc;
 	}
-	public void setSpec(Double spec) {
-		this.spec = spec;
+	public void setSpecDesc(String specDesc) {
+		this.specDesc = specDesc;
 	}
 	public String getOutDate() {
 		return outDate;
