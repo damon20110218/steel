@@ -138,7 +138,7 @@
 			var params = {'clientWidth':clientWidth, 'clientAmount':clientAmount, 'categoryId':categoryId};
 			$.ajax({
 				type : "post",
-				url : "/calc/standartamount", //提交到的url
+				url : "/calc/standart_amount", //提交到的url
 				contentType : "application/json; charset=utf-8",
 				data : JSON.stringify(params),
 				success : function(msg) {

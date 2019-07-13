@@ -30,7 +30,7 @@ public class CalculatorController {
 	public String calcStandardAmount( @RequestBody JSONObject json) {
 		try {
 			String clientWidth = json.getString("clientWidth");
-			String clientAmount = json.getString("clientWidth");
+			String clientAmount = json.getString("clientAmount");
 			String categoryId = json.getString("categoryId");
 			Long cw = Long.valueOf(clientWidth);
 			int ca = Integer.valueOf(clientAmount);
