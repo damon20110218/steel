@@ -48,12 +48,14 @@
 													.each(
 															cate,
 															function(j, spec) {
+																var futurePriceId = "futurePrice_" + spec.priceCode ;
 																futureTable += '<tbody><tr><td>'
 																		+ spec.thickness
-																		+ 'mm</td><td><input style="display:none" name="priceCode" value="'+ spec.priceCode + '"/><input type="text" name="price" class="form-control input-sm" ></td></tr></tbody>';
+																		+ 'mm</td><td><input style="display:none" name="priceCode" value="'+ spec.priceCode + '"/><input type="text" id="' + futurePriceId  + '"name="price" class="form-control input-sm" ></td></tr></tbody>';
+																var salePriceId = "salePrice_" + spec.priceCode ;
 																saleTable += '<tbody><tr><td>'
 																		+ spec.thickness
-																		+ 'mm</td><td><input style="display:none" name="priceCode" value="'+ spec.priceCode + '"/><input type="text" name="price" class="form-control input-sm" ></td></tr></tbody>';
+																		+ 'mm</td><td><input style="display:none" name="priceCode" value="'+ spec.priceCode + '"/><input type="text" name="price" id="'+ salePriceId + '" class="form-control input-sm" ></td></tr></tbody>';
 															});
 											futureTable += '</table>';
 											saleTable += '</table>';
@@ -61,9 +63,44 @@
 											$("#sale").append(saleTable);
 										});
 						$("#future").append('<div class="col-md-2"><button type="button" onclick="savePrice()" class="btn btn-success btn-block">保存</button></div>');
+						loadTodayFuturePrice();
+						loadTodaySalePrice();
 					}
 				});
+				
 	});
+	function loadTodayFuturePrice(){
+		$.ajax({
+			type : "post",
+			url: "/price/loadTodayFuturePrice",
+			contentType : "application/json; charset=utf-8",
+			dataType : 'json',
+			success : function(data) {
+				$.each(data, function(i, cate) {
+					var futurePriceId = "futurePrice_" + cate.priceCode ;
+					$("#"+futurePriceId).val(cate.price);
+				});
+			}
+		});
+	
+	};
+	
+	function loadTodaySalePrice(){
+		$.ajax({
+			type : "post",
+			url: "/price/loadTodaySalePrice",
+			contentType : "application/json; charset=utf-8",
+			dataType : 'json',
+			success : function(data) {
+				$.each(data, function(i, cate) {
+					var salePriceId = "salePrice_" + cate.priceCode ;
+					$("#"+salePriceId).val(cate.price);
+				});
+			}
+		});
+	
+	};
+	
 	function savePrice(){
 		var futurePrices = new Array();
 		var formArray = $("#futureForm").serializeArray();
@@ -113,13 +150,17 @@
 							} else { //修改失败
 								$.messager.alert('系统提示', '零售价格保存失败', 'error');
 							}
+							loadTodaySalePrice();
 						}
 					});
 				} else { //修改失败
 					$.messager.alert('系统提示', '期货价格保存失败', 'error');
 				}
+				loadTodayFuturePrice();
 			}
 		});
+		
+		
 		
 	}
 </script>

@@ -114,6 +114,7 @@ public class SteelPriceService {
 		List<Object> params = new ArrayList<Object>();
 		params.add(startDate);
 		params.add(endDate);
+		logger.info("loadFuturePrice querySQL: "  + querySQL + "; params: "+ params.toString()); 
 		List<Map<String,Object>> list = jdbcTemplate.queryForList(querySQL, params.toArray());
 		List<Price> prices = new ArrayList<>();
 		if(list != null){
@@ -123,6 +124,48 @@ public class SteelPriceService {
 				price.setSteelName(String.valueOf(m.get("steel_name")));
 				price.setThickness(String.valueOf(m.get("thickness")));
 				price.setPriceDate(SteelUtil.formatDate((Date) m.get("price_date"), null));
+				prices.add(price);
+			}
+		}
+		return prices;
+	}
+	
+	public List<Price> loadTodayFuturePrice(){
+		List<Price> prices = new ArrayList<Price>(); 
+		String querySql = "select price_code, price \n" + 
+				"from steel_future_price\n" + 
+				"where (price_code, price_Date) in(\n" + 
+				"select price_code, max(price_Date) as price_Date from steel_future_price \n" + 
+				"group by price_code)\n";
+		
+		logger.info("loadTodayFuturePrice querySql:" + querySql);
+		List<Map<String,Object>> list = jdbcTemplate.queryForList(querySql);
+		if(list != null){
+			for(Map<String,Object> m : list){
+				Price price = new Price();
+				price.setPrice(String.valueOf(m.get("price")));
+				price.setPriceCode(String.valueOf(m.get("price_code")));
+				prices.add(price);
+			}
+		}
+		return prices;
+	}
+	
+	public List<Price> loadTodaySalePrice(){
+		
+		List<Price> prices = new ArrayList<Price>(); 
+		String querySql = "select price_code, price \n" + 
+				"from steel_price\n" + 
+				"where (price_code, price_Date) in(\n" + 
+				"select price_code, max(price_Date) as price_Date from steel_price \n" + 
+				"group by price_code)\n";
+		logger.info("loadTodaySalePrice querySql:" + querySql);
+		List<Map<String,Object>> list = jdbcTemplate.queryForList(querySql);
+		if(list != null){
+			for(Map<String,Object> m : list){
+				Price price = new Price();
+				price.setPrice(String.valueOf(m.get("price")));
+				price.setPriceCode(String.valueOf(m.get("price_code")));
 				prices.add(price);
 			}
 		}

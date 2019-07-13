@@ -1,8 +1,10 @@
 package cn.four.steel.controller;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -59,6 +61,17 @@ public class SteelPriceController {
 		}
 		
 	}
+	@RequestMapping(value = "/price/loadTodayFuturePrice", method = { RequestMethod.POST,RequestMethod.GET })
+	public List<Price> loadTodayFuturePrice(){
+		return steelPriceService.loadTodayFuturePrice();
+	}
+	
+	@RequestMapping(value = "/price/loadTodaySalePrice", method = { RequestMethod.POST,RequestMethod.GET })
+	public List<Price> loadTodaySalePrice(){
+		return steelPriceService.loadTodaySalePrice();
+	}
+	
+	
 	@RequestMapping(value = "/price/cur_sale_price", method = { RequestMethod.POST,
 			RequestMethod.GET })
 	public Double getSalePriceBySpecId(String specId){
