@@ -1,7 +1,7 @@
 package cn.four.steel.cache;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +13,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import cn.four.steel.bean.from.Client;
-import cn.four.steel.bean.to.SingleInventory;
 import cn.four.steel.bean.to.SteelCategory;
 import cn.four.steel.bean.to.SteelSpecication;
 import cn.four.steel.service.BasicDataService;
@@ -39,8 +38,8 @@ public class BaseDataCache  implements CommandLineRunner {
 	@Autowired
     private JdbcTemplate jdbcTemplate;
 	
-	private Map<Long, SteelCategory> steelCatrgoryMap = new HashMap<Long, SteelCategory>(16);
-	private Map<Long, SteelSpecication> steelSpcMap = new HashMap<Long, SteelSpecication>(64);
+	private Map<Long, SteelCategory> steelCatrgoryMap = new LinkedHashMap<Long, SteelCategory>(16);
+	private Map<Long, SteelSpecication> steelSpcMap = new LinkedHashMap<Long, SteelSpecication>(64);
 	private Double[] density = new Double[11];
 	List<Client> companyList= new ArrayList<Client>();
 	Object companyListLock = new Object();

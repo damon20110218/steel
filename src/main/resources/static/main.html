@@ -21,15 +21,8 @@
 <body>
 	<div class="container-fluid">
 		<div class="panel panel-default">
-			<!--div class="panel-heading">
-                     <h3 class="panel-title"><a href="javascript:void(0);" class="toggle-sidebar"><span class="fa fa-angle-double-left" data-toggle="offcanvas" title="Maximize Panel"></span></a>首页</h3>
-                </div-->
-			<div class="panel-body">
-                    <!--div id="todayStockcontainer" style="min-width: 310px; height: 300px; margin: 0 auto"></div>
-                    <div id="todayOrdercontainer" style="min-width: 310px; height: 300px; margin: 0 auto"></div>
-                    <div id="todaySellcontainer" style="min-width: 310px; height: 300px; margin: 0 auto"></div-->
-                    <div class="content-row" id="singleDataContainer"></div>
-                </div>
+			<div class="panel-body" id="mainBody">
+            </div>
 			<div class="panel-body">
 				<div class="col-md-6">
 					<h3>张数转换器</h3>
@@ -82,6 +75,47 @@
 	</div>
 	<script type="text/javascript">
 		$(function() {
+			// 加载当日库存柱状图
+			$.ajax({
+			    type : "post",
+				url : "/inventory/category", //提交到的url
+				contentType : "application/json; charset=utf-8",
+				dataType : "json",
+				success : function(data) {
+					// 根据种类 组个加载库存数据
+					$.each(data,function(i, cate) {
+							var chartId = "chart" + i;
+							var divChart = '<div id="' + chartId + '" style="min-width: 310px; height: 280px; margin: 0 auto"></div>';
+							var title = cate.steelName + "当日库存";
+							var type = "column";
+							var xTitle = "重量";
+							var yTitle = "规格";
+							$.ajax({
+							  	type : "post",
+								url : "/inventory/calc?steelName=" + cate.steelName, //提交到的url
+								contentType : "application/json; charset=utf-8",
+								dataType : "json",
+								success : function(e) {
+									var xSeries = new Array();
+									var ySeries = new Array();
+									$.each(e,function(index, t) {
+										xSeries.push(t.thickness);
+										ySeries.push(t.inventory);
+									});
+									if(xSeries.length != 0){
+										$("#mainBody").append(divChart);
+										four.highChart(chartId,title,type,xSeries,xTitle,ySeries,yTitle);
+									}
+								}
+						});
+						if( i == data.length -1 ){
+						  setTimeout("loadPrice()", 1000);
+						}
+						});
+						
+					
+					}
+				});
 			$("#categoryId0").combobox({
 				url : '/basic/category',
 				valueField : 'categoryId',
@@ -99,26 +133,29 @@
 					});
 				}
 			});
-			// 加载当日规格价格表
-			$.ajax({
-				type : "post",
-				url : "/price/today", //提交到的url
-				contentType : "application/json; charset=utf-8",
-				dataType : "json",
-				success : function(data) {
-					$.each(data,function(i, cate) {
-						var title = cate[0].steelName;
-						var titles = new Array();
-						var columns = new Array();
-						$.each(cate,function(j, spec) {
-							titles.push(spec.thickness +' mm');
-							columns.push(spec.price)
-						});
-						 $("#singleDataContainer").append(four.singleTable(title, titles, columns));
-					});
-				}
-			});
 		});
+		function loadPrice(){
+		// 加载当日规格价格表
+		$.ajax({
+			type : "post",
+			url : "/price/today", //提交到的url
+			contentType : "application/json; charset=utf-8",
+			dataType : "json",
+			success : function(d) {
+				$.each(d,function(k, c) {
+					var title = c[0].steelName;
+					var titles = new Array();
+					var columns = new Array();
+					$.each(c,function(j, spec) {
+						titles.push(spec.thickness +' mm');
+						columns.push(spec.price)
+					});
+					$("#mainBody").append('<div class="content-row" id="singleDataContainer"></div>');
+					$("#singleDataContainer").append(four.singleTable(title, titles, columns));
+				});
+			}
+		});
+		}
 		function calcStandardAmount() {
 			var clientWidth = $("#clientWidth").textbox('getValue');
 			if(clientWidth == ''){

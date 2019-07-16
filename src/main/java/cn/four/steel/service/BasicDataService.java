@@ -2,6 +2,7 @@ package cn.four.steel.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,8 +52,9 @@ public class BasicDataService {
 			sql += "and category_id = ?";
 			params.add(categoryId);
 		}
+		sql += " order by steel_name";
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(sql, params.toArray());
-		List<SteelCategory> categories =  new ArrayList<>();
+		List<SteelCategory> categories =  new LinkedList<>();
 		if(list != null){
 			for(Map<String, Object> map : list){
 				SteelCategory category = new SteelCategory();

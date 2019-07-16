@@ -153,6 +153,11 @@
 			$("#cashAmount0").textbox('setValue', '');
 			$("#price0").textbox('setValue', '');
 			$("#factory0").textbox('setValue', '');
+			// 删除上一次新增的 tr
+			var rowLength = $("#storeTable tr").length;
+			for(var j = 1; j < rowLength - 2; j++){
+				deleteSelectedRow("row" + j);
+			}
 			$.ajax({
 				type : "post",
 				url : "/store/storeNo", //提交到的url

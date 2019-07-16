@@ -16,7 +16,6 @@ import cn.four.steel.bean.from.FrontOut;
 import cn.four.steel.bean.to.MainOut;
 import cn.four.steel.bean.to.SingleOut;
 import cn.four.steel.cache.BaseDataCache;
-import cn.four.steel.controller.SteelOrderController;
 import cn.four.steel.util.SteelUtil;
 @Transactional
 @Service
@@ -37,9 +36,8 @@ public class SteelOutService {
 		String updateSQL = "update steel_outbound set order_no =?, "
 				+ "actual_amount = ? where out_id = ?";
 		String getSpecIdByOrderNo = "select spec_id from steel_order where order_no = ?";
-		String categorySQL = "select sc.steel_name, ss.thickness from steel_specs ss, steel_category sc "
-				+ "where ss.category_id = sc.category_id and ss.spec_id = ?";
 		String inventorySQL = "select store_out from steel_inventory where inventory_date = ? and thickness = ? and steel_name = ?";
+		String inventoryCntSQl = "select count(*) from steel_inventory where inventory_date = ? and thickness = ? and steel_name = ?";
 		String updateInSQL = "update steel_inventory set store_out = ? where inventory_date = ? and thickness = ? and steel_name = ?";
 		String insertInSQL = "insert into steel_inventory(inventory_date, store_out, year, month, steel_name, thickness) values(?,?,?,?,?,?)";
 		
@@ -47,6 +45,7 @@ public class SteelOutService {
 		
 		Date now = new Date();
 		List<Object> params = new ArrayList<Object>();
+		Long cnt = 0L;
 		for (int i = 0; i < outs.size(); i++) {
 			FrontOut out = outs.get(i);
 			// 获取种类规格信息
@@ -57,7 +56,6 @@ public class SteelOutService {
 			Long categoryId = baseDataCache.getCategoryId(specId);
 			String steelName = baseDataCache.getSteelCategory(categoryId).getSteelName();
 			Double thickness = baseDataCache.getSteelSpecication(specId).getThickness();
-			
 		
 			params.clear();
 			if (out.getOutId() == null) {
@@ -72,16 +70,17 @@ public class SteelOutService {
 				
 				// Firstly query today's store in, lastly update inventory position
 				params.clear();
-				params.add(now);
+				params.add(SteelUtil.formatDate(now, null));
 				params.add(thickness);
 				params.add(steelName);
-				logger.info("updateOut: inventorySQL: " +inventorySQL +  ";params" + params.toString());
+				logger.info("updateOut: inventoryCntSQl: " +inventoryCntSQl +  ";params" + params.toString());
 				try{  // queryForMap 无记录抛异常
-				   m = jdbcTemplate.queryForMap(inventorySQL, params.toArray());
+					cnt = jdbcTemplate.queryForObject(inventoryCntSQl, params.toArray(), Long.class);
 				} catch(Exception e){
 					logger.warn(e.toString());
 				}
-				if(!m.containsKey("store_out")){  // 当日此规格未入库过
+				//
+				if( cnt == 0L){  // 当日此规格未入库 也未出库过
 					params.clear();
 					params.add(now);
 					params.add(out.getActualAmount());
@@ -92,14 +91,20 @@ public class SteelOutService {
 					logger.info("updateOut: insertInSQL: " +insertInSQL +  ";params" + params.toString());
 					jdbcTemplate.update(insertInSQL, params.toArray());
 				} else {
+					// 查询 今日此规格出库数量
+					try{  // queryForMap 无记录抛异常
+						m = jdbcTemplate.queryForMap(inventorySQL, params.toArray());
+					} catch(Exception e){
+						logger.warn(e.toString());
+					}
 					Double storeOut = Double.valueOf(String.valueOf(m.get("store_out")));
 					Double lastAmount = storeOut + out.getActualAmount();
 					params.clear();
 					params.add(lastAmount);
-					params.add(now);
+					params.add(SteelUtil.formatDate(now, null));
 					params.add(thickness);
 					params.add(steelName);
-					logger.info("updateOut: updateInSQL: " +inventorySQL +  ";params" + params.toString());
+					logger.info("updateOut: updateInSQL: " +updateInSQL +  ";params" + params.toString());
 					jdbcTemplate.update(updateInSQL, params.toArray());
 				}
 			} else {
@@ -112,10 +117,11 @@ public class SteelOutService {
 				
 				Date storeDate = (Date) m.get("out_date");
 				Double steelAmount = 0.0;
-				if(m.get("actual_amount") != null)
-					Double.valueOf(String.valueOf(m.get("actual_amount")));
+				if(m.get("actual_amount") != null) {
+					steelAmount = Double.valueOf(String.valueOf(m.get("actual_amount")));
+				}
 				params.clear();
-				params.add(storeDate);
+				params.add(SteelUtil.formatDate(storeDate, null));
 				params.add(thickness);
 				params.add(steelName);
 				
@@ -123,8 +129,9 @@ public class SteelOutService {
 				m = jdbcTemplate.queryForMap(inventorySQL, params.toArray());
 				
 				Double storeOut = 0.0;
-				if(m.get("store_out") != null)
+				if(m.get("store_out") != null) {
 					storeOut = Double.valueOf(String.valueOf(m.get("store_out")));
+				}
 				Double lastAmount = storeOut - steelAmount + out.getActualAmount();
 				params.clear();
 				params.add(lastAmount);

@@ -1,7 +1,7 @@
 package cn.four.steel.controller;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,7 +31,7 @@ public class SteelInventoryController {
 	public List<SteelCategory> category(){
 		Map<Long, SteelCategory> t = baseDataCache.getCatetories();
 		List<SteelCategory> res = new ArrayList<>();
-		Set<String> s = new HashSet<>();
+		Set<String> s = new LinkedHashSet<>();
 		for(Entry<Long, SteelCategory> e : t.entrySet()){
 			if(!s.contains(e.getValue().getSteelName())){
 				res.add(e.getValue());

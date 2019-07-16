@@ -124,7 +124,7 @@
 
 		$('#addOutBoundWindow').window({
 			title : '钢材出库',
-			width : 1400,
+			width : 1300,
 			modal : true,
 			shadow : true,
 			closed : true,
@@ -191,7 +191,7 @@
 	
 	function addRow(i, out){
 		var tr = '<tr id="row' + i + '">';
-		tr += '<td><input type="text" style="display: none;" id="outId' + i +'" name="outId"/></td>';
+		tr += '<td><input type="text" style="display:none;" id="outId' + i +'" name="outId"/></td>';
 		tr += '<td><input class="easyui-textbox" id="orderNo' + i +'" style="width: 95%; height: 32px" disabled/><input type="text" style="display: none;" id="orderNoHide' + i +'" name="orderNo"/></td>';
 		tr += '<td><input class="easyui-textbox" id="catgoryId' + i +'" style="width: 95%; height: 32px" disabled /></td>';
 		tr += '<td><input class="easyui-textbox" id="specId' + i +'" style="width: 95%; height: 32px" disabled/></td>';
@@ -220,7 +220,7 @@
 		$("#clientAmount" + i).textbox('setValue', out.clientAmount);
 		$("#unit" + i).combobox('setValue', out.unit);
 		$("#steelCalcAmount" + i).textbox('setValue', out.steelCalcAmount);
-		
+		$("#actualAmount" + i).textbox('setValue', out.actualAmount);
 	}
 	function query() {
 		var queryParams = $('#outBound').datagrid('options').queryParams;
@@ -295,20 +295,20 @@
 					<thead>
 						<tr style="height: 30px">
 							<th style="width: 0%;"></th>
-							<th style="width: 12%;">订单单号</th>
-							<th style="width: 12%;">种类</th>
-							<th style="width: 7%;">规格</th>
+							<th style="width: 15%;">订单单号</th>
+							<th style="width: 17%;">种类</th>
+							<th style="width: 10%;">规格</th>
 							<th style="width: 11%;">数量(重量)</th>
-							<th style="width: 6%;">单位</th>
-							<th style="width: 10%;">钢板张数</th>
-							<th style="width: 15%;">实际称重(吨)</th>
+							<th style="width: 10%;">单位</th>
+							<th style="width: 13%;">钢板张数</th>
+							<th style="width: 20%;">实际称重(吨)</th>
 						</tr>
 						
 						<tr >
-							<td colspan="5" style="align:center;"><input class="btn btn-success btn-block" type="button"
+							<td colspan="4" style="align:center;"><input class="btn btn-success btn-block" type="button"
 								style="width: 200px; height: 40px" value="提交"
 								onclick="saveOut()" /></td>
-							<td colspan="5"><input class="btn btn-success btn-block" type="button"
+							<td colspan="4"><input class="btn btn-success btn-block" type="button"
 								style="width: 200px; height: 40px" value="导出"
 								onclick="exportOut()" /></td>
 						</tr>

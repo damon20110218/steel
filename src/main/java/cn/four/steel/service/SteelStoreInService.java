@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -17,7 +19,8 @@ import cn.four.steel.util.SteelUtil;
 @Transactional
 @Service
 public class SteelStoreInService {
-
+	
+	private static final Logger logger = LoggerFactory.getLogger(SteelStoreInService.class);
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
@@ -28,10 +31,12 @@ public class SteelStoreInService {
 		String updateSQL = "update steel_storage set client_no = ?, store_no = ?, steel_amount = ?,"
 				+ " steel_factory = ?, spec_id = ?, client_id = ?, price = ?, cash_amount = ? where storage_id = ?";
 		String categorySQL = "select sc.steel_name, ss.thickness from steel_specs ss, steel_category sc where ss.category_id = sc.category_id and ss.spec_id = ?";
+		String inventoryCntSQl = "select count(*) from steel_inventory where inventory_date = ? and thickness = ? and steel_name = ?";
 		String inventorySQL = "select store_in from steel_inventory where inventory_date = ? and thickness = ? and steel_name = ?";
 		String updateInSQL = "update steel_inventory set store_in = ? where inventory_date = ? and thickness = ? and steel_name = ?";
 		String insertInSQL = "insert into steel_inventory(inventory_date, store_in, year, month, steel_name, thickness) values(?,?,?,?,?,?)";
 		List<Object> params = new ArrayList<Object>();
+		Long cnt = 0L;
 		Date now = new Date();
 		for (int i = 0; i < fss.size(); i++) {
 			FrontStorage fs = fss.get(i);
@@ -51,7 +56,7 @@ public class SteelStoreInService {
 				Date storeDate = (Date) m.get("store_date");
 				Double steelAmount = Double.valueOf(String.valueOf(m.get("steel_amount")));
 				params.clear();
-				params.add(storeDate);
+				params.add(SteelUtil.formatDate(storeDate, null));
 				params.add(thickness);
 				params.add(steelName);
 				m = jdbcTemplate.queryForMap(inventorySQL, params.toArray());
@@ -60,7 +65,7 @@ public class SteelStoreInService {
 				Double lastAmount = storeIn - steelAmount + fs.getAmount();
 				params.clear();
 				params.add(lastAmount);
-				params.add(storeDate);
+				params.add(SteelUtil.formatDate(storeDate, null));
 				params.add(thickness);
 				params.add(steelName);
 				jdbcTemplate.update(updateInSQL, params.toArray());
@@ -98,12 +103,11 @@ public class SteelStoreInService {
 				params.add(steelName);
 				//
 				try{  // queryForMap 无记录抛异常
-				   m = jdbcTemplate.queryForMap(inventorySQL, params.toArray());
+					cnt = jdbcTemplate.queryForObject(inventoryCntSQl, params.toArray(), Long.class);
 				} catch(Exception e){
 					
 				}
-				Object o = m.get("store_in");
-				if(o == null){  // 当日此规格未入库过
+				if(cnt == 0L){  // 当日此规格未入库 也为出库过
 					params.clear();
 					params.add(now);
 					params.add(fs.getAmount());
@@ -113,11 +117,17 @@ public class SteelStoreInService {
 					params.add(thickness);
 					jdbcTemplate.update(insertInSQL, params.toArray());
 				} else {
+					try{  // queryForMap 无记录抛异常
+						m = jdbcTemplate.queryForMap(inventorySQL, params.toArray());
+					} catch(Exception e){
+						logger.warn(e.toString());
+					}
+					Object o = m.get("store_in");
 					Double storeIn = Double.valueOf(String.valueOf(o));
 					Double lastAmount = storeIn + fs.getAmount();
 					params.clear();
 					params.add(lastAmount);
-					params.add(now);
+					params.add(SteelUtil.formatDate(now, null));
 					params.add(thickness);
 					params.add(steelName);
 					jdbcTemplate.update(updateInSQL, params.toArray());

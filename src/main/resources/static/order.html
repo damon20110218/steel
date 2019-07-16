@@ -133,13 +133,27 @@
 										field : 'isOut',
 										title : '是否出库',
 										width : 120,
-										align : 'center'
+										align : 'center',
+										formatter : function(value, row, index){
+											if(value == '1'){
+												return "是";
+											} else {
+												return "否";
+											}
+										}
 									},
 									{
 										field : 'isSale',
 										title : '是否销售',
 										width : 120,
-										align : 'center'
+										align : 'center',
+										formatter : function(value, row, index){
+											if(value == '1'){
+												return "是";
+											} else {
+												return "否";
+											}
+										}
 									},
 									{
 										field : 'comment',
@@ -194,7 +208,11 @@
 			$("#price0").textbox('setValue', '');
 			$("#steelCalcAmount0").textbox('setValue', '');
 			$("#comment0").textbox('setValue', '');
-			
+			// 删除上一次新增的 tr
+			var rowLength = $("#storeTable tr").length;
+			for(var j = 1; j < rowLength - 2; j++){
+				deleteSelectedRow("row" + j);
+			}
 			
 			$.ajax({
 				type : "post",
@@ -386,7 +404,7 @@
 								onclick="deleteSelectedRow(row0)" /></td>
 						</tr>
 						<tr>
-							<td align="center" colspan="9"><input type="button"
+							<td align="center" colspan="11"><input type="button"
 								class="easyui-linkbutton" value="增加一行"
 								style="width: 80px; height: 35px" onclick="insertNewRow()" /></td>
 						</tr>
@@ -434,7 +452,18 @@
 				$("#specId0").combobox({
 					url : '/basic/spec?categoryId=' + rec.categoryId,
 					valueField : 'specId',
-					textField : 'thickness'
+					textField : 'thickness',
+					onSelect : function(spec){
+						// 获取最新价格
+						$.ajax({
+							type : "get",
+							url : "/price/cur_sale_price?specId=" + spec.specId, //提交到的url
+							contentType : "application/json; charset=utf-8",
+							success : function(price) {
+								$("#price0").textbox("setValue", price)
+							}
+						});
+					}
 				});
 			}
 		})
@@ -499,9 +528,9 @@
 			$("#" + rowId + " td:eq(4)").children().eq(0).attr("id",
 					"specId" + flag);
 			$("#" + rowId + " td:eq(5)").children().eq(0).attr("id",
-					"unit" + flag);
+			"clientAmount" + flag);
 			$("#" + rowId + " td:eq(6)").children().eq(0).attr("id",
-					"amout" + flag);
+					"unit" + flag);
 			$("#" + rowId + " td:eq(7)").children().eq(0).attr("id",
 					"price" + flag);
 			$("#" + rowId + " td:eq(8)").children().eq(0).attr("id",
@@ -524,7 +553,19 @@
 					$("#specId" + thisId.substring(10)).combobox({
 						url : '/basic/spec?categoryId=' + rec.categoryId,
 						valueField : 'specId',
-						textField : 'thickness'
+						textField : 'thickness',
+						onSelect : function(spec){
+							thisId = $(this).attr("id");
+							// 获取最新价格
+							$.ajax({
+								type : "get",
+								url : "/price/cur_sale_price?specId=" + spec.specId, //提交到的url
+								contentType : "application/json; charset=utf-8",
+								success : function(price) {
+									$("#price" + thisId.substring(6)).textbox("setValue", price)
+								}
+							});
+						}
 					});
 				}
 			});
