@@ -225,6 +225,7 @@
 </head>
 <body class="easyui-layout" style="visibility: hidden;">
 	<div region="center" border="false">
+		<h2>钢材入库管理</h2>
 		<input class="easyui-combobox" id="year"
 			data-options="prompt:'请选择年份',iconCls:'icon-man'"
 			style="width: 200px; height: 40px" editable="false" /> &nbsp; <input
@@ -259,7 +260,7 @@
 				<div>
 					<label>公司：</label><input id="companyList" class="easyui-combobox"
 						data-options="prompt:'请选择公司',iconCls:'icon-man'"
-						style="width: 300px; height: 40px" editable="false"/>
+						style="width: 300px; height: 40px"/>
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					<label>入库单号：</label><input class="easyui-textbox" id="storageNo"
 						style="width: 210px; height: 40px; align: right" disabled />
@@ -296,7 +297,7 @@
 							<td><input type="text" class="easyui-numberbox"
 								id="cashAmount0" name="cashAmount"
 								style="width: 95%; height: 32px" data-options="required:true" /></td>
-							<td><input type="text" class="easyui-numberbox" id="price0"
+							<td><input type="text" class="easyui-textbox" id="price0"
 								name="price" style="width: 95%; height: 32px" data-options="required:true" /></td>
 							<td><input type="text" class="easyui-textbox" id="factory0"
 								name="factory" style="width: 95%; height: 32px" /></td>
@@ -322,8 +323,8 @@
 		var fourthCell = '<select id="specId0" class="easyui-combobox" name="specId" style="width: 95%; height: 32px" data-options="required:true" editable="false"> </select>';
 		var fifthCell = '<input type="text" class="easyui-numberbox"  id="amount0" name="amount" style="width: 95%; height: 32px" data-options="required:true"/>';
 		var sixthCell = '<input type="text" class="easyui-numberbox"  id="cashAmount0" name="cashAmount" style="width: 95%; height: 32px" data-options="required:true" />';
-		var seventhCell = '<input type="text" class="easyui-numberbox"  id="price0" name="price" style="width: 95%; height: 32px" data-options="required:true" />';
-		var eighthCell = '<input type="text" class="easyui-textbox"  id="factory0" name="factory" style="width: 95%; height: 32px" data-options="required:true" />';
+		var seventhCell = '<input type="text" class="easyui-textbox"  id="price0" name="price" style="width: 95%; height: 32px" data-options="required:true" />';
+		var eighthCell = '<input type="text" class="easyui-textbox"  id="factory0" name="factory" style="width: 95%; height: 32px" />';
 		$("#categoryId0").combobox({
 			url : '/basic/category',
 			valueField : 'categoryId',
@@ -346,7 +347,18 @@
 					}
 				});
 			}
-		})
+		});
+		// 添加重量  金额 计算单价逻辑
+		$('#amount0').numberbox({ onChange: function(value) { calcAmount(0);}});
+		$('#cashAmount0').numberbox({ onChange: function(value) { calcAmount(0);}});
+		function calcAmount(index){
+			var amount = $("#amount" + index).numberbox('getValue');
+			var cashAmount = $("#cashAmount" + index).numberbox('getValue');
+			if(amount !=null && amount != '' && cashAmount != null && cashAmount != ''){
+				var num = parseFloat(cashAmount)/parseFloat(amount);
+				$("#price" + index).textbox('setValue', num.toFixed(4));
+			}
+		}
 		function insertNewRow() {
 			//获取表格有多少行
 			var rowLength = $("#storeTable tr").length;
@@ -385,7 +397,6 @@
 			$("#" + rowId).children().each(function(i, e) {
 				$.parser.parse(e);
 			});
-			// 隐藏多余的框
 
 			//为新添加的行里面的控件添加新的id属性。
 			$("#" + rowId + " td:eq(0)").children().eq(0).attr("id",
@@ -429,6 +440,10 @@
 					});
 				}
 			});
+			// 添加重量  金额 计算单价逻辑
+			var index = flag;
+			$('#amount' + flag).numberbox({ onChange: function(value) { calcAmount(index);}});
+			$('#cashAmount' + flag).numberbox({ onChange: function(value) { calcAmount(index);}});
 			//每插入一行，flag自增一次
 			flag++;
 		}

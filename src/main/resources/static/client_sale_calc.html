@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>钢材销售</title>
+<link rel="stylesheet" href="dist/css/site.min.css">
+<!-- 导入jquery核心类库 -->
+<script type="text/javascript" src="dist/js/jquery-3.4.1.min.js"></script>
+<!-- 导入easyui类库 -->
+<link rel="stylesheet" type="text/css" href="css/easyui.css">
+<link rel="stylesheet" type="text/css" href="css/icon.css">
+<script type="text/javascript" src="dist/js/jquery.easyui.min.js"></script>
+<script src="dist/js/easyui-lang-zh_CN.js" type="text/javascript"></script>
+<script type="text/javascript">
+	$(function() {
+		// 先将body隐藏，再显示，不会出现页面刷新效果
+		$("body").css({
+			visibility : "visible"
+		});
+		// 初始化年份	
+		var date = new Date;
+		var curYear = date.getFullYear();
+		var curMonth = date.getMonth() + 1;
+		var yearVal = new Array();
+		for (var i = 0; i < 10; i++) {
+			var single = {};
+			single.id = curYear - i;
+			single.text = curYear - i;
+			yearVal.push(single);
+		}
+		$('#year').combobox({
+			data : yearVal,
+			valueField : 'id',
+			textField : 'text'
+		});
+		// 初始化月份
+		var monthVal = new Array();
+		for (var i = 1; i < 13; i++) {
+			var single = {};
+			single.id = i;
+			single.text = i + "月";
+			monthVal.push(single);
+		}
+		$('#month').combobox({
+			data : monthVal,
+			valueField : 'id',
+			textField : 'text'
+		});
+		// 设置默认值
+		$('#year').combobox('setValue', curYear);
+		$('#month').combobox('setValue', curMonth);
+		$('#sale')
+				.datagrid(
+						{
+							iconCls : 'icon-forward',
+							width : 1300,
+							height : 600,
+							border : true,
+							rownumbers : true,
+							striped : true,
+							queryParams : {
+								"year" : $('#year').combobox('getValue'),
+								"month" : $('#month').combobox('getValue')
+							},
+							pageList : [ 10, 20, 30 ],
+							pagination : true,
+							url : "/sale/query",
+							dataType : "jsonp",
+							idField : 'saleId',
+							columns : [ [
+									{
+										field : 'saleId',
+										checkbox : true,
+									},
+									{
+										field : 'saleDate',
+										title : '日期',
+										width : 150,
+										align : 'center'
+									},
+									{
+										field : 'saleNo',
+										title : '销售单号',
+										width : 200,
+										align : 'center'
+									},
+									{
+										field : 'cashAmount',
+										title : '金额',
+										width : 200,
+										align : 'center'
+									}] ]
+						});
+
+	});
+	function query() {
+		var queryParams = $('#sale').datagrid('options').queryParams;
+		var year = $('#year').textbox('getValue');
+		var month = $('#month').textbox('getValue');
+		var saleNo = $('#saleNoQuery').textbox('getValue');
+		var clientId = $('#companyList').combobox('getValue');
+		queryParams.year = year;
+		queryParams.month = month;
+		queryParams.saleNo = saleNo;
+		$('#sale').datagrid('options').queryParams = queryParams;
+		$("#sale").datagrid('reload');
+	}
+	function export(){
+		
+	}
+</script>
+</head>
+<body class="easyui-layout" style="visibility: hidden;">
+	<div region="center" border="false">
+		<h2>客户订单统计</h2>
+		<input class="easyui-combobox" id="year"
+			data-options="prompt:'请选择年份',iconCls:'icon-man'"
+			style="width: 200px; height: 40px" editable="false" /> &nbsp; <input
+			class="easyui-combobox" id="month"
+			data-options="prompt:'请选择月份',iconCls:'icon-man'"
+			style="width: 200px; height: 40px" editable="false" /> &nbsp; <input
+			class="easyui-textbox" id="saleNoQuery"
+			data-options="prompt:'请输入销售单号',iconCls:'icon-man'"
+			style="width: 200px; height: 40px" /> &nbsp;<input id="companyList"
+			class="easyui-combobox"
+			data-options="prompt:'请选择公司',iconCls:'icon-man'"
+			style="width: 300px; height: 40px" />
+			<table style="width:70%">
+				<tr style="height:10px"></tr>
+				<tr>
+					<td style="width:70%">&nbsp;</td>
+					<td style="width:100px"><a id="saleHref" href="" target="main" class="btn btn-success btn-block" onclick="query()">查询</a></td>
+					<td style="width:5%">&nbsp;</td>
+					<td style="width:100px"><a id="steelOutHref" href="" target="main" class="btn btn-success btn-block" onclick="export()">导出</a>	</td>
+				</tr>
+				<tr style="height:10px"></tr>
+			</table>
+		<table id="sale"></table>
+	</div>
+</body>
+</html>
