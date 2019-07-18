@@ -22,6 +22,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.four.steel.bean.from.FrontOrder;
+import cn.four.steel.cache.BaseDataCache;
 import cn.four.steel.service.SteelOrderService;
 import cn.four.steel.util.SteelExporter;
 
@@ -30,6 +31,8 @@ public class SteelOrderController {
 	private static Logger logger = LoggerFactory.getLogger(SteelOrderController.class);
 	@Autowired
 	private SteelOrderService steelOrderService;
+	@Autowired
+	private BaseDataCache baseDataCache;
 
 	@RequestMapping(value = "/order/update", method = RequestMethod.POST)
 	public String orderUpdate(@RequestBody JSONObject jsonParam, HttpServletRequest request) {
@@ -71,9 +74,13 @@ public class SteelOrderController {
 	}
 
 	@RequestMapping(value = "/order/show", method = RequestMethod.POST)
-	public List<FrontOrder> showSingleOrder(String orderId) {
+	public List<FrontOrder> showSingleOrder(String orderNo) {
 		try {
-			return steelOrderService.showSingleOrder(orderId);
+			List<FrontOrder> orders = steelOrderService.showSingleOrder(orderNo);
+			for(FrontOrder order : orders){
+				order.setCategoryId(baseDataCache.getCategoryId(order.getSpecId()));
+			}
+			return orders;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return null;

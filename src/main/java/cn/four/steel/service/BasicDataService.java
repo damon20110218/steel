@@ -164,6 +164,18 @@ public class BasicDataService {
 		jdbcTemplate.update(delSQL, params.toArray());
 		baseDataCache.delClient(clientId);
 	}
+	public boolean validateClient(String clientType, String clientName){
+		String sql = "select count(*) from client_info where client_type= ? and client_name = ?";
+		List<Object> params = new ArrayList<Object>();
+		params.add(clientType);
+		params.add(clientName);
+		Long cnt = jdbcTemplate.queryForObject(sql, params.toArray(), Long.class);
+		if(cnt == 0 ){
+			return true;
+		} else {
+			return false;
+		}
+	}
 	/**
 	 * 
 	* @Title: loadSingleSteelPrice  

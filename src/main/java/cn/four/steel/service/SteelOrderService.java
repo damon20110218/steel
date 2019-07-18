@@ -139,7 +139,7 @@ public class SteelOrderService {
 	}
 	
 	public List<FrontOrder> showSingleOrder(String orderNo){
-		String showSQL = "select order_id, order_no, client_id, account_no, spec_id, price, steel_calc_amount, comment, unit from steel_order where order_no = ?";
+		String showSQL = "select order_id, order_no, client_id, account_no, spec_id, price, client_amount, steel_calc_amount, comment, unit from steel_order where order_no = ?";
 		List<Object> params = new ArrayList<Object>();
 		params.add(orderNo);
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(showSQL, params.toArray());
@@ -153,6 +153,7 @@ public class SteelOrderService {
 				order.setAccountNo(String.valueOf(m.get("account_no")));
 				order.setSpecId(Long.valueOf(String.valueOf(m.get("spec_id"))));
 				order.setPrice(Double.valueOf(String.valueOf(m.get("price"))));
+				order.setClientAmount(Double.valueOf(String.valueOf(m.get("client_amount"))));
 				order.setSteelCalcAmount(String.valueOf(m.get("steel_calc_amount")));
 				order.setComment(String.valueOf(m.get("comment")));
 				order.setUnit(String.valueOf(m.get("unit")));

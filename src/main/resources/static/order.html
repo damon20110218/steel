@@ -255,7 +255,7 @@
 		doAdd(true);
 		$.ajax({
 			type : "post",
-			url : '/order/show?orderId=' + row.orderId,
+			url : '/order/show?orderNo=' + row.orderNo,
 			contentType : "application/json; charset=utf-8",
 			dataType : "json",
 			success : function(data) {
@@ -306,10 +306,10 @@
 	<div region="center" border="false">
 		<input class="easyui-combobox" id="year"
 			data-options="prompt:'请选择年份',iconCls:'icon-man'"
-			style="width: 200px; height: 40px" /> &nbsp; <input
+			style="width: 200px; height: 40px" editable="false" /> &nbsp; <input
 			class="easyui-combobox" id="month"
 			data-options="prompt:'请选择月份',iconCls:'icon-man'"
-			style="width: 200px; height: 40px" /> &nbsp; <input
+			style="width: 200px; height: 40px" editable="false" /> &nbsp; <input
 			class="easyui-textbox" id="orderNoQuery"
 			data-options="prompt:'请输入订单单号',iconCls:'icon-man'"
 			style="width: 200px; height: 40px" /> &nbsp;<input
@@ -355,7 +355,7 @@
 				<div>
 					<label>客户：</label><input id="customerList" class="easyui-combobox"
 						data-options="prompt:'请选择客户',iconCls:'icon-man'"
-						style="width: 300px; height: 40px" />
+						style="width: 300px; height: 40px" editable="false"/>
 				</div>
 				<p></p>
 				<table border="1" id="storeTable"
@@ -381,22 +381,22 @@
 							<td><input type="text" class="easyui-textbox" id="orderNo0"
 								name="orderNo" style="width: 95%; height: 32px" /></td>
 							<td><input type="text" class="easyui-textbox" id="accountNo0"
-								name="accountNo" style="width: 95%; height: 32px" /></td>
+								name="accountNo" style="width: 95%; height: 32px" data-options="required:true" /></td>
 							<td><select id="categoryId0" class="easyui-combobox"
-								name="categoryId" style="width: 95%; height: 32px">
+								name="categoryId" style="width: 95%; height: 32px" editable="false" data-options="required:true">
 							</select></td>
 							<td><select id="specId0" class="easyui-combobox"
-								name="specId" style="width: 95%; height: 32px">
+								name="specId" style="width: 95%; height: 32px" data-options="required:true">
 							</select></td>
-							<td><input type="text" class="easyui-textbox" id="clientAmount0"
-								name="clientAmount" style="width: 95%; height: 32px" /></td>
+							<td><input type="text" class="easyui-numberbox" id="clientAmount0"
+								name="clientAmount" style="width: 95%; height: 32px" data-options="required:true"/></td>
 							<td><select id="unit0" class="easyui-combobox"
-								name="unit" style="width: 95%; height: 32px">
+								name="unit" style="width: 95%; height: 32px" data-options="required:true" editable="false">
 							</select></td>
-							<td><input type="text" class="easyui-textbox" id="price0"
-								name="price" style="width: 95%; height: 32px" /></td>
+							<td><input type="text" class="easyui-numberbox" id="price0"
+								name="price" style="width: 95%; height: 32px" data-options="required:true" /></td>
 							<td><input type="text" class="easyui-textbox" id="steelCalcAmount0"
-								name="steelCalcAmount" style="width: 95%; height: 32px" /></td>
+								name="steelCalcAmount" style="width: 95%; height: 32px" data-options="required:true" /></td>
 							<td><input type="text" class="easyui-textbox" id="comment0"
 								name="comment" style="width: 95%; height: 32px" /></td>
 							<td><input type="button" name="delete" value="删 除"
@@ -417,13 +417,13 @@
 		var flag = 0;
 		var firstCell = '<input type="text" style="display: none;" id="orderId0" name="orderId" />';
 		var secondCell = '<input type="text" class="easyui-textbox" id="orderNo0" name="orderNo" style="width: 95%; height: 32px" />';
-		var thirdCell = '<input type="text" class="easyui-textbox" id="accountNo0" name="accountNo" style="width: 95%; height: 32px" />';
-		var fourthCell = '<select id="categoryId0" class="easyui-combobox" name="categoryId" style="width: 95%; height: 32px"> </select>';
-		var fifthCell = '<select id="specId0" class="easyui-combobox" name="specId" style="width: 95%; height: 32px"> </select>';
-		var sixthCell = '<input type="text" class="easyui-textbox" id="clientAmount0" name="clientAmount" style="width: 95%; height: 32px" />';
-		var seventhCell = '<select id="unit0" class="easyui-combobox" name="unit" style="width: 95%; height: 32px"> </select>';
-		var eighthCell = '<input type="text" class="easyui-textbox" id="price0" name="price" style="width: 95%; height: 32px" />';
-		var nineCell = '<input type="text" class="easyui-textbox" id="steelCalcAmount0" name="steelCalcAmount" style="width: 95%; height: 32px" />';
+		var thirdCell = '<input type="text" class="easyui-textbox" id="accountNo0" name="accountNo" style="width: 95%; height: 32px" data-options="required:true"/>';
+		var fourthCell = '<select id="categoryId0" class="easyui-combobox" name="categoryId" style="width: 95%; height: 32px" data-options="required:true" editable="false"> </select>';
+		var fifthCell = '<select id="specId0" class="easyui-combobox" name="specId" style="width: 95%; height: 32px" data-options="required:true" editable="false"> </select>';
+		var sixthCell = '<input type="text" class="easyui-textbox" id="clientAmount0" name="clientAmount" style="width: 95%; height: 32px" data-options="required:true"/>';
+		var seventhCell = '<select id="unit0" class="easyui-combobox" name="unit" style="width: 95%; height: 32px" data-options="required:true" > </select>';
+		var eighthCell = '<input type="text" class="easyui-textbox" id="price0" name="price" style="width: 95%; height: 32px" data-options="required:true" />';
+		var nineCell = '<input type="text" class="easyui-textbox" id="steelCalcAmount0" name="steelCalcAmount" style="width: 95%; height: 32px" data-options="required:true" />';
 		var tenCell = '<input type="text" class="easyui-textbox" id="comment0" name="comment" style="width: 95%; height: 32px" />';
 		
 		var unitVal = new Array();
@@ -593,35 +593,44 @@
 		function saveOrder() {
 			var orders = new Array();
 			var clientId = $("#customerList").combobox('getValue');
-			var formObject = {};
-			var formArray = $("#addOrderForm").serializeArray();
-			$.each(formArray, function(i, item) {
-				formObject[item.name] = item.value;
-				if (i % 10 == 9) {
-					formObject.clientId = clientId;
-					orders.push(formObject);
-					formObject = {};
-				}
-			});
-			var params = {
-				storage : orders
-			};
-			$.ajax({
-				type : "post", //数据提交方式（post/get）
-				url : "/order/update", //提交到的url
-				contentType : "application/json; charset=utf-8",
-				data : JSON.stringify(params),
-				success : function(msg) {
-					if (msg == "Success") { //修改成功
-						//修改成功处理代码...
-						$('#addOrderWindow').window("close");
-						query();
-					} else { //修改失败
-						//修改失败处理代码...
-						$.messager.alert('系统提示', '订单提交失败', 'error');
+			if(clientId == null || clientId == ''){
+				$.messager.alert('系统提示', '请选择客户', 'warning');
+				return;
+			}
+			if($("#addOrderForm").form('validate')){
+				var formObject = {};
+				var formArray = $("#addOrderForm").serializeArray();
+				$.each(formArray, function(i, item) {
+					formObject[item.name] = item.value;
+					if (i % 10 == 9) {
+						formObject.clientId = clientId;
+						orders.push(formObject);
+						formObject = {};
 					}
-				}
-			});
+				});
+				var params = {
+					storage : orders
+				};
+				$.ajax({
+					type : "post", //数据提交方式（post/get）
+					url : "/order/update", //提交到的url
+					contentType : "application/json; charset=utf-8",
+					data : JSON.stringify(params),
+					success : function(msg) {
+						if (msg == "Success") { //修改成功
+							//修改成功处理代码...
+							$('#addOrderWindow').window("close");
+							query();
+						} else { //修改失败
+							//修改失败处理代码...
+							$.messager.alert('系统提示', '订单提交失败', 'error');
+						}
+					}
+				});
+			} else {
+				$.messager.alert('系统提示','请输入必填项','warning');
+				return;
+			}
 		}
 	</script>
 </body>

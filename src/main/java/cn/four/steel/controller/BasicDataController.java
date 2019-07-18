@@ -109,4 +109,16 @@ public class BasicDataController {
 			return "Failed";
 		}
 	}
+	@RequestMapping(value = "/basic/validate_client", method = RequestMethod.POST)
+	public String clientValidation(String clientType, String clientName) {
+		try {
+			if(basicDataService.validateClient(clientType, clientName)){
+				return "Success";
+			} else {
+				return "Failed";
+			}
+		} catch (Exception e) {
+			return "Failed";
+		}
+	}
 }

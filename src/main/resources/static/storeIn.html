@@ -123,7 +123,7 @@
 
 		$('#addStoreWindow').window({
 			title : '钢材入库',
-			width : 1400,
+			width : 1450,
 			modal : true,
 			shadow : true,
 			closed : true,
@@ -227,10 +227,10 @@
 	<div region="center" border="false">
 		<input class="easyui-combobox" id="year"
 			data-options="prompt:'请选择年份',iconCls:'icon-man'"
-			style="width: 200px; height: 40px" /> &nbsp; <input
+			style="width: 200px; height: 40px" editable="false" /> &nbsp; <input
 			class="easyui-combobox" id="month"
 			data-options="prompt:'请选择月份',iconCls:'icon-man'"
-			style="width: 200px; height: 40px" /> &nbsp; <input
+			style="width: 200px; height: 40px" editable="false" /> &nbsp; <input
 			class="easyui-textbox" id="storeNoQuery"
 			data-options="prompt:'请输入入库单号',iconCls:'icon-man'"
 			style="width: 200px; height: 40px" /> &nbsp;<input
@@ -259,7 +259,7 @@
 				<div>
 					<label>公司：</label><input id="companyList" class="easyui-combobox"
 						data-options="prompt:'请选择公司',iconCls:'icon-man'"
-						style="width: 300px; height: 40px" />
+						style="width: 300px; height: 40px" editable="false"/>
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					<label>入库单号：</label><input class="easyui-textbox" id="storageNo"
 						style="width: 210px; height: 40px; align: right" disabled />
@@ -283,21 +283,21 @@
 						<tr id="row0">
 							<td><input type="text" style="display: none;"
 								id="storageId0" name="storageId" /></td>
-							<td><input type="text" class="easyui-textbox" id="clientNo0"
+							<td><input type="text" class="easyui-textbox" id="clientNo0" data-options="required:true"
 								name="clientNo" style="width: 95%; height: 32px" /></td>
 							<td><select id="categoryId0" class="easyui-combobox"
-								name="categoryId" style="width: 95%; height: 32px">
+								name="categoryId" style="width: 95%; height: 32px" data-options="required:true" editable="false">
 							</select></td>
 							<td><select id="specId0" class="easyui-combobox"
-								name="specId" style="width: 95%; height: 32px">
+								name="specId" style="width: 95%; height: 32px" data-options="required:true" editable="false">
 							</select></td>
-							<td><input type="text" class="easyui-textbox" id="amount0"
-								name="amount" style="width: 95%; height: 32px" /></td>
-							<td><input type="text" class="easyui-textbox"
+							<td><input type="text" class="easyui-numberbox" id="amount0"
+								name="amount" style="width: 95%; height: 32px" data-options="required:true" /></td>
+							<td><input type="text" class="easyui-numberbox"
 								id="cashAmount0" name="cashAmount"
-								style="width: 95%; height: 32px" /></td>
-							<td><input type="text" class="easyui-textbox" id="price0"
-								name="price" style="width: 95%; height: 32px" /></td>
+								style="width: 95%; height: 32px" data-options="required:true" /></td>
+							<td><input type="text" class="easyui-numberbox" id="price0"
+								name="price" style="width: 95%; height: 32px" data-options="required:true" /></td>
 							<td><input type="text" class="easyui-textbox" id="factory0"
 								name="factory" style="width: 95%; height: 32px" /></td>
 							<td><input type="button" name="delete" value="删 除"
@@ -317,13 +317,13 @@
 	<script type="text/javascript">
 		var flag = 1;
 		var firstCell = '<input type="text" style="display: none;" id="storageId0" name="storageId" />';
-		var secondCell = '<input type="text" class="easyui-textbox" id="clientNo0" name="clientNo" style="width: 95%; height: 32px" />';
-		var thirdCell = '<select id="categoryId0" class="easyui-combobox"  name="categoryId" style="width: 95%; height: 32px" > </select>';
-		var fourthCell = '<select id="specId0" class="easyui-combobox" name="specId" style="width: 95%; height: 32px">';
-		var fifthCell = '<input type="text" class="easyui-textbox"  id="amount0" name="amount" style="width: 95%; height: 32px" />';
-		var sixthCell = '<input type="text" class="easyui-textbox"  id="cashAmount0" name="cashAmount" style="width: 95%; height: 32px" />';
-		var seventhCell = '<input type="text" class="easyui-textbox"  id="price0" name="price" style="width: 95%; height: 32px" />';
-		var eighthCell = '<input type="text" class="easyui-textbox"  id="factory0" name="factory" style="width: 95%; height: 32px" />';
+		var secondCell = '<input type="text" class="easyui-textbox" id="clientNo0" name="clientNo" style="width: 95%; height: 32px" data-options="required:true" />';
+		var thirdCell = '<select id="categoryId0" class="easyui-combobox"  name="categoryId" style="width: 95%; height: 32px" data-options="required:true" editable="false" > </select>';
+		var fourthCell = '<select id="specId0" class="easyui-combobox" name="specId" style="width: 95%; height: 32px" data-options="required:true" editable="false"> </select>';
+		var fifthCell = '<input type="text" class="easyui-numberbox"  id="amount0" name="amount" style="width: 95%; height: 32px" data-options="required:true"/>';
+		var sixthCell = '<input type="text" class="easyui-numberbox"  id="cashAmount0" name="cashAmount" style="width: 95%; height: 32px" data-options="required:true" />';
+		var seventhCell = '<input type="text" class="easyui-numberbox"  id="price0" name="price" style="width: 95%; height: 32px" data-options="required:true" />';
+		var eighthCell = '<input type="text" class="easyui-textbox"  id="factory0" name="factory" style="width: 95%; height: 32px" data-options="required:true" />';
 		$("#categoryId0").combobox({
 			url : '/basic/category',
 			valueField : 'categoryId',
@@ -438,40 +438,50 @@
 		}
 
 		function saveStore() {
+			//页面要素校验
 			var stores = new Array();
 			var clientId = $("#companyList").combobox('getValue');
 			var storageNo = $("#storageNo").textbox('getValue');
-			var formObject = {};
-			var formArray = $("#addStoreForm").serializeArray();
-			$.each(formArray, function(i, item) {
-				formObject[item.name] = item.value;
-				if (i % 8 == 7) {
-					formObject.clientId = clientId;
-					formObject.storageNo = storageNo;
-					stores.push(formObject);
-					formObject = {};
-				}
-			});
-			var params = {
-				storage : stores
-			};
-			$.ajax({
-				type : "post", //数据提交方式（post/get）
-				url : "/store/update", //提交到的url
-				contentType : "application/json; charset=utf-8",
-				data : JSON.stringify(params),
-				success : function(msg) {
-					if (msg == "Success") { //修改成功
-						//修改成功处理代码...
-						$('#addStoreWindow').window("close");
-						query();
-					} else { //修改失败
-						//修改失败处理代码...
-						$.messager.alert('系统提示', '钢材入库失败', 'error');
+			if(clientId == null || clientId == ''){
+				$.messager.alert('系统提示', '请选择公司', 'warning');
+				return;
+			}
+			if($("#addStoreForm").form('validate')){
+				var formObject = {};
+				var formArray = $("#addStoreForm").serializeArray();
+				$.each(formArray, function(i, item) {
+					formObject[item.name] = item.value;
+					if (i % 8 == 7) {
+						formObject.clientId = clientId;
+						formObject.storageNo = storageNo;
+						stores.push(formObject);
+						formObject = {};
 					}
-				}
-			});
+				});
+				var params = {
+					storage : stores
+				};
+				$.ajax({
+					type : "post", //数据提交方式（post/get）
+					url : "/store/update", //提交到的url
+					contentType : "application/json; charset=utf-8",
+					data : JSON.stringify(params),
+					success : function(msg) {
+						if (msg == "Success") { //修改成功
+							//修改成功处理代码...
+							$('#addStoreWindow').window("close");
+							query();
+						} else { //修改失败
+							//修改失败处理代码...
+							$.messager.alert('系统提示', '钢材入库失败', 'error');
+						}
+					}
+				});
+		} else {
+			$.messager.alert('系统提示','请输入必填项','warning');
+			return;
 		}
+	}
 	</script>
 </body>
 </html>

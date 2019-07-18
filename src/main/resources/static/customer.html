@@ -126,28 +126,50 @@
 		$('#addStaffWindow').window("close");
 	}
 	function saveCompany() {
-		var formObject = {};
-        var formArray =$("#addStuffForm").serializeArray();
-        $.each(formArray,function(i,item){
-            formObject[item.name] = item.value;
-        });
-		$.ajax({
-			type : "post", //数据提交方式（post/get）
-			url : "/basic/update_client", //提交到的url
-			contentType: "application/json; charset=utf-8",
-            data: JSON.stringify(formObject),
-			//dataType : "json",//返回的数据类型格式
-			success : function(msg) {
-				if (msg == "Success") { //修改成功
-					//修改成功处理代码...
-					$('#addStaffWindow').window("close");
-					query();
-				} else { //修改失败
-					//修改失败处理代码...
-					$.messager.alert('系统提示','公司信息保存失败','error');
+		// 页面必填项校验
+		if($("#addStuffForm").form('validate')){
+			$.ajax({
+				type : "post", //数据提交方式（post/get）
+				url : "/basic/validate_client?clientType=2&clientName=" + $("#clientName").val(), //提交到的url
+				contentType: "application/json; charset=utf-8",
+	            data: JSON.stringify(formObject),
+				//dataType : "json",//返回的数据类型格式
+				success : function(msg) {
+					if (msg == "Success") { //修改成功
+					
+					} else { //修改失败
+						//修改失败处理代码...
+						$.messager.alert('系统提示','客户名称重复','error');
+						return;
+					}
 				}
-			}
-		});
+			});
+			var formObject = {};
+	        var formArray =$("#addStuffForm").serializeArray();
+	        $.each(formArray,function(i,item){
+	            formObject[item.name] = item.value;
+	        });
+			$.ajax({
+				type : "post", //数据提交方式（post/get）
+				url : "/basic/update_client", //提交到的url
+				contentType: "application/json; charset=utf-8",
+	            data: JSON.stringify(formObject),
+				//dataType : "json",//返回的数据类型格式
+				success : function(msg) {
+					if (msg == "Success") { //修改成功
+						//修改成功处理代码...
+						$('#addStaffWindow').window("close");
+						query();
+					} else { //修改失败
+						//修改失败处理代码...
+						$.messager.alert('系统提示','客户信息保存失败','error');
+					}
+				}
+			});
+		}else {
+			$.messager.alert('系统提示','请输入必填项','warning');
+			return;
+		}
 	}
 	function modify(rowIndex){
 		var a = $('#company').datagrid('selectRow',rowIndex);
@@ -174,7 +196,7 @@
 							query();
 						} else { //修改失败
 							//修改失败处理代码...
-							$.messager.alert('系统提示','公司信息删除失败','error');
+							$.messager.alert('系统提示','客户信息删除失败','error');
 						}
 					}
 				});

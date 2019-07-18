@@ -209,10 +209,10 @@
 		tr += '<td><input class="easyui-textbox" id="accountNo' + i +'" name="accountNo" style="width: 95%; height: 32px" disabled/></td>';
 		tr += '<td><input class="easyui-textbox" id="catgoryId' + i +'" style="width: 95%; height: 32px" disabled /></td>';
 		tr += '<td><input class="easyui-textbox" id="specId' + i +'" style="width: 95%; height: 32px" disabled/></td>';
-		tr += '<td><input class="easyui-textbox" id="saleAmount' + i +'" name="saleAmount" style="width: 95%; height: 32px" /></td>';
+		tr += '<td><input class="easyui-numberbox" id="saleAmount' + i +'" name="saleAmount" style="width: 95%; height: 32px" data-options="required:true"/></td>';
 		tr += '<td><input class="easyui-combobox" id="unit' + i +'" name="unit" style="width: 95%; height: 32px" disabled/></td>';
-		tr += '<td><input class="easyui-textbox" id="price' + i +'" name="price" style="width: 95%; height: 32px" /></td>';
-		tr += '<td><input class="easyui-textbox" id="cashAmount' + i +'" name="cashAmount" style="width: 95%; height: 32px" /></td>';
+		tr += '<td><input class="easyui-numberbox" id="price' + i +'" name="price" style="width: 95%; height: 32px" /></td>';
+		tr += '<td><input class="easyui-textbox" id="cashAmount' + i +'" name="cashAmount" style="width: 95%; height: 32px" data-options="required:true"/></td>';
 		tr +='</tr>';
 		var rowLength = $("#saleTable tr").length;
 		$("#saleTable tr:eq(" + (rowLength - 2) + ")").after(tr); //将新拼接的一行插入到当前行的下面
@@ -233,13 +233,22 @@
 		$("#catgoryId" + i).textbox('setValue', sale.display);
 		$("#specId" + i).textbox('setValue', sale.thickness);
 		$("#saleAmount" + i).textbox('setValue', sale.saleAmount);
+		$('#saleAmount' + i).textbox({ onChange: function(value) { calcAmount(i);}});
 		$("#unit" + i).combobox('setValue', sale.unit);
 		$("#price" + i).textbox('setValue', sale.price);
+		$('#price' + i).textbox({ onChange: function(value) { calcAmount(i);}});
 		$("#cashAmount" + i).textbox('setValue', sale.cashAmount);
 		$("#clientList").combobox('setValue', sale.clientId);
 	}
 	function closeWindow() {
 		$('#addSaleWindow').window("close");
+	}
+	function calcAmount(id){
+		var saleAmount = $("#saleAmount" + id).textbox('getValue');
+		var price = $("#price" + id).textbox('getValue');
+		if(saleAmount !=null && price != null){
+			$("#cashAmount" + id).textbox('setValue', saleAmount*price);
+		}
 	}
 </script>
 </head>
@@ -247,10 +256,10 @@
 	<div region="center" border="false">
 		<input class="easyui-combobox" id="year"
 			data-options="prompt:'请选择年份',iconCls:'icon-man'"
-			style="width: 200px; height: 40px" /> &nbsp; <input
+			style="width: 200px; height: 40px" editable="false"/> &nbsp; <input
 			class="easyui-combobox" id="month"
 			data-options="prompt:'请选择月份',iconCls:'icon-man'"
-			style="width: 200px; height: 40px" /> &nbsp; <input
+			style="width: 200px; height: 40px" editable="false"/> &nbsp; <input
 			class="easyui-textbox" id="saleNoQuery"
 			data-options="prompt:'请输入销售单号',iconCls:'icon-man'"
 			style="width: 200px; height: 40px" /> &nbsp;<input
@@ -311,39 +320,44 @@
 	</div>
 	<script type="text/javascript">
 		function saveSale() {
-			var sales = new Array();
-			var clientId = $("#clientList").combobox('getValue');
-			var saleNo = $("#saleNo").textbox('getValue');
-			var formObject = {};
-			var formArray = $("#addSaleForm").serializeArray();
-			$.each(formArray, function(i, item) {
-				formObject[item.name] = item.value;
-				if (i % 5 == 4) {
-					formObject.clientId = clientId;
-					formObject.saleNo = saleNo;
-					sales.push(formObject);
-					formObject = {};
-				}
-			});
-			var params = {
-				sales : sales
-			};
-			$.ajax({
-				type : "post", //数据提交方式（post/get）
-				url : "/sale/update", //提交到的url
-				contentType : "application/json; charset=utf-8",
-				data : JSON.stringify(params),
-				success : function(msg) {
-					if (msg == "Success") { //修改成功
-						//修改成功处理代码...
-						$('#addSaleWindow').window("close");
-						query();
-					} else { //修改失败
-						//修改失败处理代码...
-						$.messager.alert('系统提示', '钢材销售失败', 'error');
+			if($("#addSaleForm").form('validate')){
+				var sales = new Array();
+				var clientId = $("#clientList").combobox('getValue');
+				var saleNo = $("#saleNo").textbox('getValue');
+				var formObject = {};
+				var formArray = $("#addSaleForm").serializeArray();
+				$.each(formArray, function(i, item) {
+					formObject[item.name] = item.value;
+					if (i % 5 == 4) {
+						formObject.clientId = clientId;
+						formObject.saleNo = saleNo;
+						sales.push(formObject);
+						formObject = {};
 					}
-				}
-			});
+				});
+				var params = {
+					sales : sales
+				};
+				$.ajax({
+					type : "post", //数据提交方式（post/get）
+					url : "/sale/update", //提交到的url
+					contentType : "application/json; charset=utf-8",
+					data : JSON.stringify(params),
+					success : function(msg) {
+						if (msg == "Success") { //修改成功
+							//修改成功处理代码...
+							$('#addSaleWindow').window("close");
+							query();
+						} else { //修改失败
+							//修改失败处理代码...
+							$.messager.alert('系统提示', '钢材销售失败', 'error');
+						}
+					}
+				});
+			} else {
+				$.messager.alert('系统提示','请输入必填项','warning');
+				return;
+			}
 		}
 		function exportSale(){
 			
