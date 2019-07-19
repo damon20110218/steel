@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.four.steel.bean.DataGridResult;
 import cn.four.steel.bean.from.FrontOrder;
 import cn.four.steel.cache.BaseDataCache;
 import cn.four.steel.service.SteelOrderService;
@@ -64,12 +65,17 @@ public class SteelOrderController {
 	}
 	
 	@RequestMapping(value = "/order/query", method = RequestMethod.POST)
-	public List<FrontOrder> queryOrder(String orderNo, String clientId, String year, String month, String isSale, String isOut) {
+	public DataGridResult<FrontOrder> queryOrder(String orderNo, String clientId, String year, String month, String isSale, String isOut,
+			String page, String rows) {
+		DataGridResult<FrontOrder> result = new DataGridResult<FrontOrder>();
 		try {
-			return steelOrderService.queryOrder(orderNo, clientId, year, month, isSale, isOut);
+			int start = (Integer.valueOf(page) - 1) * Integer.valueOf(rows);
+			int end = Integer.valueOf(page) * Integer.valueOf(rows);
+			result = steelOrderService.queryOrder(orderNo, clientId, year, month, isSale, isOut, start, end);
+			return result;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			return null;
+			return result;
 		}
 	}
 
@@ -90,7 +96,7 @@ public class SteelOrderController {
 	public void exportMainOrder(String orderNo, String clientId, String year, String month, String isSale, String isOut, 
 			HttpServletResponse response) {
 		try {
-			List<FrontOrder> orders = steelOrderService.queryOrder(orderNo, clientId, year, month, isSale, isOut);
+			DataGridResult<FrontOrder> orders = steelOrderService.queryOrder(orderNo, clientId, year, month, isSale, isOut, null, null);
 			Date now = new Date();
 			String fileName = "main_order_" + now + ".xls";
 			response.setContentType("application/ms-excel;charset=UTF-8");
@@ -99,7 +105,7 @@ public class SteelOrderController {
 			OutputStream out = response.getOutputStream();
 			try {
 				String[] titles = new String[] { "日期", "订单单号", "客户", "价格", "是否出库", "是否销售", "备注" };
-				Workbook wb = SteelExporter.exportMainOrder(orders, titles);
+				Workbook wb = SteelExporter.exportMainOrder(orders.getRows(), titles);
 				wb.write(out);// 将数据写出去
 				logger.info("导出" + fileName + "成功！");
 			} catch (Exception e) {
@@ -117,7 +123,7 @@ public class SteelOrderController {
 	public void exportSingleOrder(String orderNo, String clientId, String year, String month, String isSale, String isOut, 
 			HttpServletResponse response) {
 		try {
-			List<FrontOrder> orders = steelOrderService.queryOrder(orderNo, clientId, year, month, isSale, isOut);
+			DataGridResult<FrontOrder> orders = steelOrderService.queryOrder(orderNo, clientId, year, month, isSale, isOut, null, null);
 			Date now = new Date();
 			String fileName = "single_order_" + now + ".xls";
 			response.setContentType("application/ms-excel;charset=UTF-8");
@@ -126,7 +132,7 @@ public class SteelOrderController {
 			OutputStream out = response.getOutputStream();
 			try {
 				String[] titles = new String[] { "订单单号", "客户款号", "种类", "规格", "重量", "单位", "价格", "钢板张数", "备注" };
-				Workbook wb = SteelExporter.exportMainOrder(orders, titles);
+				Workbook wb = SteelExporter.exportMainOrder(orders.getRows(), titles);
 				wb.write(out);// 将数据写出去
 				logger.info("导出" + fileName + "成功！");
 			} catch (Exception e) {

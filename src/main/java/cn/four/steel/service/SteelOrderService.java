@@ -12,9 +12,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import cn.four.steel.bean.DataGridResult;
 import cn.four.steel.bean.from.FrontOrder;
-import cn.four.steel.cache.BaseDataCache;
-import cn.four.steel.controller.SteelOrderController;
 import cn.four.steel.util.SteelUtil;
 @Transactional
 @Service
@@ -90,33 +89,45 @@ public class SteelOrderService {
 		}
 	}
 	
-	public List<FrontOrder> queryOrder(String orderNo, String clientId, String year, String month, String isSale, String isOut){
+	public DataGridResult<FrontOrder> queryOrder(String orderNo, String clientId, String year, String month, String isSale, String isOut,
+			Integer start, Integer end){
+		DataGridResult<FrontOrder> result = new DataGridResult<FrontOrder>();
 		String querySQL = "select s.order_date, s.order_id, s.order_no, c.client_name, s.price, s.is_out, s.is_sale, s.comment "
-				+ "from steel_order s, client_info c where s.client_id = c.client_id";
+				+ "from steel_order s, client_info c where s.client_id = c.client_id ";
+		String cntSQL = "select count(*) from steel_order s, client_info c where s.client_id = c.client_id ";
 		List<Object> params = new ArrayList<Object>();
 		if(year != null && !"".equals(year)){
-			querySQL += " and year = ?";
+			querySQL += " and year = ? ";
+			cntSQL += " and year = ? ";
 			params.add(year);
 		}
 		if(month != null && !"".equals(month)){
-			querySQL += " and month = ?";
+			querySQL += " and month = ? ";
+			cntSQL += " and month = ? ";
 			params.add(month);
 		}
 		if(orderNo != null && !"".equals(orderNo)){
-			querySQL += " and order_no = ?";
+			querySQL += " and order_no = ? ";
+			cntSQL += " and order_no = ? ";
 			params.add(orderNo);
 		}
 		if(clientId != null && !"".equals(clientId)){
-			querySQL += " and s.client_id = ?";
+			querySQL += " and s.client_id = ? ";
+			cntSQL += " and s.client_id = ? ";
 			params.add(clientId);
 		}
 		if(isSale != null && !"".equals(isSale)){
-			querySQL += "is_sale = ?";
+			querySQL += " is_sale = ? ";
+			cntSQL += " is_sale = ? ";
 			params.add(isSale);
 		}
 		if(isOut != null && !"".equals(isOut)){
-			querySQL += "is_out = ?";
+			querySQL += " is_out = ? ";
+			cntSQL += " is_out = ? ";
 			params.add(isOut);
+		}
+		if(start != null){
+			querySQL += " limit " + start + "," + end;
 		}
 		logger.info("queryOrder sql: " + querySQL + ";params:" + params.toString()); 
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(querySQL, params.toArray());
@@ -135,7 +146,10 @@ public class SteelOrderService {
 				orders.add(order);
 			}
 		}
-		return orders;
+		Long total = jdbcTemplate.queryForObject(cntSQL, params.toArray(), Long.class);
+		result.setTotal(total);
+		result.setRows(orders);
+		return result;
 	}
 	
 	public List<FrontOrder> showSingleOrder(String orderNo){

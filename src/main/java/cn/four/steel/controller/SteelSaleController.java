@@ -62,10 +62,10 @@ public class SteelSaleController {
 	public DataGridResult<FrontSale> querySale(String saleNo, String year, String month, String page, String rows) {
 		DataGridResult<FrontSale> result = new DataGridResult<FrontSale>();
 		try {
-			List<FrontSale> sales = steelSaleService.querySale(saleNo, year, month);
-			result.setRows(sales);
-			 result.setTotal(20L);
-			 return result;
+			int start = (Integer.valueOf(page) - 1) * Integer.valueOf(rows);
+			int end = Integer.valueOf(page) * Integer.valueOf(rows);
+			result = steelSaleService.querySale(saleNo, year, month, start, end);
+			return result;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return result;
@@ -126,7 +126,7 @@ public class SteelSaleController {
 	public void exportSale(String saleNo, String year, String month,
 			HttpServletResponse response) {
 		try {
-			List<FrontSale> sales = steelSaleService.querySale(saleNo, year, month);
+			DataGridResult<FrontSale> sales = steelSaleService.querySale(saleNo, year, month, null, null);
 			Date now = new Date();
 			String fileName = "main_sale_" + now + ".xls";
 			response.setContentType("application/ms-excel;charset=UTF-8");
@@ -135,7 +135,7 @@ public class SteelSaleController {
 			OutputStream out = response.getOutputStream();
 			try {
 				String[] titles = new String[] { "销售日期", "销售单号", "金额" };
-				Workbook wb = SteelExporter.exportMainSale(sales, titles);
+				Workbook wb = SteelExporter.exportMainSale(sales.getRows(), titles);
 				wb.write(out);// 将数据写出去
 				logger.info("导出" + fileName + "成功！");
 			} catch (Exception e) {

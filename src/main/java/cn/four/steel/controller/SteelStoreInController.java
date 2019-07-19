@@ -69,12 +69,12 @@ public class SteelStoreInController {
 	@RequestMapping(value="/store/query", method = RequestMethod.POST)
 	@ResponseBody
 	public DataGridResult<MainStorage> queryStorage(String storeNo, String clientNo, String year, String month, String page, String rows) {
-		 DataGridResult<MainStorage> result = new DataGridResult<MainStorage>();
+		DataGridResult<MainStorage> result = new DataGridResult<MainStorage>();
 		try {
-			 List<MainStorage> stores = steelStorageService.queryStorage(storeNo, clientNo, year, month);
-			 result.setRows(stores);
-			 result.setTotal(20L);
-			 return result;
+			int start = (Integer.valueOf(page) - 1) * Integer.valueOf(rows);
+			int end = Integer.valueOf(page) * Integer.valueOf(rows);		
+			result = steelStorageService.queryStorage(storeNo, clientNo, year, month,  start,  end);
+			return result;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return result;
@@ -85,7 +85,7 @@ public class SteelStoreInController {
 	public void exportStorage(String storageNo, String clientNo, String year, String month,
 			HttpServletResponse response) {
 		try {
-			List<MainStorage> stores = steelStorageService.queryStorage(storageNo, clientNo, year, month);
+			DataGridResult<MainStorage> stores = steelStorageService.queryStorage(storageNo, clientNo, year, month, null, null);
 			Date now = new Date();
 			String fileName = "storeIn_" + now + ".xls";
 			response.setContentType("application/ms-excel;charset=UTF-8");
@@ -94,7 +94,7 @@ public class SteelStoreInController {
 			OutputStream out = response.getOutputStream();
 			try {
 				String[] titles = new String[] { "入库日期", "入库单号", "客户单号", "金额", "钢厂" };
-				Workbook wb = SteelExporter.exportStorage(stores, titles);
+				Workbook wb = SteelExporter.exportStorage(stores.getRows(), titles);
 				wb.write(out);// 将数据写出去
 				logger.info("导出" + fileName + "成功！");
 			} catch (Exception e) {

@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import cn.four.steel.bean.DataGridResult;
 import cn.four.steel.bean.from.FrontStorage;
 import cn.four.steel.bean.to.MainStorage;
 import cn.four.steel.util.SteelUtil;
@@ -137,24 +138,33 @@ public class SteelStoreInService {
 		}
 	}
 
-	public List<MainStorage> queryStorage(String storageNo, String clientNo, String year, String month) {
+	public DataGridResult<MainStorage> queryStorage(String storageNo, String clientNo, String year, String month, Integer start, Integer end) {
+		DataGridResult<MainStorage> result = new DataGridResult<MainStorage>();
 		String querySQL = "select storage_id, store_no, client_no, cash_amount, steel_factory, store_date from steel_storage where 1=1 ";
+		String cntSQL = "select count(*) from steel_storage where 1=1 ";
 		List<Object> params = new ArrayList<Object>();
 		if (storageNo != null && !"".equals(storageNo)) {
-			querySQL += " and store_no like ?";
+			querySQL += " and store_no like ? ";
+			cntSQL += " and store_no like ? ";
 			params.add("%" + storageNo + "%");
 		}
 		if (clientNo != null && !"".equals(clientNo)) {
-			querySQL += " and client_no like ?";
+			querySQL += " and client_no like ? ";
+			cntSQL += " and client_no like ? ";
 			params.add("%" + clientNo + "%");
 		}
 		if (year != null && !"".equals(year)) {
-			querySQL += " and year = ?";
+			querySQL += " and year = ? ";
+			cntSQL += " and year = ? ";
 			params.add(year);
 		}
 		if (month != null && !"".equals(month)) {
-			querySQL += " and month = ?";
+			querySQL += " and month = ? ";
+			cntSQL += " and month = ? ";
 			params.add(month);
+		}
+		if(start != null){
+			querySQL += " limit " + start + "," + end;
 		}
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(querySQL, params.toArray());
 		List<MainStorage> stores = new ArrayList<>();
@@ -170,7 +180,10 @@ public class SteelStoreInService {
 				stores.add(ms);
 			}
 		}
-		return stores;
+		Long total = jdbcTemplate.queryForObject(cntSQL, params.toArray(), Long.class);
+		result.setRows(stores);
+		result.setTotal(total);
+		return result;
 	}
 	
 	public List<FrontStorage> queryStorageById(String storageNo, String clientNo){
@@ -200,11 +213,6 @@ public class SteelStoreInService {
 			}
 		}
 		return stores;
-	}
-	
-	public void todayStorage(){
-		String storeInSQL = "";
-		String storeOutSQL = "";
 	}
 	
 	public String generateStoreNo(){

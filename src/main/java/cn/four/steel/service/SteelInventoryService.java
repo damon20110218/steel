@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import cn.four.steel.bean.DataGridResult;
 import cn.four.steel.bean.to.SingleInventory;
 import cn.four.steel.util.SteelUtil;
 @Transactional
@@ -18,16 +19,23 @@ public class SteelInventoryService {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
-	public List<SingleInventory> queryInventory(String year, String month){
-		String querySQL = "select inventory_date, steel_name, thickness, store_in, store_out from steel_inventory si where 1=1";
+	public DataGridResult<SingleInventory> queryInventory(String year, String month, Integer start, Integer end){
+		DataGridResult<SingleInventory> result = new DataGridResult<SingleInventory>();
+		String querySQL = "select inventory_date, steel_name, thickness, store_in, store_out from steel_inventory si where 1=1 ";
+		String cntSQL = "select count(*) from steelsteel_inventory_storage where 1=1 ";
 		List<Object> params = new ArrayList<Object>();
 		if(year != null && !"".equals(year)){
-			querySQL += " and year = ?";
+			querySQL += " and year = ? ";
 			params.add(year);
+			cntSQL += " and year = ? ";
 		}
 		if(month != null && !"".equals(month)){
-			querySQL += " and month = ?";
+			querySQL += " and month = ? ";
+			cntSQL += " and month = ? ";
 			params.add(month);
+		}
+		if(start != null){
+			querySQL += " limit " + start + "," + end;
 		}
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(querySQL, params.toArray());
 		List<SingleInventory> inventories = new ArrayList<>();
@@ -42,7 +50,10 @@ public class SteelInventoryService {
 				inventories.add(in);
 			}
 		}
-		return inventories;
+		Long total = jdbcTemplate.queryForObject(cntSQL, params.toArray(), Long.class);
+		result.setRows(inventories);
+		result.setTotal(total);
+		return result;
 	}
 	public List<SingleInventory> calcAllInventory(String steelName){
 		String querySQL = "select thickness, sum(diff) as sum from (select thickness, (store_in-store_out) as diff from steel_inventory si where steel_name = ?) tt group by thickness order by thickness";

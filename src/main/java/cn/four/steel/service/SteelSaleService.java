@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import cn.four.steel.bean.DataGridResult;
 import cn.four.steel.bean.from.FrontSale;
 import cn.four.steel.bean.to.SingleSale;
 import cn.four.steel.util.SteelUtil;
@@ -60,22 +61,30 @@ public class SteelSaleService {
 		}
 	}
 	
-	public List<FrontSale> querySale(String saleNo, String year, String month){
-		String querySQL = "select sale_no, sum(cash_amount) as cash_amount, max(sale_date) as sale_date from steel_sale where 1=1";
+	public DataGridResult<FrontSale> querySale(String saleNo, String year, String month, Integer start, Integer end){
+		DataGridResult<FrontSale> result = new DataGridResult<FrontSale>();
+		String querySQL = "select sale_no, sum(cash_amount) as cash_amount, max(sale_date) as sale_date from steel_sale where 1=1 ";
+		String cntSQL = "select  count(*) from steel_sale where 1=1 ";
 		List<Object> params = new ArrayList<Object>();
 		if(year != null && !"".equals(year)){
-			querySQL += " and year = ?";
+			querySQL += " and year = ? ";
+			cntSQL += " and year = ? ";
 			params.add(year);
 		}
 		if(month != null && !"".equals(month)){
-			querySQL += " and month = ?";
+			querySQL += " and month = ? ";
+			cntSQL += " and month = ? ";
 			params.add(month);
 		}
 		if(saleNo != null && !"".equals(saleNo)){
-			querySQL += " and  sale_no like ?";
+			querySQL += " and  sale_no like ? ";
+			cntSQL += " and  sale_no like ? ";
 			params.add("%" + saleNo + "%");
 		}
-		querySQL += " group by sale_no";
+		querySQL += " group by sale_no ";
+		if(start != null){
+			querySQL += " limit " + start + "," + end;
+		}
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(querySQL, params.toArray());
 		List<FrontSale> sales = new ArrayList<>();
 		if(list != null && list.size() != 0){
@@ -87,7 +96,10 @@ public class SteelSaleService {
 				sales.add(sale);
 			}
 		}
-		return sales;
+		Long total = jdbcTemplate.queryForObject(cntSQL, params.toArray(), Long.class);
+		result.setRows(sales);
+		result.setTotal(total);
+		return result;
 	}
 	
 	public List<SingleSale> showSingleSale(String saleNo){

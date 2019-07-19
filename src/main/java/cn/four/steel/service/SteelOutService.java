@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import cn.four.steel.bean.DataGridResult;
 import cn.four.steel.bean.from.FrontOut;
 import cn.four.steel.bean.to.MainOut;
 import cn.four.steel.bean.to.SingleOut;
@@ -157,23 +158,30 @@ public class SteelOutService {
 		}
 	}
 
-	public List<MainOut> queryOut(String orderNo, String year, String month) {
+	public DataGridResult<MainOut> queryOut(String orderNo, String year, String month, Integer start, Integer end) {
+		DataGridResult<MainOut> result = new DataGridResult<MainOut>();
 		String querySQL = "select o.out_id, o.out_date, o.order_no, o.actual_amount, so.spec_id "
-				+ "from steel_outbound o, steel_order so "
-				+ "where so.order_no = o.order_no ";
+				+ " from steel_outbound o, steel_order so "
+				+ " where so.order_no = o.order_no ";
+		String cntSQL = "select count(*) from steel_outbound o, steel_order so where so.order_no = o.order_no ";
 		List<Object> params = new ArrayList<Object>();
 		if (year != null && !"".equals(year)) {
 			querySQL += " and o.year = ?";
+			cntSQL += " and o.year = ?";
 			params.add(year);
 		}
 		if (month != null && !"".equals(month)) {
 			querySQL += " and o.month = ?";
+			cntSQL += " and o.month = ?";
 			params.add(month);
 		}
 		if (orderNo != null && !"".equals(orderNo)) {
-			querySQL += " and o.order_no";
+			querySQL += " and o.order_no like ? ";
+			cntSQL += " and o.order_no like ? ";
 			params.add("%" + orderNo + "%");
-			params.add("%" + orderNo + "%");
+		}
+		if(start != null){
+			querySQL += " limit " + start + "," + end;
 		}
 		logger.info("queryOut: sql:" + querySQL + "params:"+ params);
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(querySQL, params.toArray());
@@ -192,7 +200,10 @@ public class SteelOutService {
 				outs.add(out);
 			}
 		}
-		return outs;
+		Long total = jdbcTemplate.queryForObject(cntSQL, params.toArray(), Long.class);
+		result.setRows(outs);
+		result.setTotal(total);
+		return result;
 	}
 
 	public List<SingleOut> showSingleOut(Long outId) {

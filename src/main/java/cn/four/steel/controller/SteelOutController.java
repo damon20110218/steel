@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.four.steel.bean.DataGridResult;
 import cn.four.steel.bean.from.FrontOut;
 import cn.four.steel.bean.to.MainOut;
 import cn.four.steel.bean.to.SingleOut;
@@ -58,12 +59,16 @@ public class SteelOutController {
 	}
 
 	@RequestMapping(value = "/out/query", method = RequestMethod.POST)
-	public List<MainOut> queryOut(String orderNo, String year, String month) {
+	public DataGridResult<MainOut> queryOut(String orderNo, String year, String month, String page, String rows) {
+		DataGridResult<MainOut> result = new DataGridResult<MainOut>();
 		try {
-			return steelOutService.queryOut(orderNo, year, month);
+			int start = (Integer.valueOf(page) - 1) * Integer.valueOf(rows);
+			int end = Integer.valueOf(page) * Integer.valueOf(rows);
+			result = steelOutService.queryOut(orderNo, year, month, start, end);
+			return result;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			return null;
+			return result;
 		}
 	}
 
@@ -113,7 +118,7 @@ public class SteelOutController {
 	public void exportMainOut(String saleNo, String year, String month,
 			HttpServletResponse response) {
 		try {
-			List<MainOut> outs = steelOutService.queryOut(saleNo, year, month);
+			DataGridResult<MainOut> outs = steelOutService.queryOut(saleNo, year, month, null, null);
 			Date now = new Date();
 			String fileName = "storeOut_" + now + ".xls";
 			response.setContentType("application/ms-excel;charset=UTF-8");
@@ -122,7 +127,7 @@ public class SteelOutController {
 			OutputStream out = response.getOutputStream();
 			try {
 				String[] titles = new String[] { "出库日期", "订单单号", "种类", "规格", "实际称重(吨)" };
-				Workbook wb = SteelExporter.exportMainOut(outs, titles);
+				Workbook wb = SteelExporter.exportMainOut(outs.getRows(), titles);
 				wb.write(out);// 将数据写出去
 				logger.info("导出" + fileName + "成功！");
 			} catch (Exception e) {

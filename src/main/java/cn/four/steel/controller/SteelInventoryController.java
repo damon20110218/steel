@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import cn.four.steel.bean.DataGridResult;
 import cn.four.steel.bean.to.SingleInventory;
 import cn.four.steel.bean.to.SteelCategory;
 import cn.four.steel.cache.BaseDataCache;
@@ -41,12 +42,16 @@ public class SteelInventoryController {
 		return res;
 	}
 	@RequestMapping(value = "/inventory/query")
-	public List<SingleInventory> queryInventory(String year, String month) {
+	public DataGridResult<SingleInventory> queryInventory(String year, String month, String page, String rows) {
+		DataGridResult<SingleInventory> result = new DataGridResult<SingleInventory>();
 		try {
-			return steelInventoryService.queryInventory(year, month);
+			int start = (Integer.valueOf(page) - 1) * Integer.valueOf(rows);
+			int end = Integer.valueOf(page) * Integer.valueOf(rows);	
+			result = steelInventoryService.queryInventory(year, month, start, end);
+			return result;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			return null;
+			return result;
 		}
 	}
 	
