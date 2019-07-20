@@ -38,7 +38,8 @@ public class CalculatorController {
 			double sl = sc.getLength();
 			int A = (int) (sl / cw);
 			int B = (int) (ca / A);
-			Long C = Math.floorMod(ca, A) * cw / 10;//all clientWidth mod 10 = 0
+			Long C = Math.floorMod(ca, A) * cw;//all clientWidth mod 10 = 0
+			C = C/10 + (C%10 > 0 ? 1L:0L);// convert to cm , iand need to upper
 			String res = String.valueOf(B) + "张";
 			if(C != 0L) {
 				res += String.valueOf(C) + "cm";
