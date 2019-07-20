@@ -46,6 +46,7 @@ public class SteelPriceService {
 				jdbcTemplate.update(futureSql, params.toArray());
 			} else{
 				String updateSQL = "update steel_future_price set price = ? where price_code = ? and price_date = ?";
+				params.clear();
 				params.add(price.getPrice());  // 钢材价格
 				params.add(price.getPriceCode());  // 钢材规格ID
 				params.add(SteelUtil.formatDate(now , null));  

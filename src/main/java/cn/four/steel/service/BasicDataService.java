@@ -30,7 +30,11 @@ public class BasicDataService {
 	private BaseDataCache baseDataCache;
 	
 	public List<Price> specForPriceCode(){
-		String sql = "select price_code, max(thickness) thickness, max(steel_name) steel_name from (select ss.thickness,ss.price_code,sc.steel_name from steel_specs ss, steel_category sc where ss.category_id = sc.category_id) tt group by price_code order by steel_name, thickness";
+		String sql = "select price_code, max(thickness) thickness, max(steel_name) steel_name "
+				+ "from (select ss.thickness,ss.price_code,sc.steel_name "
+				+ "from steel_specs ss, steel_category sc "
+				+ "where ss.category_id = sc.category_id) tt "
+				+ "group by price_code order by steel_name, thickness";
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(sql);
 		List<Price> prices = new ArrayList<>();
 		if(list != null ){

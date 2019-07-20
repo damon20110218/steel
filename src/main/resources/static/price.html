@@ -37,21 +37,20 @@
 											var futureTable = '<div class="col-md-2"><h3>'
 													+ futureTitle
 													+ '</h3><table <thead><tr><th>'
-													+ cate[0].steelName
-													+ '</th><th>价格</th>';
+													+ cate[0].steelName+'价格'
+													+ '</th>';
 											var saleTable = '<div class="col-md-2"><h3>'
 													+ saleTitle
 													+ '</h3><table <thead><tr><th>'
 													+ cate[0].steelName
 													+ '</th><th>价格</th>';
+											var futurePriceId = "futurePrice_" + cate[0].priceCode;
+													futureTable += '<tbody><tr><td><input style="display:none" name="priceCode" value="'+ cate[0].priceCode + '"/><input type="text" id="' + futurePriceId  + '"name="price" class="form-control input-sm" ></td></tr></tbody>';
 											$
 													.each(
 															cate,
 															function(j, spec) {
-																var futurePriceId = "futurePrice_" + spec.priceCode ;
-																futureTable += '<tbody><tr><td>'
-																		+ spec.thickness
-																		+ 'mm</td><td><input style="display:none" name="priceCode" value="'+ spec.priceCode + '"/><input type="text" id="' + futurePriceId  + '"name="price" class="form-control input-sm" ></td></tr></tbody>';
+																
 																var salePriceId = "salePrice_" + spec.priceCode ;
 																saleTable += '<tbody><tr><td>'
 																		+ spec.thickness
