@@ -63,30 +63,32 @@ public class SteelSaleService {
 	
 	public DataGridResult<FrontSale> querySale(String saleNo, String clientId, String year, String month, Integer start, Integer end){
 		DataGridResult<FrontSale> result = new DataGridResult<FrontSale>();
-		String querySQL = "select sale_no, sum(cash_amount) as cash_amount, max(sale_date) as sale_date from steel_sale where 1=1 ";
-		String cntSQL = "select  count(*) from steel_sale where 1=1 ";
+		String querySQL = "select ss.sale_no as sale_no, sum(ss.cash_amount) as cash_amount, max(ss.sale_date) as sale_date "
+				+ "from steel_sale ss,  steel_order so"
+				+ "  where ss.order_no = so.order_no ";
+		String cntSQL = "select  count(*) from steel_sale ss,  steel_order so where ss.order_no = so.order_no ";
 		List<Object> params = new ArrayList<Object>();
 		if(year != null && !"".equals(year)){
-			querySQL += " and year = ? ";
-			cntSQL += " and year = ? ";
+			querySQL += " and ss.year = ? ";
+			cntSQL += " and ss.year = ? ";
 			params.add(year);
 		}
 		if(month != null && !"".equals(month)){
-			querySQL += " and month = ? ";
-			cntSQL += " and month = ? ";
+			querySQL += " and ss.month = ? ";
+			cntSQL += " and ss.month = ? ";
 			params.add(month);
 		}
 		if(saleNo != null && !"".equals(saleNo)){
-			querySQL += " and  sale_no like ? ";
-			cntSQL += " and  sale_no like ? ";
+			querySQL += " and  ss.sale_no like ? ";
+			cntSQL += " and  ss.sale_no like ? ";
 			params.add("%" + saleNo + "%");
 		}
 		if(clientId != null && !"".equals(clientId)) {
-			querySQL += " and  sale_no = ? ";
-			cntSQL += " and sale_no = ? ";
+			querySQL += " and  so.client_id = ? ";
+			cntSQL += " and so.client_id = ? ";
 			params.add(clientId);
 		}
-		querySQL += " group by sale_no ";
+		querySQL += " group by ss.sale_no ";
 		if(start != null){
 			querySQL += " limit " + start + "," + end;
 		}

@@ -229,20 +229,21 @@
 		var rows = $('#store').datagrid('getSelections');
 		if(rows.length <= 0){
 			$.messager.alert('提示', '请选中需要打印的记录', 'warning');
-		}
-		var tr =  "<tr><td style='width:100%;height:50px' colspan='5'><center><b>入库单据</b></center></td>";
-		$("#toBePrint").append(tr);
-		tr = "<tr><td style='width:150px;height:32px'>日期</td><td style='width:150px;height:32px'>入库单号 </td><td style='width:150px;height:32px'>客户单号 </td><td style='width:150px;height:32px'>金额 </td><td style='width:150px;height:32px'>钢厂 </td></tr>";
-		$("#toBePrint").append(tr);
-		// 数据填充到待打印表格中
-		for(var i=0; i<rows.length; i++){
-			var tr = "<tr><td style='width:150px;height:32px'>" + rows[i].storeDate + "</td><td style='width:150px;height:32px'>" + rows[i].storeNo + "</td><td style='width:150px;height:32px'>" 
-			+ rows[i].clientNo + "</td><td style='width:150px;height:32px'>" + rows[i].cashAmount + "</td><td style='width:150px;height:32px'>" + rows[i].factory + "</td></tr>";
+		}else{
+			var tr =  "<tr><td style='width:100%;height:50px' colspan='5'><center><b>入库单据</b></center></td>";
 			$("#toBePrint").append(tr);
+			tr = "<tr><td style='width:150px;height:32px'>日期</td><td style='width:150px;height:32px'>入库单号 </td><td style='width:150px;height:32px'>客户单号 </td><td style='width:150px;height:32px'>金额 </td><td style='width:150px;height:32px'>钢厂 </td></tr>";
+			$("#toBePrint").append(tr);
+			// 数据填充到待打印表格中
+			for(var i=0; i<rows.length; i++){
+				var tr = "<tr><td style='width:150px;height:32px'>" + rows[i].storeDate + "</td><td style='width:150px;height:32px'>" + rows[i].storeNo + "</td><td style='width:150px;height:32px'>" 
+				+ rows[i].clientNo + "</td><td style='width:150px;height:32px'>" + rows[i].cashAmount + "</td><td style='width:150px;height:32px'>" + rows[i].factory + "</td></tr>";
+				$("#toBePrint").append(tr);
+			}
+			printJS('printJS-form', 'html');
+			// 删除刚刚添加打印的内容
+			$('#toBePrint').html('');
 		}
-		printJS('printJS-form', 'html');
-		// 删除刚刚添加打印的内容
-		$('#toBePrint').html('');
 	}
 </script>
 </head>
