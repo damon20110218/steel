@@ -59,12 +59,12 @@ public class SteelSaleController {
 
 	@RequestMapping(value = "/sale/query", method = RequestMethod.POST)
 	@ResponseBody
-	public DataGridResult<FrontSale> querySale(String saleNo, String year, String month, String page, String rows) {
+	public DataGridResult<FrontSale> querySale(String saleNo, String clientId, String year, String month, String page, String rows) {
 		DataGridResult<FrontSale> result = new DataGridResult<FrontSale>();
 		try {
 			int start = (Integer.valueOf(page) - 1) * Integer.valueOf(rows);
 			int end = Integer.valueOf(page) * Integer.valueOf(rows);
-			result = steelSaleService.querySale(saleNo, year, month, start, end);
+			result = steelSaleService.querySale(saleNo, clientId, year, month, start, end);
 			return result;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -123,10 +123,10 @@ public class SteelSaleController {
 		}
 	}
 	@RequestMapping("/sale/export")
-	public void exportSale(String saleNo, String year, String month,
+	public void exportSale(String saleNo, String clientId, String year, String month,
 			HttpServletResponse response) {
 		try {
-			DataGridResult<FrontSale> sales = steelSaleService.querySale(saleNo, year, month, null, null);
+			DataGridResult<FrontSale> sales = steelSaleService.querySale(saleNo, clientId, year, month, null, null);
 			Date now = new Date();
 			String fileName = "main_sale_" + now + ".xls";
 			response.setContentType("application/ms-excel;charset=UTF-8");

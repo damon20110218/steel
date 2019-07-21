@@ -32,13 +32,13 @@ public class SteelOrderService {
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(querySQL, params.toArray());
 		
 		if(list == null || list.size() == 0){
-			newOrderNo = "DD" + SteelUtil.formatDate(now, null) + "001";
+			newOrderNo = "D" + SteelUtil.formatDate(now, null).substring(2) + "001";
 		} else {
 			Map<String, Object> m = list.get(0);
 			String curMaxOrderNo = String.valueOf(m.get("order_no"));
-			Long l = Long.valueOf(curMaxOrderNo.substring(10));
+			Long l = Long.valueOf(curMaxOrderNo.substring(7));
 			String str = String.format("%03d", l+1);
-			newOrderNo = "DD" + SteelUtil.formatDate(now, null) + str;
+			newOrderNo = "D" + SteelUtil.formatDate(now, null).substring(2) + str;
 		}
 		return newOrderNo;
 	}

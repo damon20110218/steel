@@ -49,6 +49,12 @@
 		// 设置默认值
 		$('#year').combobox('setValue', curYear);
 		$('#month').combobox('setValue', curMonth);
+		
+		$("#customerList").combobox({
+			url : '/basic/fuzzyMatch?clientType=2',
+			valueField : 'clientId',
+			textField : 'clientName'
+		});
 		$('#sale')
 				.datagrid(
 						{
@@ -60,7 +66,8 @@
 							striped : true,
 							queryParams : {
 								"year" : $('#year').combobox('getValue'),
-								"month" : $('#month').combobox('getValue')
+								"month" : $('#month').combobox('getValue'),
+								
 							},
 							pageList : [ 10, 20, 30 ],
 							pagination : true,
@@ -98,10 +105,11 @@
 		var year = $('#year').textbox('getValue');
 		var month = $('#month').textbox('getValue');
 		var saleNo = $('#saleNoQuery').textbox('getValue');
-		var clientId = $('#companyList').combobox('getValue');
+		var clientId = $('#customerList').combobox('getValue');
 		queryParams.year = year;
 		queryParams.month = month;
 		queryParams.saleNo = saleNo;
+		queryParams.clientId = clientId;
 		$('#sale').datagrid('options').queryParams = queryParams;
 		$("#sale").datagrid('reload');
 	}
@@ -121,15 +129,16 @@
 			style="width: 200px; height: 40px" editable="false" /> &nbsp; <input
 			class="easyui-textbox" id="saleNoQuery"
 			data-options="prompt:'请输入销售单号',iconCls:'icon-man'"
-			style="width: 200px; height: 40px" /> &nbsp;<input id="companyList"
+			style="width: 200px; height: 40px" /> &nbsp;<input id="customerList"
 			class="easyui-combobox"
-			data-options="prompt:'请选择公司',iconCls:'icon-man'"
-			style="width: 300px; height: 40px" />
+			data-options="prompt:'请选择客户',iconCls:'icon-man'"
+			style="width: 300px; height: 40px" />&nbsp;
+			<input class="easyui-linkbutton" type="button" value="查询" onclick="query()" style="width: 100px; height: 34px" /> &nbsp;
+			
 			<table style="width:70%">
 				<tr style="height:10px"></tr>
 				<tr>
 					<td style="width:70%">&nbsp;</td>
-					<td style="width:100px"><a id="saleHref" href="" target="main" class="btn btn-success btn-block" onclick="query()">查询</a></td>
 					<td style="width:5%">&nbsp;</td>
 					<td style="width:100px"><a id="steelOutHref" href="" target="main" class="btn btn-success btn-block" onclick="exportSale()">导出</a>	</td>
 				</tr>

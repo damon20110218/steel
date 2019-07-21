@@ -224,13 +224,13 @@ public class SteelStoreInService {
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(querySQL, params.toArray());
 		
 		if(list == null || list.size() == 0){
-			newStoreNo = "RK" + SteelUtil.formatDate(now, null) + "01";
+			newStoreNo = "R" + SteelUtil.formatDate(now, null).substring(2) + "01";
 		} else {
 			Map<String, Object> m = list.get(0);
 			String curMaxStoreNo = String.valueOf(m.get("store_no"));
-			Long l = Long.valueOf(curMaxStoreNo.substring(10));
+			Long l = Long.valueOf(curMaxStoreNo.substring(7));
 			String str = String.format("%02d", l+1);
-			newStoreNo = "RK" + SteelUtil.formatDate(now, null) + str;
+			newStoreNo = "R" + SteelUtil.formatDate(now, null).substring(2) + str;
 		}
 		return newStoreNo;
 	}

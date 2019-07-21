@@ -211,8 +211,8 @@
 		tr += '<td><input class="easyui-textbox" id="specId' + i +'" style="width: 95%; height: 32px" disabled/></td>';
 		tr += '<td><input class="easyui-numberbox" id="saleAmount' + i +'" name="saleAmount" style="width: 95%; height: 32px" data-options="required:true"/></td>';
 		tr += '<td><input class="easyui-combobox" id="unit' + i +'" name="unit" style="width: 95%; height: 32px" disabled/></td>';
-		tr += '<td><input class="easyui-numberbox" id="price' + i +'" name="price" style="width: 95%; height: 32px" /></td>';
-		tr += '<td><input class="easyui-textbox" id="cashAmount' + i +'" name="cashAmount" style="width: 95%; height: 32px" data-options="required:true"/></td>';
+		tr += '<td><input class="easyui-numberbox" id="price' + i +'" name="price" style="width: 95%; height: 32px" precision = 2/></td>';
+		tr += '<td><input class="easyui-numberbox" id="cashAmount' + i +'" name="cashAmount" style="width: 95%; height: 32px" data-options="required:true" precision = 2/></td>';
 		tr +='</tr>';
 		var rowLength = $("#saleTable tr").length;
 		$("#saleTable tr:eq(" + (rowLength - 2) + ")").after(tr); //将新拼接的一行插入到当前行的下面

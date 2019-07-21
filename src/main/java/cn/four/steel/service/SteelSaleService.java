@@ -61,7 +61,7 @@ public class SteelSaleService {
 		}
 	}
 	
-	public DataGridResult<FrontSale> querySale(String saleNo, String year, String month, Integer start, Integer end){
+	public DataGridResult<FrontSale> querySale(String saleNo, String clientId, String year, String month, Integer start, Integer end){
 		DataGridResult<FrontSale> result = new DataGridResult<FrontSale>();
 		String querySQL = "select sale_no, sum(cash_amount) as cash_amount, max(sale_date) as sale_date from steel_sale where 1=1 ";
 		String cntSQL = "select  count(*) from steel_sale where 1=1 ";
@@ -80,6 +80,11 @@ public class SteelSaleService {
 			querySQL += " and  sale_no like ? ";
 			cntSQL += " and  sale_no like ? ";
 			params.add("%" + saleNo + "%");
+		}
+		if(clientId != null && !"".equals(clientId)) {
+			querySQL += " and  sale_no = ? ";
+			cntSQL += " and sale_no = ? ";
+			params.add(clientId);
 		}
 		querySQL += " group by sale_no ";
 		if(start != null){
@@ -163,13 +168,13 @@ public class SteelSaleService {
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(querySQL, params.toArray());
 		
 		if(list == null || list.size() == 0){
-			newStoreNo = "XS" + SteelUtil.formatDate(now, null) + "01";
+			newStoreNo = "X" + SteelUtil.formatDate(now, null).substring(2) + "01";
 		} else {
 			Map<String, Object> m = list.get(0);
 			String curMaxStoreNo = String.valueOf(m.get("sale_no"));
-			Long l = Long.valueOf(curMaxStoreNo.substring(10));
+			Long l = Long.valueOf(curMaxStoreNo.substring(7));
 			String str = String.format("%02d", l+1);
-			newStoreNo = "XS" + SteelUtil.formatDate(now, null) + str;
+			newStoreNo = "X" + SteelUtil.formatDate(now, null).substring(2) + str;
 		}
 		return newStoreNo;
 	}

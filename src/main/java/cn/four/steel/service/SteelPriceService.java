@@ -56,8 +56,10 @@ public class SteelPriceService {
 			if(price.getPrice() == null){
 				return;
 			}
-			String querySQL = "select count(*) from steel_price where price_code = ?";
+			String querySQL = "select count(*) from steel_price where price_code = ? and price_date = ?";
+			params.clear();
 			params.add(price.getPriceCode());
+			params.add(SteelUtil.formatDate(now , null));
 			Long cnt = jdbcTemplate.queryForObject(querySQL, params.toArray(), Long.class);
 			params.clear();
 			if(cnt == 0){
@@ -67,10 +69,10 @@ public class SteelPriceService {
 				params.add(price.getPriceType());
 				jdbcTemplate.update(insertSql, params.toArray());
 			} else{
-				String updateSQL = "update steel_price set price = ?, price_date = ? where price_code = ?";
+				String updateSQL = "update steel_price set price = ? where price_code = ? and  price_date = ?";
 				params.add(price.getPrice());  // 钢材价格
-				params.add(now);  // 价格录入日期
 				params.add(price.getPriceCode());  // 钢材规格ID
+				params.add(SteelUtil.formatDate(now , null));  // 价格录入日期
 				jdbcTemplate.update(updateSQL, params.toArray());
 			}
 		}
