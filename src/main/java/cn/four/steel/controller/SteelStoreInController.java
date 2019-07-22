@@ -28,6 +28,7 @@ import cn.four.steel.bean.to.MainStorage;
 import cn.four.steel.cache.BaseDataCache;
 import cn.four.steel.service.SteelStoreInService;
 import cn.four.steel.util.SteelExporter;
+import cn.four.steel.util.SteelUtil;
 
 @RestController
 public class SteelStoreInController {
@@ -82,12 +83,12 @@ public class SteelStoreInController {
 	}
 
 	@RequestMapping("/store/export")
-	public void exportStorage(String storageNo, String clientNo, String year, String month,
+	public void exportStorage(String storageNo, String st, String clientNo, String year, String month,
 			HttpServletResponse response) {
 		try {
 			DataGridResult<MainStorage> stores = steelStorageService.queryStorage(storageNo, clientNo, year, month, null, null);
 			Date now = new Date();
-			String fileName = "storeIn_" + now + ".xls";
+			String fileName = "storeIn_" + SteelUtil.formatDate(now, "yyyyMMdd HH:mm:SS") + ".xls";
 			response.setContentType("application/ms-excel;charset=UTF-8");
 			response.setHeader("Content-Disposition",
 					"attachment;filename=".concat(String.valueOf(URLEncoder.encode(fileName, "UTF-8"))));
@@ -98,7 +99,6 @@ public class SteelStoreInController {
 				wb.write(out);// 将数据写出去
 				logger.info("导出" + fileName + "成功！");
 			} catch (Exception e) {
-				e.printStackTrace();
 				logger.info("导出" + fileName + "失败！");
 			} finally {
 				out.close();
