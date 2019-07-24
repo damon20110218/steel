@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -13,14 +15,28 @@ import org.springframework.transaction.annotation.Transactional;
 import cn.four.steel.bean.DataGridResult;
 import cn.four.steel.bean.from.FrontSale;
 import cn.four.steel.bean.to.SingleSale;
+import cn.four.steel.controller.CalculatorController;
 import cn.four.steel.util.SteelUtil;
 @Transactional
 @Service
 public class SteelSaleService {
-
+	private static Logger logger = LoggerFactory.getLogger(SteelSaleService.class);
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-
+	
+	public boolean checkSaleClient(List<FrontSale> sales) {
+		String querySql = "select count(distinct(client_id)) as num from "
+				+ "steel_order where order_no in (";
+		for(int i = 0; i < sales.size();i++) {
+			querySql += "'" + sales.get(i).getOrderNo() + "'";
+			if(i != sales.size()-1)querySql +=",";
+		}
+		querySql += ")";
+		logger.debug("checkSaleClient query string : " + querySql);
+		List<Map<String, Object>> rst = jdbcTemplate.queryForList(querySql);
+		return "1".equals(String.valueOf(rst.get(0).get("num")));
+	}
+	
 	public void updateSale(List<FrontSale> sales) {
 		String insertSQL = "insert into steel_sale(sale_date, sale_no, order_no, sale_amount, cash_amount, "
 				+ " year, month) "
