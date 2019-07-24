@@ -49,7 +49,10 @@ public class SteelSaleController {
 					FrontSale sale = array.getJSONObject(i).toJavaObject(FrontSale.class);
 					sales.add(sale);
 				}
-				steelSaleService.updateSale(sales);
+				if(steelSaleService.checkSaleClient(sales))
+					steelSaleService.updateSale(sales);
+				else
+					return "repeat";
 			}
 			return "Success";
 		} catch (Exception e) {

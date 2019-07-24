@@ -449,9 +449,11 @@
 							//修改成功处理代码...
 							$('#addSaleWindow').window("close");
 							query();
-						} else { //修改失败
+						} else if(msg == "repeat"){
+							$.messager.alert('系统提示', '不同的用户禁止一同销售', 'error');
+						}else{ //修改失败
 							//修改失败处理代码...
-							$.messager.alert('系统提示', '钢材销售失败', 'error');
+							$.messager.alert('系统提示', '钢材销售处理失败', 'error');
 						}
 					}
 				});
