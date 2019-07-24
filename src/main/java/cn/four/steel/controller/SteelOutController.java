@@ -28,6 +28,7 @@ import cn.four.steel.bean.to.SingleOut;
 import cn.four.steel.cache.BaseDataCache;
 import cn.four.steel.service.SteelOutService;
 import cn.four.steel.util.SteelExporter;
+import cn.four.steel.util.SteelUtil;
 
 @RestController
 public class SteelOutController {
@@ -115,12 +116,12 @@ public class SteelOutController {
 		}
 	}
 	@RequestMapping("/out/exportMain")
-	public void exportMainOut(String saleNo, String year, String month,
+	public void exportMainOut(String orderNo, String year, String month,
 			HttpServletResponse response) {
 		try {
-			DataGridResult<MainOut> outs = steelOutService.queryOut(saleNo, year, month, null, null);
+			DataGridResult<MainOut> outs = steelOutService.queryOut(orderNo, year, month, null, null);
 			Date now = new Date();
-			String fileName = "storeOut_" + now + ".xls";
+			String fileName = "storeOut_" + SteelUtil.formatDate(now, "yyyyMMdd HH:mm:SS") + ".xls";
 			response.setContentType("application/ms-excel;charset=UTF-8");
 			response.setHeader("Content-Disposition",
 					"attachment;filename=".concat(String.valueOf(URLEncoder.encode(fileName, "UTF-8"))));

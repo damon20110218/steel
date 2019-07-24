@@ -28,6 +28,7 @@ import cn.four.steel.bean.to.SingleSale;
 import cn.four.steel.cache.BaseDataCache;
 import cn.four.steel.service.SteelSaleService;
 import cn.four.steel.util.SteelExporter;
+import cn.four.steel.util.SteelUtil;
 
 @RestController
 public class SteelSaleController {
@@ -128,7 +129,7 @@ public class SteelSaleController {
 		try {
 			DataGridResult<FrontSale> sales = steelSaleService.querySale(saleNo, clientId, year, month, null, null);
 			Date now = new Date();
-			String fileName = "main_sale_" + now + ".xls";
+			String fileName = "main_sale_" + SteelUtil.formatDate(now, "yyyyMMdd HH:mm:ss") + ".xls";
 			response.setContentType("application/ms-excel;charset=UTF-8");
 			response.setHeader("Content-Disposition",
 					"attachment;filename=".concat(String.valueOf(URLEncoder.encode(fileName, "UTF-8"))));

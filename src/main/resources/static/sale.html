@@ -318,6 +318,28 @@
 			$('#toBePrint4').html('');
 		//}
 	}
+	function exportStoreIn() {
+		// 获取查询条件
+		var form = $("<form id='exportForm'>");
+		form.attr("style", "display:none");
+		form.attr("target", "");
+		form.attr("method", "post");//提交方式为post
+		form.attr("action", "/sale/export");//定义action
+		//带上参数
+		var year = $('#year').textbox('getValue');
+		var month = $('#month').textbox('getValue');
+		var saleNo = $('#saleNoQuery').textbox('getValue');
+		var s = "<input type='hidden', name='saleNo', value='" + saleNo + "'/>"; 
+    	form.append(s); 
+    	var s = "<input type='hidden', name='year', value='"+ year + "'/>"; 
+    	form.append(s); 
+    	var s = "<input type='hidden', name='month', value='"+ month + "'/>"; 
+    	form.append(s); 
+		$("body").append(form);
+		form.submit();
+		//删除 form表单
+		$("#exportForm").remove();
+	}
 </script>
 </head>
 <body class="easyui-layout" style="visibility: hidden;">
@@ -333,7 +355,9 @@
 			data-options="prompt:'请输入销售单号',iconCls:'icon-man'"
 			style="width: 200px; height: 40px" /> &nbsp;
 		<input class="easyui-linkbutton" type="button" value="查询" onclick="query()"
-			style="width: 100px; height: 34px" /> &nbsp;
+			style="width: 100px; height: 34px" /> &nbsp;<input
+			class="easyui-linkbutton" type="button" value="导出" onclick="exportStoreIn()"
+			style="width: 100px; height: 34px" />
 		<table id="sale"></table>
 		<form method="post" action="#" id="printJS-form">
 			<table id="toBePrint1" class="table " ></table>

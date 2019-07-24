@@ -166,13 +166,13 @@ public class SteelOutService {
 		String cntSQL = "select count(*) from steel_outbound o, steel_order so where so.order_no = o.order_no ";
 		List<Object> params = new ArrayList<Object>();
 		if (year != null && !"".equals(year)) {
-			querySQL += " and o.year = ?";
-			cntSQL += " and o.year = ?";
+			querySQL += " and o.year = ? ";
+			cntSQL += " and o.year = ? ";
 			params.add(year);
 		}
 		if (month != null && !"".equals(month)) {
-			querySQL += " and o.month = ?";
-			cntSQL += " and o.month = ?";
+			querySQL += " and o.month = ? ";
+			cntSQL += " and o.month = ? ";
 			params.add(month);
 		}
 		if (orderNo != null && !"".equals(orderNo)) {

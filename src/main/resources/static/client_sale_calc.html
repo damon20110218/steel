@@ -113,8 +113,30 @@
 		$('#sale').datagrid('options').queryParams = queryParams;
 		$("#sale").datagrid('reload');
 	}
-	function exportSale(){
-		
+	function exportStoreIn(){
+		// 获取查询条件
+		var form = $("<form id='exportForm'>");
+		form.attr("style", "display:none");
+		form.attr("target", "");
+		form.attr("method", "post");//提交方式为post
+		form.attr("action", "/sale/export");//定义action
+		//带上参数
+		var year = $('#year').textbox('getValue');
+		var month = $('#month').textbox('getValue');
+		var saleNo = $('#saleNoQuery').textbox('getValue');
+		var clientId = $('#customerList').combobox('getValue');
+		var s = "<input type='hidden', name='saleNo', value='" + saleNo + "'/>"; 
+    	form.append(s); 
+    	var s = "<input type='hidden', name='year', value='"+ year + "'/>"; 
+    	form.append(s); 
+    	var s = "<input type='hidden', name='month', value='"+ month + "'/>"; 
+    	form.append(s);
+    	var s = "<input type='hidden', name='clientId', value='"+ clientId + "'/>"; 
+    	form.append(s); 
+		$("body").append(form);
+		form.submit();
+		//删除 form表单
+		$("#exportForm").remove();
 	}
 </script>
 </head>
@@ -134,16 +156,9 @@
 			data-options="prompt:'请选择客户',iconCls:'icon-man'"
 			style="width: 300px; height: 40px" />&nbsp;
 			<input class="easyui-linkbutton" type="button" value="查询" onclick="query()" style="width: 100px; height: 34px" /> &nbsp;
-			
-			<table style="width:70%">
-				<tr style="height:10px"></tr>
-				<tr>
-					<td style="width:70%">&nbsp;</td>
-					<td style="width:5%">&nbsp;</td>
-					<td style="width:100px"><a id="steelOutHref" href="" target="main" class="btn btn-success btn-block" onclick="exportSale()">导出</a>	</td>
-				</tr>
-				<tr style="height:10px"></tr>
-			</table>
+			<input
+			class="easyui-linkbutton" type="button" value="导出" onclick="exportStoreIn()"
+			style="width: 100px; height: 34px" />
 		<table id="sale"></table>
 	</div>
 </body>
