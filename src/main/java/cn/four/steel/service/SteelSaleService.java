@@ -110,8 +110,9 @@ public class SteelSaleService {
 	}
 	
 	public List<SingleSale> showSingleSale(String saleNo){
-		String showSQL = "select s.sale_id, s.sale_no, o.client_id, o.order_no, o.account_no, o.spec_id, price, s.sale_amount, s.cash_amount, o.unit "
-				+ "from steel_sale s, steel_order o where s.order_no = o.order_no and sale_no = ?";
+		String showSQL = "select s.sale_id, s.sale_no, o.client_id, o.order_no, o.account_no, o.spec_id, price, s.sale_amount, s.cash_amount, o.unit,c.client_name "
+				+ "from steel_sale s, steel_order o, client_info c "
+				+ "where s.order_no = o.order_no and sale_no = ? and c.client_id = o.client_id";
 		List<Object> params = new ArrayList<Object>();
 		params.add(saleNo);
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(showSQL, params.toArray());
@@ -129,6 +130,7 @@ public class SteelSaleService {
 				sale.setSaleAmount(Double.valueOf(String.valueOf(m.get("sale_amount"))));
 				sale.setCashAmount(Double.valueOf(String.valueOf(m.get("cash_amount"))));
 				sale.setUnit(String.valueOf(m.get("unit")));
+				sale.setClientName(String.valueOf(m.get("client_name")));
 				sales.add(sale);
 			}
 		}
