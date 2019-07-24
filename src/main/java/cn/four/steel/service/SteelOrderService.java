@@ -89,7 +89,7 @@ public class SteelOrderService {
 		}
 	}
 	
-	public DataGridResult<FrontOrder> queryOrder(String orderNo, String clientId, String year, String month, String isSale, String isOut,
+	public DataGridResult<FrontOrder> queryOrder(String orderNo, String clientName, String year, String month, String isSale, String isOut,
 			Integer start, Integer end){
 		DataGridResult<FrontOrder> result = new DataGridResult<FrontOrder>();
 		String querySQL = "select s.order_date, s.order_id, s.order_no, c.client_name, s.price, s.is_out, s.is_sale, s.comment "
@@ -111,19 +111,19 @@ public class SteelOrderService {
 			cntSQL += " and order_no = ? ";
 			params.add(orderNo);
 		}
-		if(clientId != null && !"".equals(clientId)){
-			querySQL += " and s.client_id = ? ";
-			cntSQL += " and s.client_id = ? ";
-			params.add(clientId);
+		if(clientName != null && !"".equals(clientName)){
+			querySQL += " and c.client_name like ? ";
+			cntSQL += " and c.client_name like ? ";
+			params.add("%"+ clientName + "%");
 		}
 		if(isSale != null && !"".equals(isSale)){
-			querySQL += " is_sale = ? ";
-			cntSQL += " is_sale = ? ";
+			querySQL += " s.is_sale = ? ";
+			cntSQL += " s.is_sale = ? ";
 			params.add(isSale);
 		}
 		if(isOut != null && !"".equals(isOut)){
-			querySQL += " is_out = ? ";
-			cntSQL += " is_out = ? ";
+			querySQL += " s.is_out = ? ";
+			cntSQL += " s.is_out = ? ";
 			params.add(isOut);
 		}
 		if(start != null){

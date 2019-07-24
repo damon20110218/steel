@@ -83,7 +83,7 @@ public class SteelStoreInController {
 	}
 
 	@RequestMapping("/store/export")
-	public void exportStorage(String storageNo, String st, String clientNo, String year, String month,
+	public void exportStorage(String storageNo, String clientNo, String year, String month,
 			HttpServletResponse response) {
 		try {
 			DataGridResult<MainStorage> stores = steelStorageService.queryStorage(storageNo, clientNo, year, month, null, null);

@@ -233,10 +233,22 @@
 		form.attr("method", "post");//提交方式为post
 		form.attr("action", "/store/export");//定义action
 		//带上参数
-		var s = "<input type='hidden', name='st', value='RK2019070802'/>";  
+		var year = $('#year').textbox('getValue');
+		var month = $('#month').textbox('getValue');
+		var storeNo = $('#storeNoQuery').textbox('getValue');
+		var clientNo = $('#clientNo').textbox('getValue');
+		var s = "<input type='hidden', name='storageNo', value='" + storeNo + "'/>"; 
+    	form.append(s); 
+    	var s = "<input type='hidden', name='year', value='"+ year + "'/>"; 
+    	form.append(s); 
+    	var s = "<input type='hidden', name='month', value='"+ month + "'/>"; 
+    	form.append(s); 
+    	var s = "<input type='hidden', name='clientNo', value='"+ clientNo + "'/>"; 
     	form.append(s); 
 		$("body").append(form);
 		form.submit();
+		//删除 form表单
+		$("#exportForm").remove();
 	}
 </script>
 </head>

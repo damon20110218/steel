@@ -26,6 +26,7 @@ import cn.four.steel.bean.from.FrontOrder;
 import cn.four.steel.cache.BaseDataCache;
 import cn.four.steel.service.SteelOrderService;
 import cn.four.steel.util.SteelExporter;
+import cn.four.steel.util.SteelUtil;
 
 @RestController
 public class SteelOrderController {
@@ -65,13 +66,13 @@ public class SteelOrderController {
 	}
 	
 	@RequestMapping(value = "/order/query", method = RequestMethod.POST)
-	public DataGridResult<FrontOrder> queryOrder(String orderNo, String clientId, String year, String month, String isSale, String isOut,
+	public DataGridResult<FrontOrder> queryOrder(String orderNo, String clientName, String year, String month, String isSale, String isOut,
 			String page, String rows) {
 		DataGridResult<FrontOrder> result = new DataGridResult<FrontOrder>();
 		try {
 			int start = (Integer.valueOf(page) - 1) * Integer.valueOf(rows);
 			int end = Integer.valueOf(page) * Integer.valueOf(rows);
-			result = steelOrderService.queryOrder(orderNo, clientId, year, month, isSale, isOut, start, end);
+			result = steelOrderService.queryOrder(orderNo, clientName, year, month, isSale, isOut, start, end);
 			return result;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -93,12 +94,12 @@ public class SteelOrderController {
 		}
 	}
 	@RequestMapping("/order/exportMain")
-	public void exportMainOrder(String orderNo, String clientId, String year, String month, String isSale, String isOut, 
+	public void exportMainOrder(String orderNo, String clientName, String year, String month, String isSale, String isOut, 
 			HttpServletResponse response) {
 		try {
-			DataGridResult<FrontOrder> orders = steelOrderService.queryOrder(orderNo, clientId, year, month, isSale, isOut, null, null);
+			DataGridResult<FrontOrder> orders = steelOrderService.queryOrder(orderNo, clientName, year, month, isSale, isOut, null, null);
 			Date now = new Date();
-			String fileName = "main_order_" + now + ".xls";
+			String fileName = "main_order_" + SteelUtil.formatDate(now, "yyyyMMdd HH:mm:SS") + ".xls";
 			response.setContentType("application/ms-excel;charset=UTF-8");
 			response.setHeader("Content-Disposition",
 					"attachment;filename=".concat(String.valueOf(URLEncoder.encode(fileName, "UTF-8"))));
