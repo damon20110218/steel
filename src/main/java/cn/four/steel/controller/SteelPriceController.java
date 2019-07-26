@@ -81,7 +81,7 @@ public class SteelPriceController {
 		Double salePrice = steelPriceService.findPrice(Long.valueOf(specId));
 		return salePrice;
 	}
-	@RequestMapping(value = "/price/today")
+	@RequestMapping(value = "/price/today", method = { RequestMethod.POST,RequestMethod.GET })
 	public List<List<Price>> todayPrice() {
 		try {
 			List<Price> prices = steelPriceService.loadTodayPrice();
@@ -92,7 +92,7 @@ public class SteelPriceController {
 		}
 	}
 	
-	@RequestMapping(value = "/price/future")
+	@RequestMapping(value = "/price/future", method = { RequestMethod.POST,RequestMethod.GET })
 	public List<List<Price>> loadFuturePrice(){
 		try {
 			Date endDate = new Date();
@@ -100,7 +100,7 @@ public class SteelPriceController {
 		    calendar.setTime(endDate); //需要将date数据转移到Calender对象中操作
 		    calendar.add(calendar.DATE, -60);//把日期往后增加n天.正数往后推,负数往前移动 
 		    Date startDate = calendar.getTime();   //这个时间就是日期往后推一天的结果 
-			List<Price> prices = steelPriceService.loadFuturePrice(startDate, endDate);
+			List<Price> prices = steelPriceService.loadFuturePrice(SteelUtil.formatDate(startDate, null), SteelUtil.formatDate(endDate, null));
 		    return SteelUtil.convert(prices);
 		} catch (Exception e) {
 			logger.error(e.getMessage());

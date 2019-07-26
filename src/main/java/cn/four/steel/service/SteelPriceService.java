@@ -110,10 +110,10 @@ public class SteelPriceService {
 		return prices;
 	}
 	
-	public List<Price> loadFuturePrice(Date startDate, Date endDate){
-		String querySQL = "select ss.thickness, sc.steel_name, sp.price, sp.price_date from steel_specs ss, steel_category sc, steel_future_price sp"
-				+ "where ss.category_id = sc.category_id and ss.price_code = sp.price_code(+)"
-				+ "and sp.price_date >= ? and sp.price_date <= ? order by sc.steel_name";
+	public List<Price> loadFuturePrice(String startDate, String endDate){
+		String querySQL = "select distinct sc.steel_name, sp.price, sp.price_date from steel_specs ss, steel_category sc, steel_future_price sp "
+				+ " where ss.category_id = sc.category_id and ss.price_code = sp.price_code "
+				+ " and sp.price_date >= ? and sp.price_date <= ? order by sc.steel_name, sp.price_date";
 		List<Object> params = new ArrayList<Object>();
 		params.add(startDate);
 		params.add(endDate);

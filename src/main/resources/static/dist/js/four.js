@@ -8,7 +8,7 @@ var four ={
 		//if(type=='column') 
 		Highcharts.chart(id, {
 		    chart: {
-		        type: 'column'
+		        type: type
 		    },
 		    title: {
 		        text: title
@@ -24,9 +24,9 @@ var four ={
 		        }
 		    },
 		    tooltip: {
-		        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-		        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-		            '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+		        headerFormat: '<span style="font-size:10px">{series.name}: {point.x} mm</span> <table>',
+		        pointFormat: '<tr><td style="color:{series.color};padding:0"></td>' +
+		            '<td style="padding:0"><b>库存量：{point.y:.1f} 吨</b></td></tr>',
 		        footerFormat: '</table>',
 		        shared: true,
 		        useHTML: true
@@ -41,6 +41,54 @@ var four ={
 		        name: yTitle,
 		        data: ySeries
 
+		    }]
+		});
+	},
+	lineChart:function(id , title, type, xSeries, xTitle, ySeries, yTitle){
+		Highcharts.chart(id, {
+		    chart: {
+		        type: type
+		    },
+		    title: {
+		        text: title
+		    },
+		    xAxis: {
+		        categories: xSeries
+		    },
+		    yAxis: {
+		        min: 0,
+		        title: {
+		            text: yTitle,
+		            style: {
+                        color: '#3E576F'
+                    }
+		        }
+		    },
+		    tooltip: {
+		    	
+		    },
+		    plotOptions: {
+		    	line: {
+		    		dataLabels: {
+						// 开启数据标签
+						enabled: true          
+					},
+	                marker:{
+	                    enabled: false,
+	                    states: {
+	                        hover: {
+	                            enabled: true,
+	                            symbol: 'circle',
+	                            radius: 5,
+	                            lineWidth: 1
+	                        }
+	                    }
+	                }
+	            }
+	        },
+		    series: [{
+		        name: yTitle,
+		        data: ySeries
 		    }]
 		});
 	},
