@@ -79,7 +79,8 @@ public class SteelPriceService {
 	}
 	
 	public double findPrice(long specId){
-		String querySQL = "select round(sp.price,3) from steel_specs ss, steel_price sp where ss.price_code = sp.price_code and ss.spec_id = ?";
+		String querySQL = "select round(sp.price,3) from steel_specs ss, steel_price sp where ss.price_code = sp.price_code and ss.spec_id = ? "
+				+ " order by sp.price_date desc limit 1";
 		List<Object> params = new ArrayList<Object>();
 		params.add(specId);
 		Double p = 0.0;

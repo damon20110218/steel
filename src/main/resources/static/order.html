@@ -188,14 +188,30 @@
 
 	function doAdd(isModify) {
 		$('#addOrderWindow').window("open");
+		
+		// 删除上一次新增的 tr
+		var mytable =document.getElementById("storeTable");
+		for(var i=mytable.rows.length - 2; i > 0; i--){
+			var rowid =  mytable.rows[i].id;
+			if(rowid.startsWith("row") && rowid != "row0"){
+				deleteSelectedRow(rowid);
+			}
+		}
+		
 		// 加载 客户列表，并设置默认值
 		$("#customerList").combobox({
 			url : '/basic/fuzzyMatch?clientType=2',
 			valueField : 'clientId',
 			textField : 'clientName'
 		});
+		
+		//var rowLength = $("#storeTable tr").length;
+		//for(var j = 1; j < rowLength - 2; j++){
+		//	deleteSelectedRow("row" + j);
+		//}
 		// 从后台获取订单单号
 		if(isModify != true){
+			$("#addOneLineButton").show();
 			//清除页面值
 			$("#customerList").combobox('setValue', '');
 			$("#orderId0").val('');
@@ -208,11 +224,8 @@
 			$("#price0").textbox('setValue', '');
 			$("#steelCalcAmount0").textbox('setValue', '');
 			$("#comment0").textbox('setValue', '');
-			// 删除上一次新增的 tr
-			var rowLength = $("#storeTable tr").length;
-			for(var j = 1; j < rowLength - 2; j++){
-				deleteSelectedRow("row" + j);
-			}
+			
+			
 			
 			$.ajax({
 				type : "post",
@@ -250,8 +263,10 @@
 		$("#order").datagrid('reload');
 	}
 	function modify(rowIndex) {
+		$("#addOneLineButton").hide();
 		var row = $('#order').datagrid('getData').rows[rowIndex];
 		// 从后台订单详细信息
+		
 		doAdd(true);
 		$.ajax({
 			type : "post",
@@ -279,6 +294,8 @@
 		// disable 删除与新增一行按钮
 	}
 	function closeWindow() {
+		
+		
 		$('#addOrderWindow').window("close");
 	}
 	function sale(){
@@ -427,7 +444,7 @@
 							<td><select id="unit0" class="easyui-combobox"
 								name="unit" style="width: 95%; height: 32px" data-options="required:true" editable="false">
 							</select></td>
-							<td><input type="text" class="easyui-numberbox" id="price0" precision=2
+							<td><input type="text" class="easyui-numberbox" id="price0" precision=3
 								name="price" style="width: 95%; height: 32px" data-options="required:true" /></td>
 							<td><input type="text" class="easyui-textbox" id="steelCalcAmount0"
 								name="steelCalcAmount" style="width: 95%; height: 32px" data-options="required:true" /></td>
@@ -438,7 +455,7 @@
 								onclick="deleteSelectedRow(row0)" /></td>
 						</tr>
 						<tr>
-							<td align="center" colspan="11"><input type="button"
+							<td align="center" colspan="11" id = "addOneLineButton"><input type="button"
 								class="easyui-linkbutton" value="增加一行"
 								style="width: 80px; height: 35px" onclick="insertNewRow()" /></td>
 						</tr>
@@ -454,9 +471,9 @@
 		var thirdCell = '<input type="text" class="easyui-textbox" id="accountNo0" name="accountNo" style="width: 95%; height: 32px" data-options="required:true"/>';
 		var fourthCell = '<select id="categoryId0" class="easyui-combobox" name="categoryId" style="width: 95%; height: 32px" data-options="required:true" editable="false"> </select>';
 		var fifthCell = '<select id="specId0" class="easyui-combobox" name="specId" style="width: 95%; height: 32px" data-options="required:true" editable="false"> </select>';
-		var sixthCell = '<input type="text" class="easyui-textbox" id="clientAmount0" name="clientAmount" style="width: 95%; height: 32px" data-options="required:true"/>';
+		var sixthCell = '<input type="text" class="easyui-numberbox" id="clientAmount0" precision=2 name="clientAmount" style="width: 95%; height: 32px" data-options="required:true"/>';
 		var seventhCell = '<select id="unit0" class="easyui-combobox" name="unit" style="width: 95%; height: 32px" data-options="required:true" > </select>';
-		var eighthCell = '<input type="text" class="easyui-textbox" id="price0" name="price" style="width: 95%; height: 32px" data-options="required:true" />';
+		var eighthCell = '<input type="text" class="easyui-numberbox" id="price0" name="price" precision=3 style="width: 95%; height: 32px" data-options="required:true" />';
 		var nineCell = '<input type="text" class="easyui-textbox" id="steelCalcAmount0" name="steelCalcAmount" style="width: 95%; height: 32px" data-options="required:true" />';
 		var tenCell = '<input type="text" class="easyui-textbox" id="comment0" name="comment" style="width: 95%; height: 32px" />';
 		

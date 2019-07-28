@@ -74,12 +74,12 @@ public class SteelPriceController {
 	
 	@RequestMapping(value = "/price/cur_sale_price", method = { RequestMethod.POST,
 			RequestMethod.GET })
-	public Double getSalePriceBySpecId(String specId){
+	public String  getSalePriceBySpecId(String specId){
 		if(specId == null || "".equals(specId)){
-			return 0.0;
+			return "0.000";
 		}
 		Double salePrice = steelPriceService.findPrice(Long.valueOf(specId));
-		return salePrice;
+		return String.format("%.3f", salePrice);
 	}
 	@RequestMapping(value = "/price/today", method = { RequestMethod.POST,RequestMethod.GET })
 	public List<List<Price>> todayPrice() {
