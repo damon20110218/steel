@@ -79,7 +79,7 @@ public class SteelPriceService {
 	}
 	
 	public double findPrice(long specId){
-		String querySQL = "select sp.price from steel_specs ss, steel_price sp where ss.price_code = sp.price_code and ss.spec_id = ?";
+		String querySQL = "select round(sp.price,3) from steel_specs ss, steel_price sp where ss.price_code = sp.price_code and ss.spec_id = ?";
 		List<Object> params = new ArrayList<Object>();
 		params.add(specId);
 		Double p = 0.0;
@@ -94,14 +94,14 @@ public class SteelPriceService {
 		return 0;
 	}
 	public List<Price> loadTodayPrice(){
-		String querySQL = " select distinct sp.price, ss.thickness, sc.steel_name from steel_price sp, steel_specs ss, steel_category sc "
+		String querySQL = " select distinct round(sp.price,3) as price, ss.thickness, sc.steel_name from steel_price sp, steel_specs ss, steel_category sc "
 						 +" where sp.price_code = ss.price_code and ss.category_id = sc.category_id order by sc.steel_name, thickness";
 		List<Map<String,Object>> list = jdbcTemplate.queryForList(querySQL);
 		List<Price> prices = new ArrayList<>();
 		if(list != null){
 			for(Map<String,Object> m : list){
 				Price price = new Price();
-				price.setPrice(String.valueOf(m.get("price")));
+				price.setPrice(String.format("%.3f", m.get("price")));
 				price.setSteelName(String.valueOf(m.get("steel_name")));
 				price.setThickness(String.valueOf(m.get("thickness")));
 				prices.add(price);
@@ -111,7 +111,7 @@ public class SteelPriceService {
 	}
 	
 	public List<Price> loadFuturePrice(String startDate, String endDate){
-		String querySQL = "select distinct sc.steel_name, sp.price, sp.price_date from steel_specs ss, steel_category sc, steel_future_price sp "
+		String querySQL = "select distinct sc.steel_name, round(sp.price ,3) as price, sp.price_date from steel_specs ss, steel_category sc, steel_future_price sp "
 				+ " where ss.category_id = sc.category_id and ss.price_code = sp.price_code "
 				+ " and sp.price_date >= ? and sp.price_date <= ? order by sc.steel_name, sp.price_date";
 		List<Object> params = new ArrayList<Object>();
@@ -123,7 +123,7 @@ public class SteelPriceService {
 		if(list != null){
 			for(Map<String,Object> m : list){
 				Price price = new Price();
-				price.setPrice(String.valueOf(m.get("price")));
+				price.setPrice(String.format("%.3f", m.get("price")));
 				price.setSteelName(String.valueOf(m.get("steel_name")));
 				price.setThickness(String.valueOf(m.get("thickness")));
 				price.setPriceDate(SteelUtil.formatDate((Date) m.get("price_date"), null));
@@ -135,7 +135,7 @@ public class SteelPriceService {
 	
 	public List<Price> loadTodayFuturePrice(){
 		List<Price> prices = new ArrayList<Price>(); 
-		String querySql = "select price_code, price \n" + 
+		String querySql = "select price_code, round(price,3) as price \n" + 
 				"from steel_future_price\n" + 
 				"where (price_code, price_Date) in(\n" + 
 				"select price_code, max(price_Date) as price_Date from steel_future_price \n" + 
@@ -146,7 +146,7 @@ public class SteelPriceService {
 		if(list != null){
 			for(Map<String,Object> m : list){
 				Price price = new Price();
-				price.setPrice(String.valueOf(m.get("price")));
+				price.setPrice(String.format("%.3f", m.get("price")));
 				price.setPriceCode(String.valueOf(m.get("price_code")));
 				prices.add(price);
 			}
@@ -157,7 +157,7 @@ public class SteelPriceService {
 	public List<Price> loadTodaySalePrice(){
 		
 		List<Price> prices = new ArrayList<Price>(); 
-		String querySql = "select price_code, price \n" + 
+		String querySql = "select price_code, round(price,3) as price \n" + 
 				"from steel_price\n" + 
 				"where (price_code, price_Date) in(\n" + 
 				"select price_code, max(price_Date) as price_Date from steel_price \n" + 
@@ -167,7 +167,7 @@ public class SteelPriceService {
 		if(list != null){
 			for(Map<String,Object> m : list){
 				Price price = new Price();
-				price.setPrice(String.valueOf(m.get("price")));
+				price.setPrice(String.format("%.3f", m.get("price")));
 				price.setPriceCode(String.valueOf(m.get("price_code")));
 				prices.add(price);
 			}

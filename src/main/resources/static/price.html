@@ -50,7 +50,7 @@
 													+ cate[0].steelName
 													+ '</th><th>价格</th>';
 											var futurePriceId = "futurePrice_" + cate[0].priceCode;
-													futureTable += '<tbody><tr><td><input style="display:none" name="priceCode" value="'+ cate[0].priceCode + '"/><input type="text" id="' + futurePriceId  + '"name="price" class="form-control input-sm" ></td></tr></tbody>';
+													futureTable += '<tbody><tr><td><input style="display:none" name="priceCode" value="'+ cate[0].priceCode + '"/><input type="text" class="easyui-numberbox" precision=3 id="' + futurePriceId  + '" name="price"  ></td></tr></tbody>';
 											$
 													.each(
 															cate,
@@ -59,14 +59,21 @@
 																var salePriceId = "salePrice_" + spec.priceCode ;
 																saleTable += '<tbody><tr><td>'
 																		+ spec.thickness
-																		+ 'mm</td><td><input style="display:none" name="priceCode" value="'+ spec.priceCode + '"/><input type="text" name="price" id="'+ salePriceId + '" class="form-control input-sm" ></td></tr></tbody>';
+																		+ 'mm</td><td><input style="display:none" name="priceCode" value="'+ spec.priceCode + '"/><input type="text" class="easyui-numberbox" precision=3 name="price" id="'+ salePriceId + '"></td></tr></tbody>';
 															});
 											futureTable += '</table>';
 											saleTable += '</table>';
 											$("#future").append(futureTable);
 											$("#sale").append(saleTable);
+																				
 										});
 						$("#future").append('<div class="col-md-2"><button type="button" onclick="savePrice()" class="btn btn-success btn-block">保存</button></div>');
+						$("#future").children().each(function(k, e) {
+							$.parser.parse(e);
+						});	
+						$("#sale").children().each(function(k, e) {
+							$.parser.parse(e);
+						});		
 						loadTodayFuturePrice();
 						loadTodaySalePrice();
 					}
@@ -103,7 +110,7 @@
 			success : function(data) {
 				$.each(data, function(i, cate) {
 					var futurePriceId = "futurePrice_" + cate.priceCode ;
-					$("#"+futurePriceId).val(cate.price);
+					$("#"+futurePriceId).textbox('setValue',cate.price);
 				});
 			}
 		});
@@ -119,7 +126,7 @@
 			success : function(data) {
 				$.each(data, function(i, cate) {
 					var salePriceId = "salePrice_" + cate.priceCode ;
-					$("#"+salePriceId).val(cate.price);
+					$("#"+salePriceId).textbox('setValue',cate.price);
 				});
 			}
 		});
