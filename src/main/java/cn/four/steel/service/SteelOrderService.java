@@ -138,7 +138,7 @@ public class SteelOrderService {
 				order.setOrderId(Long.valueOf(String.valueOf(m.get("order_id"))));
 				order.setOrderNo(String.valueOf(m.get("order_no")));
 				order.setClientName(String.valueOf(m.get("client_name")));
-				order.setPrice(Double.valueOf(String.valueOf(m.get("price"))));
+				order.setPrice(String.format("%.3f", m.get("price")));
 				order.setIsOut(String.valueOf(m.get("is_out")));
 				order.setIsSale(String.valueOf(m.get("is_sale")));
 				order.setComment(String.valueOf(m.get("comment")));
@@ -166,7 +166,7 @@ public class SteelOrderService {
 				order.setClientId(Long.valueOf(String.valueOf(m.get("client_id"))));
 				order.setAccountNo(String.valueOf(m.get("account_no")));
 				order.setSpecId(Long.valueOf(String.valueOf(m.get("spec_id"))));
-				order.setPrice(Double.valueOf(String.valueOf(m.get("price"))));
+				order.setPrice(String.format("%.3f", m.get("price")));
 				order.setClientAmount(Double.valueOf(String.valueOf(m.get("client_amount"))));
 				order.setSteelCalcAmount(String.valueOf(m.get("steel_calc_amount")));
 				order.setComment(String.valueOf(m.get("comment")));

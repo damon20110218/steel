@@ -8,7 +8,7 @@ public class FrontOrder {
 	private Long categoryId;
 	private Long specId;
 	private Double clientAmount;
-	private Double price;
+	private String price;
 	private String steelCalcAmount;
 	private String comment;
 	private String unit;
@@ -58,10 +58,10 @@ public class FrontOrder {
 	public void setClientAmount(Double clientAmount) {
 		this.clientAmount = clientAmount;
 	}
-	public Double getPrice() {
+	public String getPrice() {
 		return price;
 	}
-	public void setPrice(Double price) {
+	public void setPrice(String price) {
 		this.price = price;
 	}
 	public String getSteelCalcAmount() {
