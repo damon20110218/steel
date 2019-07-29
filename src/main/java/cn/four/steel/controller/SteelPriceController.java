@@ -1,10 +1,8 @@
 package cn.four.steel.controller;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,6 +18,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.four.steel.bean.DataGridResult;
+import cn.four.steel.bean.from.FrontSale;
 import cn.four.steel.bean.from.PagePrice;
 import cn.four.steel.bean.to.Price;
 import cn.four.steel.service.SteelPriceService;
@@ -106,5 +106,10 @@ public class SteelPriceController {
 			logger.error(e.getMessage());
 			return null;
 		}
+	}
+	@RequestMapping(value = "/price/change", method = { RequestMethod.POST,RequestMethod.GET })
+	public DataGridResult<Price> queryPriceChange(String year, String month, String specId, String page, String rows){
+		DataGridResult<Price> res = new DataGridResult<Price>();
+		return res;
 	}
 }
