@@ -13,6 +13,7 @@ import cn.four.steel.bean.from.FrontOrder;
 import cn.four.steel.bean.from.FrontSale;
 import cn.four.steel.bean.to.MainOut;
 import cn.four.steel.bean.to.MainStorage;
+import cn.four.steel.bean.to.Price;
 import cn.four.steel.bean.to.SingleOut;
 
 public class SteelExporter {
@@ -191,6 +192,31 @@ public class SteelExporter {
 					calcAmountCell.setCellValue(out.getSteelCalcAmount());
 					HSSFCell actualAmountCell = row.createCell(6);
 					actualAmountCell.setCellValue(out.getActualAmount());
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return wb;	
+	}
+	
+	public static HSSFWorkbook exportPriceChange(List<Price> prices, String[] titles) {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		try {
+			HSSFSheet sheet = wb.createSheet();
+			createHeader(wb, sheet, titles);
+			if(prices != null && prices.size() != 0){
+				for(int i = 0 ; i < prices.size() ;i ++){
+					Price price = prices.get(i);
+					HSSFRow row = sheet.createRow(i + 1);
+					HSSFCell categoryCell = row.createCell(0);
+					categoryCell.setCellValue(price.getSteelName());
+					HSSFCell specCell = row.createCell(1);
+					specCell.setCellValue(price.getThickness());
+					HSSFCell priceDateCell = row.createCell(2);
+					priceDateCell.setCellValue(price.getPriceDate());
+					HSSFCell priceCell = row.createCell(3);
+					priceCell.setCellValue(price.getPrice());
 				}
 			}
 		} catch (Exception e) {

@@ -25,7 +25,8 @@ ALTER  TABLE  `steel_outbound`  ADD  UNIQUE (`order_no` );
 DROP TABLE steel_parameter;
 CREATE TABLE steel_parameter (param_id int NOT NULL, density double(10,4), category_id int, PRIMARY KEY (param_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci COMMENT='钢板基本信息表，维护密度等信息';
 DROP TABLE steel_price;
-CREATE TABLE steel_price (price_id int NOT NULL AUTO_INCREMENT, price_code varchar(45), price double(10,4), price_date date, price_type int(2) COMMENT '1-期货价格 2-零售价格', PRIMARY KEY (price_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci COMMENT='钢板每日价格表';
+CREATE TABLE steel_price (price_id int NOT NULL AUTO_INCREMENT, price_code varchar(45), price double(10,4), price_date date, price_type int(2) COMMENT '1-期货价格 2-零售价格',  YEAR INT,
+        MONTH INT, PRIMARY KEY (price_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci COMMENT='钢板每日价格表';
 DROP TABLE steel_sale;
 CREATE TABLE steel_sale (sale_id int NOT NULL AUTO_INCREMENT, sale_no varchar(45), order_no varchar(45), sale_date date, year int, month int, sale_amount double(10,4), cash_amount double(10,4), PRIMARY KEY (sale_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci;
 DROP TABLE steel_specs;
