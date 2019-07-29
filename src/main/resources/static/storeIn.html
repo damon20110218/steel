@@ -137,6 +137,17 @@
 
 	function doAdd(isModify) {
 		$('#addStoreWindow').window("open");
+		
+		
+		// 删除上一次新增的 tr
+		var mytable =document.getElementById("storeTable");
+		for(var i=mytable.rows.length - 2; i > 0; i--){
+			var rowid =  mytable.rows[i].id;
+			if(rowid.startsWith("row") && rowid != "row0"){
+				deleteSelectedRow(rowid);
+			}
+		}
+		
 		// 加载 公司列表，并设置默认值
 		$("#companyList").combobox({
 			url : '/basic/fuzzyMatch?clientType=1',
@@ -145,6 +156,8 @@
 		});
 		// 从后台获取入库单号
 		if(isModify != true){
+			$("#addOneLineButton").show();
+			
 			//清除页面值
 			$("#companyList").combobox('setValue', '');
 			$("#storageNo").textbox('setValue', '');
@@ -156,11 +169,7 @@
 			$("#cashAmount0").textbox('setValue', '');
 			$("#price0").textbox('setValue', '');
 			$("#factory0").textbox('setValue', '');
-			// 删除上一次新增的 tr
-			var rowLength = $("#storeTable tr").length;
-			for(var j = 1; j < rowLength - 2; j++){
-				deleteSelectedRow("row" + j);
-			}
+			
 			$.ajax({
 				type : "post",
 				url : "/store/storeNo", //提交到的url
@@ -189,6 +198,8 @@
 		$("#store").datagrid('reload');
 	}
 	function modify(rowIndex) {
+		$("#addOneLineButton").hide();
+	
 		var a = $('#store').datagrid('selectRow', rowIndex);
 		var row = $('#store').datagrid('getSelected');
 		// 从后台入库详细信息
@@ -341,7 +352,7 @@
 								onclick="deleteSelectedRow(row0)" /></td>
 						</tr>
 						<tr>
-							<td align="center" colspan="9"><input type="button"
+							<td align="center" colspan="9" id = "addOneLineButton"><input type="button"
 								class="easyui-linkbutton" value="增加一行"
 								style="width: 80px; height: 35px" onclick="insertNewRow()" /></td>
 						</tr>

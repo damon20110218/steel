@@ -188,6 +188,8 @@
 
 	function doAdd(isModify) {
 		$('#addOrderWindow').window("open");
+		$('#price0').textbox({ onChange: function(value) { calcAmount(0);}});
+		$('#clientAmount0').textbox({ onChange: function(value) { calcAmount(0);}});
 		
 		// 删除上一次新增的 tr
 		var mytable =document.getElementById("storeTable");
@@ -283,9 +285,11 @@
 					$("#accountNo0").textbox('setValue', item.accountNo);
 					$("#categoryId0").combobox('setValue', item.categoryId);
 					$("#specId0").combobox('setValue', item.specId);
+					$("#clientSpec0").textbox('setValue', item.clientSpec);
 					$("#clientAmount0").textbox('setValue', item.clientAmount);
 					$("#unit0").combobox('setValue', item.unit);
 					$("#price0").textbox('setValue', item.price);
+					$("#cashAmount0").textbox('setValue', item.cashAmount);
 					$("#steelCalcAmount0").textbox('setValue', item.steelCalcAmount);
 					$("#comment0").textbox('setValue', item.comment);
 				});
@@ -419,9 +423,11 @@
 							<th style="width: 10%;">客户款号</th>
 							<th style="width: 10%;">种类</th>
 							<th style="width: 10%;">规格</th>
+							<th style="width: 10%;">客户规格</th>
 							<th style="width: 10%;">数量</th>
 							<th style="width: 10%;">单位</th>
 							<th style="width: 10%;">价格</th>
+							<th style="width: 10%;">金额</th>
 							<th style="width: 10%;">钢板张数</th>
 							<th style="width: 10%;">备注</th>
 							<th>操作</th>
@@ -439,6 +445,8 @@
 							<td><select id="specId0" class="easyui-combobox"
 								name="specId" style="width: 95%; height: 32px" data-options="required:true">
 							</select></td>
+							<td><input type="text" class="easyui-textbox" id="clientSpec0"
+								name="clientSpec" style="width: 95%; height: 32px" data-options="required:true"/></td>
 							<td><input type="text" class="easyui-numberbox" id="clientAmount0" precision=2
 								name="clientAmount" style="width: 95%; height: 32px" data-options="required:true"/></td>
 							<td><select id="unit0" class="easyui-combobox"
@@ -446,6 +454,8 @@
 							</select></td>
 							<td><input type="text" class="easyui-numberbox" id="price0" precision=3
 								name="price" style="width: 95%; height: 32px" data-options="required:true" /></td>
+							<td><input type="text" class="easyui-numberbox" id="cashAmount0" precision=2
+								name="cashAmount" style="width: 95%; height: 32px" data-options="required:true" /></td>
 							<td><input type="text" class="easyui-textbox" id="steelCalcAmount0"
 								name="steelCalcAmount" style="width: 95%; height: 32px" data-options="required:true" /></td>
 							<td><input type="text" class="easyui-textbox" id="comment0"
@@ -471,11 +481,13 @@
 		var thirdCell = '<input type="text" class="easyui-textbox" id="accountNo0" name="accountNo" style="width: 95%; height: 32px" data-options="required:true"/>';
 		var fourthCell = '<select id="categoryId0" class="easyui-combobox" name="categoryId" style="width: 95%; height: 32px" data-options="required:true" editable="false"> </select>';
 		var fifthCell = '<select id="specId0" class="easyui-combobox" name="specId" style="width: 95%; height: 32px" data-options="required:true" editable="false"> </select>';
-		var sixthCell = '<input type="text" class="easyui-numberbox" id="clientAmount0" precision=2 name="clientAmount" style="width: 95%; height: 32px" data-options="required:true"/>';
-		var seventhCell = '<select id="unit0" class="easyui-combobox" name="unit" style="width: 95%; height: 32px" data-options="required:true" > </select>';
-		var eighthCell = '<input type="text" class="easyui-numberbox" id="price0" name="price" precision=3 style="width: 95%; height: 32px" data-options="required:true" />';
-		var nineCell = '<input type="text" class="easyui-textbox" id="steelCalcAmount0" name="steelCalcAmount" style="width: 95%; height: 32px" data-options="required:true" />';
-		var tenCell = '<input type="text" class="easyui-textbox" id="comment0" name="comment" style="width: 95%; height: 32px" />';
+		var sixthCell = '<select id="clientSpec0" class="easyui-textbox" name="clientSpec" style="width: 95%; height: 32px" data-options="required:true" > </select>';
+		var seventhCell = '<input type="text" class="easyui-numberbox" id="clientAmount0" precision=2 name="clientAmount" style="width: 95%; height: 32px" data-options="required:true"/>';
+		var eighthCell = '<select id="unit0" class="easyui-combobox" name="unit" style="width: 95%; height: 32px" data-options="required:true" > </select>';
+		var nineCell = '<input type="text" class="easyui-numberbox" id="price0" name="price" precision=3 style="width: 95%; height: 32px" data-options="required:true" />';
+		var tenCell = '<input type="text" class="easyui-numberbox" id="cashAmount0" name="price" precision=2 style="width: 95%; height: 32px" data-options="required:true" />';
+		var elevenCell = '<input type="text" class="easyui-textbox" id="steelCalcAmount0" name="steelCalcAmount" style="width: 95%; height: 32px" data-options="required:true" />';
+		var twelveCell = '<input type="text" class="easyui-textbox" id="comment0" name="comment" style="width: 95%; height: 32px" />';
 		
 		var unitVal = new Array();
 		
@@ -517,7 +529,8 @@
 					}
 				});
 			}
-		})
+		});
+		
 		
 		
 		function insertNewRow() {
@@ -557,6 +570,12 @@
 					+ "<td style='width: 10%'>"
 					+ tenCell
 					+ "</td>"
+					+ "<td style='width: 10%'>"
+					+ elevenCell
+					+ "</td>"
+					+ "<td style='width: 10%'>"
+					+ twelveCell
+					+ "</td>"
 					+ "<td><input type='button' name='delete' value='删除' style='width:80px; height:35px'  class='easyui-linkbutton' onclick='deleteSelectedRow(\""
 					+ rowId + "\")' />";
 			+"</tr>";
@@ -579,16 +598,23 @@
 			$("#" + rowId + " td:eq(4)").children().eq(0).attr("id",
 					"specId" + flag);
 			$("#" + rowId + " td:eq(5)").children().eq(0).attr("id",
-			"clientAmount" + flag);
+					"clientSpec" + flag);
 			$("#" + rowId + " td:eq(6)").children().eq(0).attr("id",
-					"unit" + flag);
+					"clientAmount" + flag);
 			$("#" + rowId + " td:eq(7)").children().eq(0).attr("id",
-					"price" + flag);
+					"unit" + flag);
 			$("#" + rowId + " td:eq(8)").children().eq(0).attr("id",
-					"steelCalcAmount" + flag);
+					"price" + flag);
 			$("#" + rowId + " td:eq(9)").children().eq(0).attr("id",
+					"cashAmount" + flag);
+			$("#" + rowId + " td:eq(10)").children().eq(0).attr("id",
+					"steelCalcAmount" + flag);
+			$("#" + rowId + " td:eq(11)").children().eq(0).attr("id",
 					"comment" + flag);
 					
+			$('#price' + flag).textbox({ onChange: function(value) { calcAmount(flag);}});
+			$('#clientAmount' + flag).textbox({ onChange: function(value) { calcAmount(flag);}});
+			
 			$('#unit' + flag).combobox({
 				data : unitVal,
 				valueField : 'id',
@@ -636,7 +662,16 @@
 			//每插入一行，flag自增一次
 			
 		}
-
+		
+		function calcAmount(id){
+			var clientAmount = $("#clientAmount" + id).textbox('getValue');
+			var price = $("#price" + id).textbox('getValue');
+			if(clientAmount !=null && price != null){
+				var result = clientAmount*price;
+				$("#cashAmount" + id).textbox('setValue', result.toFixed(2));
+			}
+		}
+	
 		function deleteSelectedRow(rowID) {
 			$("#" + rowID).remove();
 		}
@@ -653,7 +688,7 @@
 				var formArray = $("#addOrderForm").serializeArray();
 				$.each(formArray, function(i, item) {
 					formObject[item.name] = item.value;
-					if (i % 10 == 9) {
+					if (i % 12 == 11) {
 						formObject.clientId = clientId;
 						orders.push(formObject);
 						formObject = {};

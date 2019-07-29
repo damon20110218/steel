@@ -36,8 +36,8 @@
 											var futureTitle = "&nbsp;";
 											var saleTitle = "&nbsp;";
 											if (i == 0) {
-												futureTitle = "期货价格";
-												saleTitle = "零售价格";
+												futureTitle = "期货价格 元/kg";
+												saleTitle = "零售价格 元/kg";
 											}
 											var futureTable = '<div class="col-md-2"><h3>'
 													+ futureTitle
@@ -191,6 +191,14 @@
 				loadTodayFuturePrice();
 			}
 		});						
+	}
+	
+	function calcAmount(id){
+		var saleAmount = $("#saleAmount" + id).textbox('getValue');
+		var price = $("#price" + id).textbox('getValue');
+		if(saleAmount !=null && price != null){
+			$("#cashAmount" + id).textbox('setValue', saleAmount*price);
+		}
 	}
 </script>
 <body>

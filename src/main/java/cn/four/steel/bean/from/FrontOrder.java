@@ -7,8 +7,10 @@ public class FrontOrder {
 	private Long clientId;
 	private Long categoryId;
 	private Long specId;
+	private String clientSpec;
 	private Double clientAmount;
 	private String price;
+	private String cashAmount;
 	private String steelCalcAmount;
 	private String comment;
 	private String unit;
@@ -105,5 +107,17 @@ public class FrontOrder {
 	}
 	public void setOrderDate(String orderDate) {
 		this.orderDate = orderDate;
+	}
+	public String getClientSpec() {
+		return clientSpec;
+	}
+	public void setClientSpec(String clientSpec) {
+		this.clientSpec = clientSpec;
+	}
+	public String getCashAmount() {
+		return cashAmount;
+	}
+	public void setCashAmount(String cashAmount) {
+		this.cashAmount = cashAmount;
 	}
 }

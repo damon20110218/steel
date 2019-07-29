@@ -45,11 +45,12 @@ public class SteelOrderService {
 	
 	public void updateOrder(List<FrontOrder> orders) {
 		String insertSQL = "insert into steel_order(order_date, order_no, client_id, account_no, spec_id, "
-				+ "client_amount, price, steel_calc_amount, comment,is_out,is_sale,is_delete, unit, year, month) "
-				+ "values(?,?,?,?,?,?,?,?,?,0,0,0,?,?,?)";
+				+ "client_spec, client_amount, price, cash_amount, steel_calc_amount, comment,"
+				+ "is_out,is_sale,is_delete, unit, year, month) "
+				+ "values(?,?,?,?,?,?,?,?,?,?,?,0,0,0,?,?,?)";
 		String updateSQL = "update steel_order set order_date = ?, "
 				+ "order_no =?, client_id =?, account_no=?, spec_id = ?,"
-				+ "client_amount = ?, price = ?, steel_calc_amount = ?, comment = ?, unit = ?,"
+				+ "client_spec = ?, client_amount = ?, price = ?, cash_amount=?, steel_calc_amount = ?, comment = ?, unit = ?,"
 				+ " year = ?, month = ? where order_id = ?";
 		Date now = new Date();
 		List<Object> params = new ArrayList<Object>();
@@ -62,8 +63,10 @@ public class SteelOrderService {
 				params.add(order.getClientId());
 				params.add(order.getAccountNo());
 				params.add(order.getSpecId());
+				params.add(order.getClientSpec());
 				params.add(order.getClientAmount());
 				params.add(order.getPrice());
+				params.add(order.getCashAmount());
 				params.add(order.getSteelCalcAmount());
 				params.add(order.getComment());
 				params.add(order.getUnit());
@@ -76,8 +79,10 @@ public class SteelOrderService {
 				params.add(order.getClientId());
 				params.add(order.getAccountNo());
 				params.add(order.getSpecId());
+				params.add(order.getClientSpec());
 				params.add(order.getClientAmount());
 				params.add(order.getPrice());
+				params.add(order.getCashAmount());
 				params.add(order.getSteelCalcAmount());
 				params.add(order.getComment());
 				params.add(order.getUnit());
@@ -153,7 +158,8 @@ public class SteelOrderService {
 	}
 	
 	public List<FrontOrder> showSingleOrder(String orderNo){
-		String showSQL = "select order_id, order_no, client_id, account_no, spec_id, price, client_amount, steel_calc_amount, comment, unit from steel_order where order_no = ?";
+		String showSQL = "select order_id, order_no, client_id, account_no, spec_id, price,client_amount, client_spec,"
+				+ " round(cash_amount,2) as cash_amount, steel_calc_amount, comment, unit from steel_order where order_no = ?";
 		List<Object> params = new ArrayList<Object>();
 		params.add(orderNo);
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(showSQL, params.toArray());
@@ -167,9 +173,12 @@ public class SteelOrderService {
 				order.setAccountNo(String.valueOf(m.get("account_no")));
 				order.setSpecId(Long.valueOf(String.valueOf(m.get("spec_id"))));
 				order.setPrice(String.format("%.3f", m.get("price")));
+				order.setCashAmount(String.format("%.2f", m.get("cash_amount")));
+				order.setClientSpec(String.valueOf(m.get("client_spec")));
 				order.setClientAmount(Double.valueOf(String.valueOf(m.get("client_amount"))));
 				order.setSteelCalcAmount(String.valueOf(m.get("steel_calc_amount")));
-				order.setComment(String.valueOf(m.get("comment")));
+				if(null != m.get("comment"))
+					order.setComment(String.valueOf(m.get("comment")));
 				order.setUnit(String.valueOf(m.get("unit")));
 				orders.add(order);
 			}

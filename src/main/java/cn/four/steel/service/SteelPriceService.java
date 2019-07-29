@@ -49,7 +49,7 @@ public class SteelPriceService {
 					params.clear();
 					params.add(price.getPriceCode()); // 钢材规格ID
 					params.add(price.getPrice()); // 钢材价格
-					params.add(now); // 价格录入日期
+					params.add(SteelUtil.formatDate(now, null)); // 价格录入日期
 					params.add(price.getPriceType());
 					jdbcTemplate.update(futureSql, params.toArray());
 				} else {
@@ -71,6 +71,7 @@ public class SteelPriceService {
 				params.add(price.getPriceCode());
 				Double pc = null;
 				try {
+					logger.info("addPrice: sql:" + sql + "; params: " + params.toString()); 
 					pc = jdbcTemplate.queryForObject(sql, params.toArray(), Double.class);
 				} catch (Exception e) {
 					logger.error(e.getMessage());
@@ -81,12 +82,13 @@ public class SteelPriceService {
 					}
 				}
 				params.add(SteelUtil.formatDate(now, null));
+				logger.info("addPrice: querySQL:" + querySQL + "; params: " + params.toString()); 
 				Long cnt = jdbcTemplate.queryForObject(querySQL, params.toArray(), Long.class);
 				params.clear();
 				if (cnt == 0) {
 					params.add(price.getPriceCode()); // 钢材规格ID
 					params.add(price.getPrice()); // 钢材价格
-					params.add(now); // 价格录入日期
+					params.add(SteelUtil.formatDate(now, null)); // 价格录入日期
 					params.add(price.getPriceType());
 					params.add(now.getYear() + 1900);
 					params.add(now.getMonth() + 1);
@@ -203,7 +205,7 @@ public class SteelPriceService {
 	
 	public DataGridResult<Price> loadPriceChange(String year, String month, String categoryId, String specId, Integer start, Integer end){
 		DataGridResult<Price> res = new DataGridResult<Price>();
-		String querySQL = "select distinct s.price, s.price_date, p.thickness, p.category_id from steel_price s, steel_specs p where s.price_code = p.price_code ";
+		String querySQL = "select s.price, s.price_date, p.thickness, p.category_id from steel_price s, steel_specs p where s.price_code = p.price_code ";
 		String cntSQL = "select count(*) from steel_price s, steel_specs p where s.price_code = p.price_code ";
 		List<Object> params = new ArrayList<Object>();
 		if (year != null && !"".equals(year)) {
