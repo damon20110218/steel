@@ -172,12 +172,21 @@
 													+ ')" value="修改"> &nbsp; ';
 											return str;
 										}
-									} ] ]
+									} ] ],
+									rowStyler:function(index,row){
+										if (row.isSale =='1' && row.isOut =='1' ){
+											return 'background-color:#123456;font-weight:bold;';
+										} else if(row.isSale =='0' && row.isOut =='1' ){
+											return 'background-color:#443456;font-weight:bold;';
+										} else if(row.isSale =='1' && row.isOut =='0' ){
+											return 'background-color:#EE3456;font-weight:bold;';
+										}
+									}
 						});
 
 		$('#addOrderWindow').window({
 			title : '增加订单',
-			width : 1400,
+			width : 1500,
 			modal : true,
 			shadow : true,
 			closed : true,
@@ -298,28 +307,45 @@
 		// disable 删除与新增一行按钮
 	}
 	function closeWindow() {
-		
-		
 		$('#addOrderWindow').window("close");
 	}
 	function sale(){
 		var rows = $('#order').datagrid('getSelections');
 		var orderNos = new Array();
+		var tof = false;
 		for(var i=0; i<rows.length; i++){
+			if(rows[i].isSale == '1'){
+				tof = true;
+				break;
+			}
 			orderNos.push(rows[i].orderNo);
 		}
-		var url="sale.html?orderNos=" + orderNos;
-		$("#saleHref").attr("href",url)
+		if(tof == false){
+			var url="sale.html?orderNos=" + orderNos;
+			$("#saleHref").attr("href",url);
+		} else {
+			$.messager.alert('系统提示', '请不要重复销售', 'error');
+		}
+		
 	}
 	
 	function steelOut(){
+		var tof = false;
 		var rows = $('#order').datagrid('getSelections');
 		var orderNos = new Array();
 		for(var i=0; i<rows.length; i++){
+			if(rows[i].isSale == '1'){
+				tof = true;
+				break;
+			}
 			orderNos.push(rows[i].orderNo);
 		}
-		var url="out.html?orderNos=" + orderNos;
-		$("#steelOutHref").attr("href",url)
+		if(tof == false){
+			var url="out.html?orderNos=" + orderNos;
+			$("#steelOutHref").attr("href",url);
+		} else {
+			$.messager.alert('系统提示', '请不要重复出库', 'error');
+		}
 	}
 	function exportStoreIn() {
 		// 获取查询条件
@@ -384,9 +410,9 @@
 				<tr style="height:10px"></tr>
 				<tr>
 					<td style="width:70%">&nbsp;</td>
-					<td style="width:100px"><a id="saleHref" href="" target="main" class="btn btn-success btn-block" onclick="sale()">销售</a></td>
+					<td style="width:100px"><a id="saleHref" href="#" target="main" class="btn btn-success btn-block" onclick="sale()">销售</a></td>
 					<td style="width:5%">&nbsp;</td>
-					<td style="width:100px"><a id="steelOutHref" href="" target="main" class="btn btn-success btn-block" onclick="steelOut()">出库</a>	</td>
+					<td style="width:100px"><a id="steelOutHref" href="#" target="main" class="btn btn-success btn-block" onclick="steelOut()">出库</a>	</td>
 				</tr>
 				<tr style="height:10px"></tr>
 			</table>
@@ -485,7 +511,7 @@
 		var seventhCell = '<input type="text" class="easyui-numberbox" id="clientAmount0" precision=2 name="clientAmount" style="width: 95%; height: 32px" data-options="required:true"/>';
 		var eighthCell = '<select id="unit0" class="easyui-combobox" name="unit" style="width: 95%; height: 32px" data-options="required:true" > </select>';
 		var nineCell = '<input type="text" class="easyui-numberbox" id="price0" name="price" precision=3 style="width: 95%; height: 32px" data-options="required:true" />';
-		var tenCell = '<input type="text" class="easyui-numberbox" id="cashAmount0" name="price" precision=2 style="width: 95%; height: 32px" data-options="required:true" />';
+		var tenCell = '<input type="text" class="easyui-numberbox" id="cashAmount0" name="cashAmount" precision=2 style="width: 95%; height: 32px" data-options="required:true" />';
 		var elevenCell = '<input type="text" class="easyui-textbox" id="steelCalcAmount0" name="steelCalcAmount" style="width: 95%; height: 32px" data-options="required:true" />';
 		var twelveCell = '<input type="text" class="easyui-textbox" id="comment0" name="comment" style="width: 95%; height: 32px" />';
 		
