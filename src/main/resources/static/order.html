@@ -334,7 +334,7 @@
 		var rows = $('#order').datagrid('getSelections');
 		var orderNos = new Array();
 		for(var i=0; i<rows.length; i++){
-			if(rows[i].isSale == '1'){
+			if(rows[i].isOut == '1'){
 				tof = true;
 				break;
 			}

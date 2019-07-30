@@ -407,12 +407,12 @@
 							<th style="width: 15%;">金额</th>
 						</tr>
 						<tr >
-							<td colspan="5" style="align:center;"><input class="btn btn-success btn-block" type="button"
+							<td colspan="10" style="align:center;"><input class="btn btn-success btn-block" type="button"
 								style="width: 200px; height: 40px" value="提交"
 								onclick="saveSale()" /></td>
-							<td colspan="5"><input class="btn btn-success btn-block" type="button"
+							<!--td colspan="5"><input class="btn btn-success btn-block" type="button"
 								style="width: 200px; height: 40px" value="导出"
-								onclick="exportSale()" /></td>
+								onclick="exportSale()" /></td-->
 						</tr>
 					</thead>
 				</table>	
@@ -464,7 +464,22 @@
 		}
 		function exportSale(){
 			// 获取 导出要素
-			
+			// 获取查询条件
+			var form = $("<form id='exportForm'>");
+			form.attr("style", "display:none");
+			form.attr("target", "");
+			form.attr("method", "post");//提交方式为post
+			form.attr("action", "/sale/singleExport");//定义action
+			//带上参数
+			var formArray = $("#addSaleForm").serializeArray();
+			$.each(formArray, function(i, item) {
+				var s = "<input type='hidden', name='"+ item.name + "', value='"+ item.value + "'/>"; 
+		    	form.append(s); 	
+			}	    	
+			$("body").append(form);
+			form.submit();
+			//删除 form表单
+			$("#exportForm").remove();
 		}
 	</script>
 </body>

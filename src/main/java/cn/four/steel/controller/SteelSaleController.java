@@ -151,4 +151,37 @@ public class SteelSaleController {
 		} catch (Exception e) {
 		}
 	}
+	@RequestMapping("/sale/singleExport")
+	public void exportSingleSale(@RequestBody JSONObject jsonParam, HttpServletResponse response){
+		try {
+			// 解析数据
+			JSONArray array = jsonParam.getJSONArray("sales");
+			List<FrontSale> sales = new ArrayList<>();
+			if (array != null && array.size() != 0) {
+				for (int i = 0; i < array.size(); i++) {
+					FrontSale sale = array.getJSONObject(i).toJavaObject(FrontSale.class);
+					sales.add(sale);
+				}
+			}
+			Date now = new Date();
+			String fileName = "main_sale_" + SteelUtil.formatDate(now, "yyyyMMdd HH:mm:ss") + ".xls";
+			response.setContentType("application/ms-excel;charset=UTF-8");
+			response.setHeader("Content-Disposition",
+					"attachment;filename=".concat(String.valueOf(URLEncoder.encode(fileName, "UTF-8"))));
+			OutputStream out = response.getOutputStream();
+			try {
+				String[] titles = new String[] { "订单单号", "客户款号", "种类", "规格", "数量", "单位", "单价", "金额" };
+				Workbook wb = SteelExporter.exportMainSale(sales, titles);
+				wb.write(out);// 将数据写出去
+				logger.info("导出" + fileName + "成功！");
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.info("导出" + fileName + "失败！");
+			} finally {
+				out.close();
+			}
+		} catch (Exception e) {
+			logger.info("exportSingleSale 导出 失败！");
+		}
+	}
 }
