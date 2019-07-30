@@ -8,12 +8,16 @@ public class SingleSale {
 	private Long clientId;
 	private Long specId;
 	private Double saleAmount;
-	private Double cashAmount;
+	private String cashAmount;
 	private String unit;
-	private Double price;
+	private String price;
 	private String display;
+	private String clientSpec;
 	private String clientName;
 	private String thickness;
+	private String processCost;
+	private String freight;
+	private String totalAmount;
 	public Long getSaleId() {
 		return saleId;
 	}
@@ -44,10 +48,10 @@ public class SingleSale {
 	public void setSaleAmount(Double saleAmount) {
 		this.saleAmount = saleAmount;
 	}
-	public Double getCashAmount() {
+	public String getCashAmount() {
 		return cashAmount;
 	}
-	public void setCashAmount(Double cashAmount) {
+	public void setCashAmount(String cashAmount) {
 		this.cashAmount = cashAmount;
 	}
 	public String getUnit() {
@@ -56,10 +60,10 @@ public class SingleSale {
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
-	public Double getPrice() {
+	public String getPrice() {
 		return price;
 	}
-	public void setPrice(Double price) {
+	public void setPrice(String price) {
 		this.price = price;
 	}
 	public String getOrderNo() {
@@ -91,5 +95,29 @@ public class SingleSale {
 	}
 	public void setThickness(String thickness) {
 		this.thickness = thickness;
+	}
+	public String getProcessCost() {
+		return processCost;
+	}
+	public void setProcessCost(String processCost) {
+		this.processCost = processCost;
+	}
+	public String getFreight() {
+		return freight;
+	}
+	public void setFreight(String freight) {
+		this.freight = freight;
+	}
+	public String getTotalAmount() {
+		return totalAmount;
+	}
+	public void setTotalAmount(String totalAmount) {
+		this.totalAmount = totalAmount;
+	}
+	public String getClientSpec() {
+		return clientSpec;
+	}
+	public void setClientSpec(String clientSpec) {
+		this.clientSpec = clientSpec;
 	}
 }
