@@ -21,7 +21,7 @@ CREATE TABLE
     ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci;
 	
 DROP TABLE steel_order;
-CREATE TABLE steel_order (order_id int NOT NULL AUTO_INCREMENT, order_date date not null, order_no varchar(45) not null, client_id int not null, account_no varchar(45) not null, spec_id int  not null,client_spec varchar(100) not null, client_amount double(10,4)  not null, price double(10,4)  not null, cash_amount double(10,4)  not null, steel_calc_amount varchar(100)  not null, comment varchar(400), is_out int(2)  not null COMMENT '0-未出库  1-已出库', is_sale int(2)   not null COMMENT '0-未销售  1-已销售', is_delete int(2) not null, unit varchar(45)  not null, year int(4)  not null, month int(2)  not null, PRIMARY KEY (order_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci COMMENT='钢板订单表';
+CREATE TABLE steel_order (order_id int NOT NULL AUTO_INCREMENT, order_date date not null, order_no varchar(45) not null, client_id int not null, account_no varchar(45) not null, spec_id int  not null,client_spec varchar(100) not null, client_amount double(10,4)  not null, price double(10,4)  not null, cash_amount double(16,4)  not null, steel_calc_amount varchar(100)  not null, comment varchar(400), is_out int(2)  not null COMMENT '0-未出库  1-已出库', is_sale int(2)   not null COMMENT '0-未销售  1-已销售', is_delete int(2) not null, unit varchar(45)  not null, year int(4)  not null, month int(2)  not null, PRIMARY KEY (order_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci COMMENT='钢板订单表';
 
 DROP TABLE steel_outbound;
 CREATE TABLE steel_outbound (out_id int NOT NULL AUTO_INCREMENT, order_no varchar(45), spec_id int, actual_amount double(10,4), out_date date, year int, month int, PRIMARY KEY (out_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci;
@@ -35,7 +35,7 @@ CREATE TABLE steel_price (price_id int NOT NULL AUTO_INCREMENT, price_code varch
         MONTH INT, PRIMARY KEY (price_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci COMMENT='钢板每日价格表';
 
 DROP TABLE steel_sale;
-CREATE TABLE steel_sale (sale_id int NOT NULL AUTO_INCREMENT, sale_no varchar(45), order_no varchar(45), sale_date date, year int, month int, sale_amount double(10,4), cash_amount double(10,4), PRIMARY KEY (sale_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci;
+CREATE TABLE steel_sale (sale_id int NOT NULL AUTO_INCREMENT, sale_no varchar(45), order_no varchar(45), sale_date date, year int, month int, sale_amount double(16,4), unit varchar(45), price double(10,4), cash_amount double(16,4), process_cost double(16,4),  freight double(16,4), total_amount double(16,4), PRIMARY KEY (sale_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci;
 
 DROP TABLE steel_specs;
 CREATE TABLE steel_specs (spec_id int NOT NULL, thickness double(10,3), steel_code varchar(45), spec_desc varchar(300), category_id int, price_code varchar(45), PRIMARY KEY (spec_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci COMMENT='钢板规格信息，主要维护钢板厚度';

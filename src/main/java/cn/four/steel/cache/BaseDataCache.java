@@ -70,6 +70,9 @@ public class BaseDataCache  implements CommandLineRunner {
 	public Long getCategoryId (Long specId){
 		return steelSpcMap.get(specId).getCategoryId();
 	}
+	public String getCategoryNameBySpecId (Long specId){
+		return steelCatrgoryMap.get(steelSpcMap.get(specId).getCategoryId()).getSteelName();
+	}
 	private void loadSteelCategory() {
 		List<SteelCategory> steelCatrgoryList = basicDataService.listAllCategory(null); 
 		for(SteelCategory steelCatrgory: steelCatrgoryList) {

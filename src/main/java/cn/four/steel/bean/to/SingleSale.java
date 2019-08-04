@@ -12,8 +12,10 @@ public class SingleSale {
 	private String unit;
 	private String price;
 	private String display;
+	private String goodsName;
 	private String clientSpec;
 	private String clientName;
+	private String contactPerson;
 	private String thickness;
 	private String processCost;
 	private String freight;
@@ -119,5 +121,17 @@ public class SingleSale {
 	}
 	public void setClientSpec(String clientSpec) {
 		this.clientSpec = clientSpec;
+	}
+	public String getContactPerson() {
+		return contactPerson;
+	}
+	public void setContactPerson(String contactPerson) {
+		this.contactPerson = contactPerson;
+	}
+	public String getGoodsName() {
+		return goodsName;
+	}
+	public void setGoodsName(String goodsName) {
+		this.goodsName = goodsName;
 	}
 }

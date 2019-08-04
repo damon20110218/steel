@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import cn.four.steel.bean.DataGridResult;
 import cn.four.steel.bean.from.FrontSale;
 import cn.four.steel.bean.to.SingleSale;
+import cn.four.steel.cache.BaseDataCache;
 import cn.four.steel.util.SteelUtil;
 @Transactional
 @Service
@@ -22,6 +23,8 @@ public class SteelSaleService {
 	private static Logger logger = LoggerFactory.getLogger(SteelSaleService.class);
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	@Autowired
+	private BaseDataCache baseDataCache;
 	
 	public boolean checkSaleClient(List<FrontSale> sales) {
 		String querySql = "select count(distinct(client_id)) as num from "
@@ -37,13 +40,13 @@ public class SteelSaleService {
 	}
 	
 	public void updateSale(List<FrontSale> sales) {
-		String insertSQL = "insert into steel_sale(sale_date, sale_no, order_no, sale_amount, unit, price, cash_amount, process_cost, freight, total_amount "
+		String insertSQL = "insert into steel_sale(sale_date, sale_no, order_no, sale_amount, unit, price, cash_amount, process_cost, freight, total_amount, "
 				+ " year, month) "
 				+ "values(?,?,?,?,?,?,?,?,?,?,?,?)";
 		String updateOrderSQL = "update steel_order set is_sale = ? where order_no = ?";
 		String updateSQL = "update steel_sale set sale_date = ?, "
-				+ "sale_no = ?, sale_amount =?, unit=?, price=? "
-				+ "cash_amount = ?, year = ?, month = ?, process_cost=? ,freight=? ,total_amount=? where sale_id = ?";
+				+ "sale_no = ?, sale_amount =?, unit=?, price=?, "
+				+ "cash_amount = ?,  process_cost=? ,freight=? ,total_amount=?, year = ?, month = ? where sale_id = ?";
 		Date now = new Date();
 		List<Object> params = new ArrayList<Object>();
 		for (int i = 0; i < sales.size(); i++) {
@@ -62,6 +65,7 @@ public class SteelSaleService {
 				params.add(sale.getTotalAmount());
 				params.add(now.getYear() + 1900);
 				params.add(now.getMonth() + 1);
+				logger.info("updateSale, insertSQL: "+insertSQL+";params: " + params.toString()); 
 				jdbcTemplate.update(insertSQL, params.toArray());
 			} else{
 				params.add(now);
@@ -135,8 +139,8 @@ public class SteelSaleService {
 	}
 	
 	public List<SingleSale> showSingleSale(String saleNo){
-		String showSQL = "select s.sale_id, s.sale_no, o.client_id, o.order_no, o.account_no, o.spec_id, o.client_spec "
-				+ "s.sale_amount, s.cash_amount, s.unit,  s.price, s.process_cost, s.freight, s.total_amount, c.client_name "
+		String showSQL = "select s.sale_id, s.sale_no, o.client_id, o.order_no, o.account_no, o.spec_id, o.client_spec, "
+				+ "s.sale_amount, s.cash_amount, s.unit,  s.price, s.process_cost, s.freight, s.total_amount, c.client_name, c.contact_person "
 				+ "from steel_sale s, steel_order o, client_info c "
 				+ "where s.order_no = o.order_no and sale_no = ? and c.client_id = o.client_id";
 		List<Object> params = new ArrayList<Object>();
@@ -152,6 +156,7 @@ public class SteelSaleService {
 				sale.setOrderNo(String.valueOf(m.get("order_no")));
 				sale.setAccountNo(String.valueOf(m.get("account_no")));
 				sale.setSpecId(Long.valueOf(String.valueOf(m.get("spec_id"))));
+				sale.setClientSpec(String.valueOf(m.get("client_spec")));
 				if(null != m.get("price"))
 					sale.setPrice(String.format("%.3f", m.get("price")));
 				sale.setSaleAmount(Double.valueOf(String.valueOf(m.get("sale_amount"))));
@@ -166,6 +171,11 @@ public class SteelSaleService {
 					sale.setTotalAmount(String.format("%.2f", m.get("total_amount")));
 				sale.setUnit(String.valueOf(m.get("unit")));
 				sale.setClientName(String.valueOf(m.get("client_name")));
+				if(null != m.get("contact_person"))
+					sale.setContactPerson(String.valueOf(m.get("contact_person")));
+				else
+					sale.setContactPerson("");
+				sale.setGoodsName(baseDataCache.getCategoryNameBySpecId(sale.getSpecId()));
 				sales.add(sale);
 			}
 		}
@@ -173,7 +183,7 @@ public class SteelSaleService {
 	}
 	
 	public List<SingleSale> loadSaleByOrderNo(List<String> orderNos){
-		String showSQL = "select order_no, account_no, spec_id, client_amount, client_id, unit, price, client_spec from steel_order where order_no = ? ";
+		String showSQL = "select order_no, account_no, spec_id, client_amount, client_id, unit, round(price, 3) as price, round(cash_amount, 2) as cash_amount, client_spec from steel_order where order_no = ? ";
 		logger.info("loadSaleByOrderNo showSQL : " + showSQL);
 		List<Object> params = new ArrayList<Object>();
 		List<SingleSale> sales = new ArrayList<>();
@@ -193,6 +203,7 @@ public class SteelSaleService {
 						sale.setSaleAmount(Double.valueOf(String.valueOf(m.get("client_amount"))));
 						sale.setUnit(String.valueOf(m.get("unit")));
 						sale.setPrice(String.format("%.3f", m.get("price")));
+						sale.setCashAmount(String.format("%.2f", m.get("cash_amount")));
 						sale.setClientSpec(String.valueOf(m.get("client_spec")));
 						sales.add(sale);
 					}
