@@ -321,8 +321,12 @@
 			orderNos.push(rows[i].orderNo);
 		}
 		if(tof == false){
-			var url="sale.html?orderNos=" + orderNos;
-			$("#saleHref").attr("href",url);
+			if(orderNos.length == 0){
+				$.messager.alert('系统提示', '请选中需要销售的订单', 'warning');
+			} else {
+				var url="sale.html?orderNos=" + orderNos;
+				$("#saleHref").attr("href",url);
+			}
 		} else {
 			$.messager.alert('系统提示', '请不要重复销售', 'error');
 		}
@@ -341,8 +345,12 @@
 			orderNos.push(rows[i].orderNo);
 		}
 		if(tof == false){
-			var url="out.html?orderNos=" + orderNos;
-			$("#steelOutHref").attr("href",url);
+			if(orderNos.length == 0){
+				$.messager.alert('系统提示', '请选中需要出库的订单', 'warning');
+			} else {
+				var url="out.html?orderNos=" + orderNos;
+				$("#steelOutHref").attr("href",url);
+			}
 		} else {
 			$.messager.alert('系统提示', '请不要重复出库', 'error');
 		}

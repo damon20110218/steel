@@ -407,20 +407,20 @@
 		//}else{
 			var date = new Date;
 			fDate = formatDate(date);
-			var tr =  "<tr><td style='width:25%;height:50px;font-size:80%' valign = 'bottom'>销售单号："+rows.saleNo+" </td>" + 
-							"<td style='width:50%;height:50px;font-size:140%' align='center'><b>临海市美鹏金属材料有限公司销售单</b></td>" + 
-							"<td style='width:25%;height:50px;font-size:80%' valign = 'bottom' >日期：" +fDate +"</td>" +
+			var tr =  "<tr><td style='width:23%;height:50px;' valign = 'bottom'>销售单号："+rows.saleNo+" </td>" + 
+							"<td style='width:54%;height:50px;' align='center'><b><font size='5px'>临海市美鹏金属材料有限公司销售单</font></b></td>" + 
+							"<td style='width:23%;height:50px;' valign = 'bottom' >日期：" +fDate +"</td>" +
 							"</tr>";
 			$("#toBePrint1").append(tr);
-			var tr =  "<tr><td style='width:14%;height:32px;font-size:70%' align='center'>货物名称</td>" + 
-							"<td style='width:16%;height:32px;font-size:70%' align='center'>规格型号</td>" + 
-							"<td style='width:8%;height:32px;font-size:70%' align='center'>数量</td>" + 
-							"<td style='width:6%;height:32px;font-size:70%' align='center'>单位</td>" + 
-							"<td style='width:10%;height:32px;font-size:70%' align='center'>价格</td>" + 
-							"<td style='width:13%;height:32px;font-size:70%' align='center'>金额</td>" + 
-							"<td style='width:10%;height:32px;font-size:70%' align='center'>加工费</td>" + 
-							"<td style='width:10%;height:32px;font-size:70%' align='center'>运输费</td>" + 
-							"<td style='width:13%;height:32px;font-size:70%' align='center'>小计</td>" + 
+			var tr =  "<tr><td style='width:14%;height:32px;' align='center'>货物名称</td>" + 
+							"<td style='width:16%;height:32px;' align='center'>规格型号</td>" + 
+							"<td style='width:8%;height:32px;' align='center'>数量</td>" + 
+							"<td style='width:6%;height:32px;' align='center'>单位</td>" + 
+							"<td style='width:10%;height:32px;' align='center'>价格</td>" + 
+							"<td style='width:13%;height:32px;' align='center'>金额</td>" + 
+							"<td style='width:10%;height:32px;' align='center'>加工费</td>" + 
+							"<td style='width:10%;height:32px;' align='center'>运输费</td>" + 
+							"<td style='width:13%;height:32px;' align='center'>小计</td>" + 
 							"</tr>";
 			$("#toBePrint3").append(tr);
 			
@@ -440,23 +440,23 @@
 							+ "<td style='width:20%;height:32px'>联系人:"+outRow.contactPerson+"</td></tr>";
 							$("#toBePrint2").append(tr);
 						}
-						tr =  "<tr><td style='width:14%;height:32px;font-size:70%' >" + outRow.goodsName + "</td>" + 
-						"<td style='width:16%;height:32px;font-size:70%' >" + outRow.clientSpec + "</td>" + 
-						"<td style='width:8%;height:32px;font-size:70%' >" + outRow.saleAmount + "</td>" + 
-						"<td style='width:6%;height:32px;font-size:70%' >" + outRow.unit + "</td>" + 
-						"<td style='width:10%;height:32px;font-size:70%' >" + outRow.price + "</td>" + 
-						"<td style='width:13%;height:32px;font-size:70%' >" + outRow.cashAmount + "</td>";
+						tr =  "<tr><td style='width:14%;height:32px;' >" + outRow.goodsName + "</td>" + 
+						"<td style='width:16%;height:32px;' >" + outRow.clientSpec + "</td>" + 
+						"<td style='width:8%;height:32px;' >" + outRow.saleAmount + "</td>" + 
+						"<td style='width:6%;height:32px;' >" + outRow.unit + "</td>" + 
+						"<td style='width:10%;height:32px;' >" + outRow.price + "</td>" + 
+						"<td style='width:13%;height:32px;' >" + outRow.cashAmount + "</td>";
 						if(outRow.processCost != null){
-							tr+="<td style='width:10%;height:32px;font-size:70%' >" + outRow.processCost + "</td>";
+							tr+="<td style='width:10%;height:32px;' >" + outRow.processCost + "</td>";
 						}else{
-							tr+="<td style='width:10%;height:32px;font-size:70%' >" + "</td>" 
+							tr+="<td style='width:10%;height:32px;' >" + "</td>" 
 						}
 						if(outRow.freight != null){
-							tr+="<td style='width:10%;height:32px;font-size:70%' >" + outRow.freight + "</td>";
+							tr+="<td style='width:10%;height:32px;' >" + outRow.freight + "</td>";
 						}else{
-							tr+="<td style='width:10%;height:32px;font-size:70%' >" + "</td>" 
+							tr+="<td style='width:10%;height:32px;' >" + "</td>" 
 						}
-						tr+="<td style='width:13%;height:32px;font-size:70%' >" + outRow.totalAmount + "</td>" + 
+						tr+="<td style='width:13%;height:32px;' >" + outRow.totalAmount + "</td>" + 
 						"</tr>";
 						$("#toBePrint3").append(tr);
 						allTotalNum+=Number(outRow.totalAmount);
@@ -467,32 +467,32 @@
 			if(tableRows < 6){
 				for(emptyRows = 0; emptyRows < 6-tableRows; emptyRows++){
 					tr =  "<tr><td style='width:14%;height:32px;font-size:70%' ></td>" + 
-						"<td style='width:16%;height:32px;font-size:70%' ></td>" + 
-						"<td style='width:8%;height:32px;font-size:70%' ></td>" + 
-						"<td style='width:6%;height:32px;font-size:70%' ></td>" + 
-						"<td style='width:10%;height:32px;font-size:70%' ></td>" + 
-						"<td style='width:13%;height:32px;font-size:70%' ></td>" + 
-						"<td style='width:10%;height:32px;font-size:70%' ></td>" + 
-						"<td style='width:10%;height:32px;font-size:70%' ></td>" + 
-						"<td style='width:13%;height:32px;font-size:70%' ></td>" + 
+						"<td style='width:16%;height:32px;' ></td>" + 
+						"<td style='width:8%;height:32px;' ></td>" + 
+						"<td style='width:6%;height:32px;' ></td>" + 
+						"<td style='width:10%;height:32px;' ></td>" + 
+						"<td style='width:13%;height:32px;' ></td>" + 
+						"<td style='width:10%;height:32px;' ></td>" + 
+						"<td style='width:10%;height:32px;' ></td>" + 
+						"<td style='width:13%;height:32px;' ></td>" + 
 						"</tr>";
 						$("#toBePrint3").append(tr);
 				}
 			}
-			tr =  "<tr><td style='width:87%;height:32px;font-size:70%' colspan='8'>人民币大写："+convertCurrency(allTotalNum)+"</td>"
-				+"<td style='width:13%;height:32px;font-size:70%' >￥"+keepTwoDecimalFull(allTotalNum)+"</td>"
+			tr =  "<tr><td style='width:87%;height:32px;' colspan='8'>人民币大写："+convertCurrency(allTotalNum)+"</td>"
+				+"<td style='width:13%;height:32px;' >￥"+keepTwoDecimalFull(allTotalNum)+"</td>"
 				+"/tr";
 			$("#toBePrint3").append(tr);
 			//}
 			var date = new Date;
 			fDate = formatDate(date);
-			tr =  "<tr><td  style='width:33%;height:30px;font-size:80%' >  开票：</td><td  style='width:33%;height:30px;font-size:80%' >复核： </td><td  style='width:34%;height:30px;font-size:80%' >提货人签字： </td></tr>";
+			tr =  "<tr><td  style='width:33%;height:30px;' >  开票：</td><td  style='width:33%;height:30px;' >复核： </td><td  style='width:34%;height:30px;' >提货人签字： </td></tr>";
 			$("#toBePrint4").append(tr);
-			tr = "<tr><td style='width:100%;height:25px;font-size:15px' align='center'>第一联：存根联（白）        第二联：客户联（红）        第三联：记账联（黄）</td></tr>"
+			tr = "<tr><td style='width:100%;height:25px;' align='center'><font size='3'>第一联：存根联（白）        第二联：客户联（红）        第三联：记账联（黄）</font></td></tr>"
 			$("#toBePrint5").append(tr);
-			tr = "<tr><td style='width:100%;height:25px;font-size:12px%'>公司主管：热轧板、冷轧板、镀锌板、花纹板、不锈钢板、铝板、槽纲、角铁等。对外剪切、折弯、卷板加工。欢迎新老客户光临合作！</td></tr>"
+			tr = "<tr><td style='width:100%;height:25px;'><font size='3'>公司主管：热轧板、冷轧板、镀锌板、花纹板、不锈钢板、铝板、槽纲、角铁等。对外剪切、折弯、卷板加工。欢迎新老客户光临合作！</font></td></tr>"
 			$("#toBePrint5").append(tr);
-			tr = "<tr><td style='width:100%;height:25px;font-size:12px'>地址：临海市大洋街道三溪岗（台州学院后面，大洋工业区内）    销售经理：黄美存    联系电话：13175359587，85126672</td></tr>"
+			tr = "<tr><td style='width:100%;height:25px;'><font size='3'>地址：临海市大洋街道三溪岗（台州学院后面，大洋工业区内）    销售经理：黄美存    联系电话：13175359587，85126672</font></td></tr>"
 			$("#toBePrint5").append(tr);
 			printJS('printJS-form', 'html');
 			// 删除刚刚添加打印的内容
