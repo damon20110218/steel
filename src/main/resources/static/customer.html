@@ -11,7 +11,17 @@
 <script type="text/javascript" src="dist/js/jquery.easyui.min.js"></script>
 <script src="dist/js/easyui-lang-zh_CN.js" type="text/javascript"></script>
 <script type="text/javascript">
+	var needValidate = false;
 	function doAdd() {
+		$("#clientId").textbox('setValue', '');
+		$("#clientName").textbox('setValue', '');
+		$("#mobile").textbox('setValue', '');
+		$("#telephone").textbox('setValue', '');
+		$("#email").textbox('setValue', '');
+		$("#address").textbox('setValue', '');
+		$("#contactPerson").textbox('setValue', '');
+		$("#clientMark").textbox('setValue', '');
+		needValidate = true;
 		$('#addStaffWindow').window("open");
 	}
 	//工具栏
@@ -128,22 +138,29 @@
 	function saveCompany() {
 		// 页面必填项校验
 		if($("#addStuffForm").form('validate')){
-			$.ajax({
-				type : "post", //数据提交方式（post/get）
-				url : "/basic/validate_client?clientType=2&clientName=" + $("#clientName").val(), //提交到的url
-				contentType: "application/json; charset=utf-8",
-	            data: JSON.stringify(formObject),
-				//dataType : "json",//返回的数据类型格式
-				success : function(msg) {
-					if (msg == "Success") { //修改成功
-					
-					} else { //修改失败
-						//修改失败处理代码...
-						$.messager.alert('系统提示','客户名称重复','error');
-						return;
+			if(needValidate){
+				var checkResult=true;
+				$.ajax({
+					type : "post", //数据提交方式（post/get）
+					url : "/basic/validate_client?clientType=2&clientName=" + $("#clientName").val(), //提交到的url
+					contentType: "application/json; charset=utf-8",
+					data: JSON.stringify(formObject),
+					async: false,
+					//dataType : "json",//返回的数据类型格式
+					success : function(msg) {
+						if (msg == "Success") { //修改成功
+						
+						} else { //修改失败
+							//修改失败处理代码...
+							$.messager.alert('系统提示','客户名称重复','error');
+							checkResult = false;
+						}
 					}
+				});
+				if(checkResult == false){
+					return;
 				}
-			});
+			}
 			var formObject = {};
 	        var formArray =$("#addStuffForm").serializeArray();
 	        $.each(formArray,function(i,item){
@@ -154,6 +171,7 @@
 				url : "/basic/update_client", //提交到的url
 				contentType: "application/json; charset=utf-8",
 	            data: JSON.stringify(formObject),
+				async: false,
 				//dataType : "json",//返回的数据类型格式
 				success : function(msg) {
 					if (msg == "Success") { //修改成功
@@ -182,7 +200,8 @@
 		$("#address").textbox('setValue', row.address);
 		$("#contactPerson").textbox('setValue', row.contactPerson);
 		$("#clientMark").textbox('setValue', row.clientMark);
-		doAdd();
+		needValidate = false;
+		$('#addStaffWindow').window("open");
 	}
 	function deleteClient(clientId){
 		$.messager.confirm("删除确认", "你确定要删除选中项吗?", function(r) {

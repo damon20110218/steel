@@ -21,7 +21,7 @@ public class LoginService {
 	public boolean validateUser(String userName, String password) {
 		try {
 			logger.info("validateUser " +userName);
-			String querySQL = "select count(*) from user where user_name = ? and password = ?";
+			String querySQL = "select count(1) from user where user_name = ? and password = ?";
 			List<Object> params = new ArrayList<>();
 			params.add(userName);
 			params.add(password);
