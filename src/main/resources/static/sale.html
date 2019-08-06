@@ -471,11 +471,11 @@
 			fDate = formatDate(date);
 			tr =  "<tr><td  style='width:33%;height:30px;' >  开票：</td><td  style='width:33%;height:30px;' >复核： </td><td  style='width:34%;height:30px;' >提货人签字： </td></tr>";
 			$("#toBePrint4").append(tr);
-			tr = "<tr><td style='width:100%;height:25px;' align='center'><font size='3'>第一联：存根联（白）        第二联：客户联（红）        第三联：记账联（黄）</font></td></tr>"
+			tr = "<tr><td style='width:100%;height:25px;' align='center'><font size='2'>第一联：存根联（白）        第二联：客户联（红）        第三联：记账联（黄）</font></td></tr>"
 			$("#toBePrint5").append(tr);
-			tr = "<tr><td style='width:100%;height:25px;'><font size='3'>公司主管：热轧板、冷轧板、镀锌板、花纹板、不锈钢板、铝板、槽纲、角铁等。对外剪切、折弯、卷板加工。欢迎新老客户光临合作！</font></td></tr>"
+			tr = "<tr><td style='width:100%;height:25px;'><font size='2'>公司主管：热轧板、冷轧板、镀锌板、花纹板、不锈钢板、铝板、槽纲、角铁等。对外剪切、折弯、卷板加工。欢迎新老客户光临合作！</font></td></tr>"
 			$("#toBePrint5").append(tr);
-			tr = "<tr><td style='width:100%;height:25px;'><font size='3'>地址：临海市大洋街道三溪岗（台州学院后面，大洋工业区内）    销售经理：黄美存    联系电话：13175359587，85126672</font></td></tr>"
+			tr = "<tr><td style='width:100%;height:25px;'><font size='2'>地址：临海市大洋街道三溪岗（台州学院后面，大洋工业区内）    销售经理：黄美存    联系电话：13175359587，85126672</font></td></tr>"
 			$("#toBePrint5").append(tr);
 			printJS('printJS-form', 'html');
 			// 删除刚刚添加打印的内容
@@ -530,7 +530,7 @@
 		<form method="post" action="#" id="printJS-form">
 			<table id="toBePrint1"  class="table"></table>
 			<table id="toBePrint2"  class="table"></table>
-			<table id="toBePrint3"  class="table table-striped table-bordered" border='1px' solid='#000'></table>
+			<table id="toBePrint3"  class="table table-striped table-bordered" border='1px' cellspacing="0"></table>
 			<table id="toBePrint4"  class="table"></table>
 			<table id="toBePrint5"  class="table"></table>
      	</form>
