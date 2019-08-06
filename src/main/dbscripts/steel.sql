@@ -35,7 +35,7 @@ CREATE TABLE steel_price (price_id int NOT NULL AUTO_INCREMENT, price_code varch
         MONTH INT, PRIMARY KEY (price_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci COMMENT='钢板每日价格表';
 
 DROP TABLE steel_sale;
-CREATE TABLE steel_sale (sale_id int NOT NULL AUTO_INCREMENT, sale_no varchar(45), order_no varchar(45), sale_date date, year int, month int, sale_amount double(16,4), unit varchar(45), price double(10,4), cash_amount double(16,4), process_cost double(16,4),  freight double(16,4), total_amount double(16,4), PRIMARY KEY (sale_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci;
+CREATE TABLE steel_sale (sale_id int NOT NULL AUTO_INCREMENT, sale_no varchar(45), order_no varchar(45), sale_date date, year int, month int, sale_amount double(16,4), unit varchar(45), price double(10,4), cash_amount double(16,4),  PRIMARY KEY (sale_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci;
 
 DROP TABLE steel_specs;
 CREATE TABLE steel_specs (spec_id int NOT NULL, thickness double(10,3), steel_code varchar(45), spec_desc varchar(300), category_id int, price_code varchar(45), PRIMARY KEY (spec_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci COMMENT='钢板规格信息，主要维护钢板厚度';

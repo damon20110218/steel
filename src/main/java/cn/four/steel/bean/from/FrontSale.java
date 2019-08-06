@@ -9,9 +9,6 @@ public class FrontSale {
 	private Double saleAmount;
 	private String unit;
 	private Double cashAmount;
-	private Double processCost;
-	private Double freight;
-	private Double totalAmount;
 	private String saleDate;
 	public Long getSaleId() {
 		return saleId;
@@ -54,24 +51,6 @@ public class FrontSale {
 	}
 	public void setSaleDate(String saleDate) {
 		this.saleDate = saleDate;
-	}
-	public Double getProcessCost() {
-		return processCost;
-	}
-	public void setProcessCost(Double processCost) {
-		this.processCost = processCost;
-	}
-	public Double getFreight() {
-		return freight;
-	}
-	public void setFreight(Double freight) {
-		this.freight = freight;
-	}
-	public Double getTotalAmount() {
-		return totalAmount;
-	}
-	public void setTotalAmount(Double totalAmount) {
-		this.totalAmount = totalAmount;
 	}
 	public String getUnit() {
 		return unit;

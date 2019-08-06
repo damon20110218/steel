@@ -216,9 +216,6 @@
 		tr += '<td><input class="easyui-combobox" id="unit' + i +'" name="unit" style="width: 95%; height: 32px"/></td>';
 		tr += '<td><input class="easyui-numberbox" id="price' + i +'" name="price" style="width: 95%; height: 32px" precision = 3/></td>';
 		tr += '<td><input class="easyui-numberbox" id="cashAmount' + i +'" name="cashAmount" style="width: 95%; height: 32px" data-options="required:true" precision = 2/></td>';
-		tr += '<td><input class="easyui-numberbox" id="processCost' + i +'" name="processCost" style="width: 95%; height: 32px" precision = 2/></td>';
-		tr += '<td><input class="easyui-numberbox" id="freight' + i +'" name="freight" style="width: 95%; height: 32px" precision = 2/></td>';
-		tr += '<td><input class="easyui-numberbox" id="totalAmount' + i +'" name="totalAmount" style="width: 95%; height: 32px" data-options="required:true" precision = 2/></td>';
 		tr +='</tr>';
 		var rowLength = $("#saleTable tr").length;
 		$("#saleTable tr:eq(" + (rowLength - 2) + ")").after(tr); //将新拼接的一行插入到当前行的下面
@@ -240,18 +237,12 @@
 		$("#specId" + i).textbox('setValue', sale.thickness);
 		$("#clientSpec" + i).textbox('setValue', sale.clientSpec);
 		$("#saleAmount" + i).textbox('setValue', sale.saleAmount);
-		$('#saleAmount' + i).textbox({ onChange: function(value) {calcAmount(i); calcTotalAmount(i)}});
+		$('#saleAmount' + i).textbox({ onChange: function(value) {calcAmount(i); }});
 		$("#unit" + i).combobox('setValue', sale.unit);
 		$("#price" + i).textbox('setValue', sale.price);
-		$('#price' + i).textbox({ onChange: function(value) {calcAmount(i); calcTotalAmount(i)}});
+		$('#price' + i).textbox({ onChange: function(value) {calcAmount(i); }});
 		$("#cashAmount" + i).textbox('setValue', sale.cashAmount);
-		$("#processCost" + i).textbox('setValue', sale.processCost);
-		$('#processCost' + i).textbox({ onChange: function(value) {calcTotalAmount(i)}});
-		$("#freight" + i).textbox('setValue', sale.freight);
-		$('#freight' + i).textbox({ onChange: function(value) {calcTotalAmount(i)}});
-		$("#totalAmount" + i).textbox('setValue', sale.totalAmount);
 		$("#clientList").combobox('setValue', sale.clientId);
-		calcTotalAmount(i);
 	}
 	function closeWindow() {
 		$('#addSaleWindow').window("close");
@@ -260,7 +251,7 @@
 		var saleAmount = $("#saleAmount" + id).textbox('getValue');
 		var price = $("#price" + id).textbox('getValue');
 		if(saleAmount !=null && price != null){
-			$("#cashAmount" + id).textbox('setValue', saleAmount*price);
+			$("#cashAmount" + id).textbox('setValue', (saleAmount*price).toFixed(2));
 		}
 	}
 	
@@ -412,15 +403,15 @@
 							"<td style='width:23%;height:50px;' valign = 'bottom' >日期：" +fDate +"</td>" +
 							"</tr>";
 			$("#toBePrint1").append(tr);
-			var tr =  "<tr><td style='width:14%;height:32px;' align='center'>货物名称</td>" + 
-							"<td style='width:16%;height:32px;' align='center'>规格型号</td>" + 
+			var tr =  "<tr>"	+
+							"<td style='width:13%;height:32px;' align='center'>订单编号</td>" + 
+							"<td style='width:17%;height:32px;' align='center'>客户款号</td>" + 
+							"<td style='width:14%;height:32px;' align='center'>货物名称</td>" + 
+							"<td style='width:18%;height:32px;' align='center'>规格型号</td>" + 
 							"<td style='width:8%;height:32px;' align='center'>数量</td>" + 
 							"<td style='width:6%;height:32px;' align='center'>单位</td>" + 
 							"<td style='width:10%;height:32px;' align='center'>价格</td>" + 
-							"<td style='width:13%;height:32px;' align='center'>金额</td>" + 
-							"<td style='width:10%;height:32px;' align='center'>加工费</td>" + 
-							"<td style='width:10%;height:32px;' align='center'>运输费</td>" + 
-							"<td style='width:13%;height:32px;' align='center'>小计</td>" + 
+							"<td style='width:14%;height:32px;' align='center'>金额</td>" + 
 							"</tr>";
 			$("#toBePrint3").append(tr);
 			
@@ -440,46 +431,38 @@
 							+ "<td style='width:20%;height:32px'>联系人:"+outRow.contactPerson+"</td></tr>";
 							$("#toBePrint2").append(tr);
 						}
-						tr =  "<tr><td style='width:14%;height:32px;' >" + outRow.goodsName + "</td>" + 
-						"<td style='width:16%;height:32px;' >" + outRow.clientSpec + "</td>" + 
-						"<td style='width:8%;height:32px;' >" + outRow.saleAmount + "</td>" + 
-						"<td style='width:6%;height:32px;' >" + outRow.unit + "</td>" + 
-						"<td style='width:10%;height:32px;' >" + outRow.price + "</td>" + 
-						"<td style='width:13%;height:32px;' >" + outRow.cashAmount + "</td>";
-						if(outRow.processCost != null){
-							tr+="<td style='width:10%;height:32px;' >" + outRow.processCost + "</td>";
-						}else{
-							tr+="<td style='width:10%;height:32px;' >" + "</td>" 
-						}
-						if(outRow.freight != null){
-							tr+="<td style='width:10%;height:32px;' >" + outRow.freight + "</td>";
-						}else{
-							tr+="<td style='width:10%;height:32px;' >" + "</td>" 
-						}
-						tr+="<td style='width:13%;height:32px;' >" + outRow.totalAmount + "</td>" + 
+						tr =  "<tr>"	+
+							"<td style='width:13%;height:32px;' >" + outRow.orderNo + "</td>" + 
+							"<td style='width:17%;height:32px;' >" + outRow.accountNo + "</td>" + 
+							"<td style='width:14%;height:32px;' >" + outRow.goodsName + "</td>" + 
+							"<td style='width:18%;height:32px;' >" + outRow.clientSpec + "</td>" + 
+							"<td style='width:8%;height:32px;' >" + outRow.saleAmount + "</td>" + 
+							"<td style='width:6%;height:32px;' >" + outRow.unit + "</td>" + 
+							"<td style='width:10%;height:32px;' >" + outRow.price + "</td>" + 
+							"<td style='width:14%;height:32px;' >" + outRow.cashAmount + "</td>" +
 						"</tr>";
 						$("#toBePrint3").append(tr);
-						allTotalNum+=Number(outRow.totalAmount);
+						allTotalNum+=Number(outRow.cashAmount);
 						tableRows++;
 					});
 				}
 			});
 			if(tableRows < 6){
 				for(emptyRows = 0; emptyRows < 6-tableRows; emptyRows++){
-					tr =  "<tr><td style='width:14%;height:32px;font-size:70%' ></td>" + 
-						"<td style='width:16%;height:32px;' ></td>" + 
+					tr =  "<tr>"+
+						"<td style='width:13%;height:32px;font-size:70%' ></td>" + 
+						"<td style='width:17%;height:32px;' ></td>" + 
+						"<td style='width:14%;height:32px;' ></td>" + 
+						"<td style='width:18%;height:32px;' ></td>" + 
 						"<td style='width:8%;height:32px;' ></td>" + 
 						"<td style='width:6%;height:32px;' ></td>" + 
 						"<td style='width:10%;height:32px;' ></td>" + 
-						"<td style='width:13%;height:32px;' ></td>" + 
-						"<td style='width:10%;height:32px;' ></td>" + 
-						"<td style='width:10%;height:32px;' ></td>" + 
-						"<td style='width:13%;height:32px;' ></td>" + 
+						"<td style='width:14%;height:32px;' ></td>" + 
 						"</tr>";
 						$("#toBePrint3").append(tr);
 				}
 			}
-			tr =  "<tr><td style='width:87%;height:32px;' colspan='8'>人民币大写："+convertCurrency(allTotalNum)+"</td>"
+			tr =  "<tr><td style='width:87%;height:32px;' colspan='7'>人民币大写："+convertCurrency(allTotalNum)+"</td>"
 				+"<td style='width:13%;height:32px;' >￥"+keepTwoDecimalFull(allTotalNum)+"</td>"
 				+"/tr";
 			$("#toBePrint3").append(tr);
@@ -592,9 +575,6 @@
 							<th style="width: 6%;">单位</th>
 							<th style="width: 8%;">单价</th>
 							<th style="width: 8%;">金额</th>
-							<th style="width: 8%;">加工费</th>
-							<th style="width: 8%;">运输费</th>
-							<th style="width: 8%;">小计</th>
 						</tr>
 						<tr >
 							<td colspan="10" style="align:center;"><input class="btn btn-success btn-block" type="button"
@@ -619,7 +599,7 @@
 				var formArray = $("#addSaleForm").serializeArray();
 				$.each(formArray, function(i, item) {
 					formObject[item.name] = item.value;
-					if (i % 9 == 8) {
+					if (i % 6 == 5) {
 						formObject.clientId = clientId;
 						formObject.saleNo = saleNo;
 						sales.push(formObject);

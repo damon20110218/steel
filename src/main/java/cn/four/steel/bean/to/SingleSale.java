@@ -17,9 +17,6 @@ public class SingleSale {
 	private String clientName;
 	private String contactPerson;
 	private String thickness;
-	private String processCost;
-	private String freight;
-	private String totalAmount;
 	public Long getSaleId() {
 		return saleId;
 	}
@@ -97,24 +94,6 @@ public class SingleSale {
 	}
 	public void setThickness(String thickness) {
 		this.thickness = thickness;
-	}
-	public String getProcessCost() {
-		return processCost;
-	}
-	public void setProcessCost(String processCost) {
-		this.processCost = processCost;
-	}
-	public String getFreight() {
-		return freight;
-	}
-	public void setFreight(String freight) {
-		this.freight = freight;
-	}
-	public String getTotalAmount() {
-		return totalAmount;
-	}
-	public void setTotalAmount(String totalAmount) {
-		this.totalAmount = totalAmount;
 	}
 	public String getClientSpec() {
 		return clientSpec;
