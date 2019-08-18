@@ -163,7 +163,7 @@ public class SteelOutService {
 		String querySQL = "select o.out_id, o.out_date, o.order_no, o.actual_amount, so.spec_id "
 				+ " from steel_outbound o, steel_order so "
 				+ " where so.order_no = o.order_no ";
-		String cntSQL = "select count(*) from steel_outbound o, steel_order so where so.order_no = o.order_no ";
+		String cntSQL = "select count(*) from steel_outbound o, steel_order so where  so.order_no = o.order_no ";
 		List<Object> params = new ArrayList<Object>();
 		if (year != null && !"".equals(year)) {
 			querySQL += " and o.year = ? ";

@@ -174,12 +174,12 @@
 										}
 									} ] ],
 									rowStyler:function(index,row){
-										if (row.isSale =='1' && row.isOut =='1' ){
-											return 'background-color:#123456;font-weight:bold;';
+										if (row.isSale == '0' && row.isOut =='0' ){
+											return 'background-color:#FFFF77;font-weight:bold;';
 										} else if(row.isSale =='0' && row.isOut =='1' ){
-											return 'background-color:#443456;font-weight:bold;';
+											return 'background-color:#FFFF77;font-weight:bold;';
 										} else if(row.isSale =='1' && row.isOut =='0' ){
-											return 'background-color:#EE3456;font-weight:bold;';
+											return 'background-color:#FF8888;font-weight:bold;';
 										}
 									}
 						});
@@ -199,6 +199,12 @@
 		$('#addOrderWindow').window("open");
 		$('#price0').textbox({ onChange: function(value) { calcAmount(0);}});
 		$('#clientAmount0').textbox({ onChange: function(value) { calcAmount(0);}});
+		$('#unit0').combobox({
+			onSelect : function(unitrec){
+				resetUnitPrecision(0, unitrec.id);
+			}
+		});
+		$.parser.parse($('#unit0'));
 		
 		// 删除上一次新增的 tr
 		var mytable =document.getElementById("storeTable");
@@ -283,6 +289,7 @@
 			type : "post",
 			url : '/order/show?orderNo=' + row.orderNo,
 			contentType : "application/json; charset=utf-8",
+			async: false,
 			dataType : "json",
 			success : function(data) {
 				$.each(data, function(index, item) {
@@ -295,8 +302,8 @@
 					$("#categoryId0").combobox('setValue', item.categoryId);
 					$("#specId0").combobox('setValue', item.specId);
 					$("#clientSpec0").textbox('setValue', item.clientSpec);
-					$("#clientAmount0").textbox('setValue', item.clientAmount);
 					$("#unit0").combobox('setValue', item.unit);
+					$("#clientAmount0").textbox('setValue', item.clientAmount);
 					$("#price0").textbox('setValue', item.price);
 					$("#cashAmount0").textbox('setValue', item.cashAmount);
 					$("#steelCalcAmount0").textbox('setValue', item.steelCalcAmount);
@@ -304,6 +311,8 @@
 				});
 			}
 		});
+		
+		//resetUnitPrecision(0);
 		// disable 删除与新增一行按钮
 	}
 	function closeWindow() {
@@ -481,7 +490,7 @@
 							</select></td>
 							<td><input type="text" class="easyui-textbox" id="clientSpec0"
 								name="clientSpec" style="width: 95%; height: 32px" data-options="required:true"/></td>
-							<td><input type="text" class="easyui-numberbox" id="clientAmount0" precision=2
+							<td><input type="text" class="easyui-numberbox" id="clientAmount0" precision=3
 								name="clientAmount" style="width: 95%; height: 32px" data-options="required:true"/></td>
 							<td><select id="unit0" class="easyui-combobox"
 								name="unit" style="width: 95%; height: 32px" data-options="required:true" editable="false">
@@ -516,7 +525,7 @@
 		var fourthCell = '<select id="categoryId0" class="easyui-combobox" name="categoryId" style="width: 95%; height: 32px" data-options="required:true" editable="false"> </select>';
 		var fifthCell = '<select id="specId0" class="easyui-combobox" name="specId" style="width: 95%; height: 32px" data-options="required:true" editable="false"> </select>';
 		var sixthCell = '<select id="clientSpec0" class="easyui-textbox" name="clientSpec" style="width: 95%; height: 32px" data-options="required:true" > </select>';
-		var seventhCell = '<input type="text" class="easyui-numberbox" id="clientAmount0" precision=2 name="clientAmount" style="width: 95%; height: 32px" data-options="required:true"/>';
+		var seventhCell = '<input type="text" class="easyui-numberbox" id="clientAmount0" precision=3 name="clientAmount" style="width: 95%; height: 32px" data-options="required:true"/>';
 		var eighthCell = '<select id="unit0" class="easyui-combobox" name="unit" style="width: 95%; height: 32px" data-options="required:true" > </select>';
 		var nineCell = '<input type="text" class="easyui-numberbox" id="price0" name="price" precision=3 style="width: 95%; height: 32px" data-options="required:true" />';
 		var tenCell = '<input type="text" class="easyui-numberbox" id="cashAmount0" name="cashAmount" precision=2 style="width: 95%; height: 32px" data-options="required:true" />';
@@ -538,7 +547,7 @@
 		$('#unit0').combobox({
 			data : unitVal,
 			valueField : 'id',
-			textField : 'text'
+			textField : 'text',
 		});
 		
 		$("#categoryId0").combobox({
@@ -565,7 +574,22 @@
 			}
 		});
 		
-		
+		function resetUnitPrecision(i, unitType){
+			var tmpAmount = $('#clientAmount' + i).numberbox('getValue');
+			if(unitType == '张'){
+				$('#clientAmount' + i).numberbox({   
+					precision:1 ,
+					onChange: function(value) { calcAmount(flag);}
+				}); 
+			}else{
+				$('#clientAmount' + i).numberbox({   
+					precision:3  ,
+					onChange: function(value) { calcAmount(flag);}
+				}); 
+			}
+			$.parser.parse($('#clientAmount'+i));
+			$('#clientAmount' + i).numberbox('setValue', tmpAmount);
+		}
 		
 		function insertNewRow() {
 			flag++;
@@ -652,7 +676,10 @@
 			$('#unit' + flag).combobox({
 				data : unitVal,
 				valueField : 'id',
-				textField : 'text'
+				textField : 'text',
+				onSelect : function(unitrec){
+					resetUnitPrecision(flag, unitrec.id);
+				}
 			});
 		
 			$("#categoryId" + flag).combobox({

@@ -226,7 +226,10 @@
 		$('#unit' + i).combobox({
 			data : [{"id":"张", "text":"张"}, {"id":"吨", "text":"吨"}],
 			valueField : 'id',
-			textField : 'text'
+			textField : 'text',
+			onSelect : function(unitrec){
+				resetUnitPrecision(i, unitrec.id);
+			}
 		});
 		// 设置单元格值
 		$("#saleId" + i).val(sale.saleId);
@@ -243,6 +246,7 @@
 		$('#price' + i).textbox({ onChange: function(value) {calcAmount(i); }});
 		$("#cashAmount" + i).textbox('setValue', sale.cashAmount);
 		$("#clientList").combobox('setValue', sale.clientId);
+		
 	}
 	function closeWindow() {
 		$('#addSaleWindow').window("close");
@@ -253,6 +257,23 @@
 		if(saleAmount !=null && price != null){
 			$("#cashAmount" + id).textbox('setValue', (saleAmount*price).toFixed(2));
 		}
+	}
+	
+	function resetUnitPrecision(i, unitType){
+		var tmpAmount = $('#saleAmount' + i).numberbox('getValue');
+		if(unitType == '张'){
+			$('#saleAmount' + i).numberbox({   
+				precision:1 ,
+				onChange: function(value) { calcAmount(i);}
+			}); 
+		}else{
+			$('#saleAmount' + i).numberbox({   
+				precision:3  ,
+				onChange: function(value) { calcAmount(i);}
+			}); 
+		}
+		$.parser.parse($('#saleAmount'+i));
+		$('#saleAmount' + i).numberbox('setValue', tmpAmount);
 	}
 	
 	function calcTotalAmount(id){
@@ -435,7 +456,7 @@
 							"<td style='width:13%;height:32px;' >" + outRow.orderNo + "</td>" + 
 							"<td style='width:17%;height:32px;' >" + outRow.accountNo + "</td>" + 
 							"<td style='width:14%;height:32px;' >" + outRow.goodsName + "</td>" + 
-							"<td style='width:18%;height:32px;' >" + outRow.clientSpec + "</td>" + 
+							"<td style='width:18%;height:32px;' >" + outRow.thickness.replace(/\s+/g,"") + '*' + outRow.clientSpec + "</td>" + 
 							"<td style='width:8%;height:32px;' >" + outRow.saleAmount + "</td>" + 
 							"<td style='width:6%;height:32px;' >" + outRow.unit + "</td>" + 
 							"<td style='width:10%;height:32px;' >" + outRow.price + "</td>" + 

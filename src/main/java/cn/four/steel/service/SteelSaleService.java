@@ -153,7 +153,15 @@ public class SteelSaleService {
 				sale.setClientSpec(String.valueOf(m.get("client_spec")));
 				if(null != m.get("price"))
 					sale.setPrice(String.format("%.3f", m.get("price")));
-				sale.setSaleAmount(Double.valueOf(String.valueOf(m.get("sale_amount"))));
+				if(null != m.get("sale_amount")) {
+					if("张".equals(String.valueOf(m.get("unit")))) {
+						sale.setSaleAmount(String.format("%.1f", m.get("sale_amount")));
+					}
+					else {
+						sale.setSaleAmount(String.format("%.3f", m.get("sale_amount")));
+					}
+				}
+				
 				sale.setUnit(String.valueOf(m.get("unit")));
 				if(null != m.get("cash_amount"))
 					sale.setCashAmount(String.format("%.2f", m.get("cash_amount")));
@@ -171,7 +179,7 @@ public class SteelSaleService {
 	}
 	
 	public List<SingleSale> loadSaleByOrderNo(List<String> orderNos){
-		String showSQL = "select order_no, account_no, spec_id, client_amount, client_id, unit, round(price, 3) as price, round(cash_amount, 2) as cash_amount, client_spec from steel_order where order_no = ? ";
+		String showSQL = "select order_no, account_no, spec_id, round(client_amount, 3) as client_amount, client_id, unit, round(price, 3) as price, round(cash_amount, 2) as cash_amount, client_spec from steel_order where order_no = ? ";
 		logger.info("loadSaleByOrderNo showSQL : " + showSQL);
 		List<Object> params = new ArrayList<Object>();
 		List<SingleSale> sales = new ArrayList<>();
@@ -188,7 +196,14 @@ public class SteelSaleService {
 						sale.setAccountNo(String.valueOf(m.get("account_no")));
 						sale.setSpecId(Long.valueOf(String.valueOf(m.get("spec_id"))));
 						sale.setClientId(Long.valueOf(String.valueOf(m.get("client_id"))));
-						sale.setSaleAmount(Double.valueOf(String.valueOf(m.get("client_amount"))));
+						if(null != m.get("client_amount")) {
+							if("张".equals(String.valueOf(m.get("unit")))) {
+								sale.setSaleAmount(String.format("%.1f", m.get("client_amount")));
+							}
+							else {
+								sale.setSaleAmount(String.format("%.3f", m.get("client_amount")));
+							}
+						}
 						sale.setUnit(String.valueOf(m.get("unit")));
 						sale.setPrice(String.format("%.3f", m.get("price")));
 						sale.setCashAmount(String.format("%.2f", m.get("cash_amount")));

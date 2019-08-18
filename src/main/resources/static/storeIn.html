@@ -338,10 +338,10 @@
 							<td><select id="specId0" class="easyui-combobox"
 								name="specId" style="width: 95%; height: 32px" data-options="required:true" editable="false">
 							</select></td>
-							<td><input type="text" class="easyui-numberbox" id="amount0"
+							<td><input type="text" class="easyui-textbox" id="amount0"
 								name="amount" style="width: 95%; height: 32px" data-options="required:true" /></td>
 							<td><input type="text" class="easyui-numberbox"
-								id="cashAmount0" name="cashAmount"
+								id="cashAmount0" name="cashAmount"  precision=3
 								style="width: 95%; height: 32px" data-options="required:true" /></td>
 							<td><input type="text" class="easyui-textbox" id="price0"
 								name="price" style="width: 95%; height: 32px" data-options="required:true" /></td>
@@ -367,9 +367,9 @@
 		var secondCell = '<input type="text" class="easyui-textbox" id="clientNo0" name="clientNo" style="width: 95%; height: 32px" data-options="required:true" />';
 		var thirdCell = '<select id="categoryId0" class="easyui-combobox"  name="categoryId" style="width: 95%; height: 32px" data-options="required:true" editable="false" > </select>';
 		var fourthCell = '<select id="specId0" class="easyui-combobox" name="specId" style="width: 95%; height: 32px" data-options="required:true" editable="false"> </select>';
-		var fifthCell = '<input type="text" class="easyui-numberbox"  id="amount0" name="amount" style="width: 95%; height: 32px" data-options="required:true"/>';
-		var sixthCell = '<input type="text" class="easyui-numberbox"  id="cashAmount0" name="cashAmount" style="width: 95%; height: 32px" data-options="required:true" />';
-		var seventhCell = '<input type="text" class="easyui-textbox"  id="price0" name="price" style="width: 95%; height: 32px" data-options="required:true" />';
+		var fifthCell = '<input type="text" class="easyui-textbox"  id="amount0" name="amount" style="width: 95%; height: 32px" data-options="required:true"/>';
+		var sixthCell = '<input type="text" class="easyui-numberbox"  id="cashAmount0" name="cashAmount" style="width: 95%; height: 32px" precision=3 data-options="required:true" />';
+		var seventhCell = '<input type="text" class="easyui-numberbox"  id="price0" name="price" style="width: 95%; height: 32px" precision=3 data-options="required:true" />';
 		var eighthCell = '<input type="text" class="easyui-textbox"  id="factory0" name="factory" style="width: 95%; height: 32px" />';
 		$("#categoryId0").combobox({
 			url : '/basic/category',
@@ -395,10 +395,10 @@
 			}
 		});
 		// 添加重量  金额 计算单价逻辑
-		$('#amount0').numberbox({ onChange: function(value) { calcAmount(0);}});
+		$('#amount0').textbox({ onChange: function(value) { calcAmount(0);}});
 		$('#cashAmount0').numberbox({ onChange: function(value) { calcAmount(0);}});
 		function calcAmount(index){
-			var amount = $("#amount" + index).numberbox('getValue');
+			var amount = $("#amount" + index).textbox('getValue');
 			var cashAmount = $("#cashAmount" + index).numberbox('getValue');
 			if(amount !=null && amount != '' && cashAmount != null && cashAmount != ''){
 				var num = parseFloat(cashAmount)/parseFloat(amount);
@@ -488,7 +488,7 @@
 			});
 			// 添加重量  金额 计算单价逻辑
 			var index = flag;
-			$('#amount' + flag).numberbox({ onChange: function(value) { calcAmount(index);}});
+			$('#amount' + flag).textbox({ onChange: function(value) { calcAmount(index);}});
 			$('#cashAmount' + flag).numberbox({ onChange: function(value) { calcAmount(index);}});
 			//每插入一行，flag自增一次
 			flag++;

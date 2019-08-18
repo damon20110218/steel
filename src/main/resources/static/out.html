@@ -172,7 +172,7 @@
 		tr += '<td><input class="easyui-textbox" id="clientAmount' + i +'" name="clientAmount" style="width: 95%; height: 32px" disabled /></td>';
 		tr += '<td><input class="easyui-combobox" id="unit' + i +'" name="unit" style="width: 95%; height: 32px" disabled /></td>';
 		tr += '<td><input class="easyui-textbox" id="steelCalcAmount' + i +'" name="steelCalcAmount" style="width: 95%; height: 32px" disabled /></td>';
-		tr += '<td><input class="easyui-numberbox" id="actualAmount' + i +'" name="actualAmount" style="width: 95%; height: 32px" precision=2/></td>';
+		tr += '<td><input class="easyui-textbox" id="actualAmount' + i +'" name="actualAmount" style="width: 95%; height: 32px"/></td>';
 		tr +='</tr>';
 		var rowLength = $("#outBoundTable tr").length;
 		$("#outBoundTable tr:eq(" + (rowLength - 2) + ")").after(tr); //将新拼接的一行插入到当前行的下面

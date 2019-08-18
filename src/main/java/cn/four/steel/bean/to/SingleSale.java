@@ -7,7 +7,7 @@ public class SingleSale {
 	private String accountNo;
 	private Long clientId;
 	private Long specId;
-	private Double saleAmount;
+	private String saleAmount;
 	private String cashAmount;
 	private String unit;
 	private String price;
@@ -41,10 +41,10 @@ public class SingleSale {
 	public void setSpecId(Long specId) {
 		this.specId = specId;
 	}
-	public Double getSaleAmount() {
+	public String getSaleAmount() {
 		return saleAmount;
 	}
-	public void setSaleAmount(Double saleAmount) {
+	public void setSaleAmount(String saleAmount) {
 		this.saleAmount = saleAmount;
 	}
 	public String getCashAmount() {

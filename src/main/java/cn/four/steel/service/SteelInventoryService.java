@@ -22,7 +22,7 @@ public class SteelInventoryService {
 	public DataGridResult<SingleInventory> queryInventory(String year, String month, Integer start, Integer end){
 		DataGridResult<SingleInventory> result = new DataGridResult<SingleInventory>();
 		String querySQL = "select inventory_date, steel_name, thickness, store_in, store_out from steel_inventory si where 1=1 ";
-		String cntSQL = "select count(*) from steel_inventory where 1=1 ";
+		String cntSQL = "select count(*) from steel_inventory where 1=1  ";
 		List<Object> params = new ArrayList<Object>();
 		if(year != null && !"".equals(year)){
 			querySQL += " and year = ? ";
